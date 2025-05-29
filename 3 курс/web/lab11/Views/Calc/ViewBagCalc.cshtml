@@ -1,0 +1,53 @@
+﻿@using lab11.ViewModels;
+@model CalcViewModel;
+
+
+<head>
+    <link rel="stylesheet" href="~/css/stylesCalc.css" />
+</head>
+<body>
+    <main class="main">
+        <div class="title">
+            ViewBag Calc
+        </div>
+
+        @{
+            //var calc = ViewData["Calc"] as CalcViewModel;
+
+            var firstVal = ViewBag.calc.firstValue;
+            var secondVal = ViewBag.calc.secondValue;
+        }
+
+        <div class="valContainer">
+            <p class="valContainer_val">
+                Rand value first: <span class="fw-bold">@firstVal</span>
+            </p>
+            <p class="valContainer_val">
+                Rand value second:  <span class="fw-bold">@secondVal</span>
+            </p>
+        </div>
+        <div class="operationsContainer">
+            <div class="operationsContainer_oper">
+                <p class="fw-bold">Add:</p>
+                @firstVal + @secondVal = @ViewBag.calc.additionResult
+            </div>
+            <div class="operationsContainer_oper">
+                <p class="fw-bold">Sub:</p>
+                @firstVal - @secondVal = @ViewBag.calc.subtractionResult
+            </div>
+            <div class="operationsContainer_oper">
+                <p class="fw-bold">Div:</p>
+                @firstVal / @secondVal = @ViewBag.calc.divisionResult
+            </div>
+            <div class="operationsContainer_oper">
+                <p class="fw-bold">Mult:</p>
+                @firstVal * @secondVal = @ViewBag.calc.multiplicationResult
+            </div>
+        </div>
+    </main>
+</body>
+
+
+
+
+

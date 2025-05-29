@@ -1,0 +1,28 @@
+﻿<Window x:Class="ChiSquareDRV.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Симуляция ДСВ с Chi-Square" Height="600" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Выберите размер выборки (N):" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <ComboBox x:Name="SampleSizeComboBox" Width="100">
+                <ComboBoxItem Content="10"/>
+                <ComboBoxItem Content="100"/>
+                <ComboBoxItem Content="1000"/>
+                <ComboBoxItem Content="10000"/>
+            </ComboBox>
+        </StackPanel>
+
+        <Button Grid.Row="1" Content="Запустить симуляцию" Click="RunSimulation_Click" Width="150" HorizontalAlignment="Left" Margin="0,0,0,10"/>
+
+        <ScrollViewer Grid.Row="2">
+            <TextBlock x:Name="ResultsTextBlock" TextWrapping="Wrap"/>
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="CrugDiagg.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="23"/>
+      </Unit>
+      <Unit>
+        <Filename Value="crugd.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="CrugD"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="93"/>
+        <CursorPos X="94" Y="116"/>
+        <ComponentState Value="1"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="13">
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="82" Column="12" TopLine="56"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="51" Column="52" TopLine="36"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="53" Column="19" TopLine="38"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="55" Column="31" TopLine="39"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="71" Column="19" TopLine="55"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="90" Column="44" TopLine="82"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="97" Column="22" TopLine="80"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="92" Column="71" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="93" Column="71" TopLine="76"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="92" Column="71" TopLine="75"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="116" Column="17" TopLine="95"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="114" TopLine="94"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="120" Column="12" TopLine="96"/>
+      </Position>
+      <Position>
+        <Filename Value="crugd.pas"/>
+        <Caret Line="119" Column="50" TopLine="96"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

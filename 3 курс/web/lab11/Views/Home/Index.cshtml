@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/stylesIndex.css" />
+</head>
+<body>
+    <main class="main">
+        <p class="title">
+            Calc Service Demonstration
+        </p>
+        <div class="buttonsContainer">
+            <a class="buttonsContainer_button model" asp-controller="Calc" asp-action="ModelCalc">
+                Using Model Calc
+            </a>
+            <a class="buttonsContainer_button viewData" asp-controller="Calc" asp-action="ViewDataCalc">
+                Using ViewData Calc
+            </a>
+            <a class="buttonsContainer_button viewBag" asp-controller="Calc" asp-action="ViewBagCalc">
+                Using ViewBag Calc
+            </a>
+            <a class="buttonsContainer_button serviceInj" asp-controller="Calc" asp-action="ServiceInjCalc">
+                Using Service Injection Calc
+            </a>
+        </div>
+    </main>
+</body>

@@ -1,0 +1,66 @@
+object Form1: TForm1
+  Left = 1074
+  Height = 484
+  Top = 134
+  Width = 785
+  Caption = 'Столбчатая Диаграмма'
+  ClientHeight = 484
+  ClientWidth = 785
+  DesignTimePPI = 120
+  OnCreate = FormCreate
+  LCLVersion = '2.2.4.0'
+  object ColDiagrImage: TImage
+    Left = 24
+    Height = 360
+    Top = 100
+    Width = 375
+  end
+  object ExitButton: TButton
+    Left = 630
+    Height = 50
+    Top = 400
+    Width = 118
+    Caption = 'Выход'
+    OnClick = ExitButtonClick
+    TabOrder = 0
+  end
+  object TiobeLabel: TLabel
+    Left = 136
+    Height = 20
+    Top = 16
+    Width = 291
+    Caption = 'The TIOBE Programming  Community index '
+    ParentColor = False
+  end
+  object OctLabel: TLabel
+    Left = 230
+    Height = 20
+    Top = 50
+    Width = 97
+    Caption = 'Октябрь, 2022'
+    ParentColor = False
+  end
+  object LangNumLabel: TLabel
+    Left = 620
+    Height = 20
+    Top = 100
+    Width = 135
+    Caption = 'Количество языков'
+    ParentColor = False
+  end
+  object LegendImage: TImage
+    Left = 410
+    Height = 358
+    Top = 100
+    Width = 190
+  end
+  object ComboBox1: TComboBox
+    Left = 630
+    Height = 28
+    Top = 130
+    Width = 111
+    ItemHeight = 20
+    OnChange = ComboBox1Change
+    TabOrder = 1
+  end
+end

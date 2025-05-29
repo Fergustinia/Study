@@ -1,0 +1,34 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="Страница — 1" id="I_lJIlI_gpbxl2vdXcUT">
+    <mxGraphModel dx="1493" dy="914" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="OTLvM94IuBBTUby6ws5M-5" value=" Lunar_Phase (Singleton)" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="144" y="210" width="270" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-6" value="- UniqueMap: Singleton&lt;div&gt;&lt;br&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;+ getUniqueMap(): Singleton&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;- Singleton()&lt;span style=&quot;background-color: initial;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="OTLvM94IuBBTUby6ws5M-5">
+          <mxGeometry y="26" width="270" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-9" value="Shrine " style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="225" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-10" value="+ coordinates(): Coordinates&lt;div&gt;&amp;nbsp;+ activate()&lt;br&gt;&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="OTLvM94IuBBTUby6ws5M-9">
+          <mxGeometry y="26" width="240" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.989;entryY=0.375;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="OTLvM94IuBBTUby6ws5M-9" target="OTLvM94IuBBTUby6ws5M-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-16" value="&#xa;&lt;h4 data-end=&quot;784&quot; data-start=&quot;766&quot;&gt;&lt;strong data-end=&quot;782&quot; data-start=&quot;771&quot;&gt;Методы:&lt;/strong&gt;&lt;/h4&gt;&lt;ul data-end=&quot;1127&quot; data-start=&quot;785&quot;&gt;&lt;li data-end=&quot;876&quot; data-start=&quot;785&quot;&gt;&lt;code data-end=&quot;816&quot; data-start=&quot;787&quot;&gt;+ getInstance(): LunarPhase&lt;/code&gt;уникальный экземпляр&lt;strong data-end=&quot;854&quot; data-start=&quot;830&quot;&gt; – возвращ&lt;/strong&gt; класса (Singleton).&lt;/li&gt;&lt;li data-end=&quot;949&quot; data-start=&quot;877&quot;&gt;&lt;code data-end=&quot;903&quot; data-start=&quot;879&quot;&gt;+ getPhaseLevel(): int&lt;/code&gt; – возвращает текущий уровень &lt;strong data-end=&quot;946&quot; data-start=&quot;933&quot;&gt;фазы луны&lt;/strong&gt;.&lt;/li&gt;&lt;li data-end=&quot;1038&quot; data-start=&quot;950&quot;&gt;&lt;code data-end=&quot;975&quot; data-start=&quot;952&quot;&gt;+ updatePhase(): void&lt;/code&gt; – увеличивает &lt;strong data-end=&quot;1011&quot; data-start=&quot;990&quot;&gt;уровень фазы луны&lt;/strong&gt; при активации святилища.&lt;/li&gt;&lt;li data-end=&quot;1127&quot; data-start=&quot;1039&quot;&gt;&lt;code data-end=&quot;1060&quot; data-start=&quot;1041&quot;&gt;+ getMap(): Image&lt;/code&gt; – возвращает текущее состояние &lt;strong data-end=&quot;1124&quot; data-start=&quot;1092&quot;&gt;карты с уровнем освещённости&lt;/strong&gt;.&lt;/li&gt;&lt;/ul&gt;&#xa;&#xa;" style="text;strokeColor=none;fillColor=none;html=1;fontSize=24;fontStyle=1;verticalAlign=middle;align=center;" vertex="1" parent="1">
+          <mxGeometry x="530" y="590" width="100" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-17" value="+activate()" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="520" y="380" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="OTLvM94IuBBTUby6ws5M-18" value="+getUniaueMap()" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="450" y="248" width="120" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,48 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram name="Страница — 1" id="2FZ5orQabk9qAPB0q3bC">
+    <mxGraphModel dx="1195" dy="737" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="1654" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-3" value="TaskManager" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="460" y="70" width="550" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-4" value="&lt;pre style=&quot;font-family: var(--ds-font-family-code); overflow: auto; padding: calc(var(--ds-md-zoom)*8px)calc(var(--ds-md-zoom)*12px); text-wrap: wrap; word-break: break-all; font-size: 12.573px; margin-top: 0px !important; margin-bottom: 0px !important;&quot;&gt; + Instance: TaskManager&lt;br&gt; + Projects: ObservableCollection&amp;lt;Project&amp;gt; &lt;/pre&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-3">
+          <mxGeometry y="26" width="550" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-5" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-3">
+          <mxGeometry y="70" width="550" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-6" value="&lt;pre style=&quot;font-family: var(--ds-font-family-code); overflow: auto; padding: calc(var(--ds-md-zoom)*8px)calc(var(--ds-md-zoom)*12px); text-wrap: wrap; word-break: break-all; font-size: 12.573px; margin-top: 0px !important; margin-bottom: 0px !important;&quot;&gt;  + AddProject(name: string): void&lt;br&gt;  + RemoveProject(name: string): void&lt;br&gt;  + AddTask(projectName: string, taskName: string, dueDate: DateTime, priority: string): void&lt;br&gt;  + RemoveTask(projectName: string, taskName: string): void&lt;/pre&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-3">
+          <mxGeometry y="78" width="550" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-7" value="MainWindow" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="490" y="350" width="460" height="240" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-8" value="ProjectsList:LIstBox&lt;div&gt;TaskList:ListBox&lt;/div&gt;&lt;div&gt;ProjectNameBox:TextBox&lt;/div&gt;&lt;div&gt;TaskNameBox:TextBox&lt;/div&gt;&lt;div&gt;DueDatePicker:DatePicker&lt;/div&gt;&lt;div&gt;PriorityCombo:ComboBox&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-7">
+          <mxGeometry y="26" width="460" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-9" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-7">
+          <mxGeometry y="130" width="460" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-10" value="+MainWindow()&lt;div&gt;-AddProject_Click(object sender, RoutedEventArgs e)&lt;/div&gt;&lt;div&gt;-RemoveProject_Click(object sender, RoutedEventArgs e)&lt;/div&gt;&lt;div&gt;-AddTask_Click(object sender, RoutedEventArgs e)&lt;/div&gt;&lt;div&gt;-RemoveTask_Click(object sender, RoutedEventArgs e)&lt;/div&gt;&lt;div&gt;-ProjectsList_SelectionChanged(object sender, SelectionChangedEventArgs e)&lt;/div&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;" vertex="1" parent="ndX3KLHFtpuB8M6XMM_t-7">
+          <mxGeometry y="138" width="460" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-11" value="" style="endArrow=open;endFill=1;endSize=12;html=1;rounded=0;exitX=0.47;exitY=1.019;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="ndX3KLHFtpuB8M6XMM_t-6" target="ndX3KLHFtpuB8M6XMM_t-7">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="570" y="320" as="sourcePoint" />
+            <mxPoint x="780" y="250" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="719" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ndX3KLHFtpuB8M6XMM_t-12" value="&lt;div&gt;TaskManager&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="ndX3KLHFtpuB8M6XMM_t-11">
+          <mxGeometry x="0.2823" y="1" relative="1" as="geometry">
+            <mxPoint y="16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

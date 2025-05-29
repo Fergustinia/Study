@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="sortirovka.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="4"/>
+        <CursorPos X="70" Y="6"/>
+        <UsageCount Value="25"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="6">
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="25"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="18" Column="72"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="30" Column="30" TopLine="4"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="26" Column="32"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="24" Column="17"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="23" Column="19" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="sortirovka.lpr"/>
+        <Caret Line="27" Column="51"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "90yep5Hh1g7yulCy6k3wdv3NXKEbWOzFz88GswPEZfRl/u1KmAXreo6ZtWtXdE0oy+ckrH5aWYzB79p4PFrzoA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Артем\\Documents\\GitHub\\932101.artem.vildanov.lab13\\lab13\\lab13.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Артем\\.nuget\\packages\\newtonsoft.json\\13.0.3\\newtonsoft.json.13.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

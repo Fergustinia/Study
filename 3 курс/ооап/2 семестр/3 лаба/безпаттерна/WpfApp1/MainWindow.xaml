@@ -1,0 +1,220 @@
+﻿<Window x:Class="ResumeBuilderApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Создатель резюме" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <!-- Стили для светлой темы -->
+        <Style x:Key="LightThemeButton" TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Background" Value="#0288D1"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#0277BD"/>
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="LightThemeTextBlock" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,5,5,2"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style x:Key="LightThemeTextBox" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,2,5,5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="#B0BEC5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+        </Style>
+        <Style x:Key="LightThemeBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#B0BEC5"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
+        </Style>
+        <Style x:Key="LightThemeListBox" TargetType="ListBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#B0BEC5"/>
+        </Style>
+        <!-- Стили для темной темы -->
+        <Style x:Key="DarkThemeButton" TargetType="Button">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Background" Value="#1976D2"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="0" CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#1565C0"/>
+                                <Setter Property="Opacity" Value="0.8"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="False">
+                                <Setter Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DarkThemeTextBlock" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,5,5,2"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+        </Style>
+        <Style x:Key="DarkThemeTextBox" TargetType="TextBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Margin" Value="5,2,5,5"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="BorderBrush" Value="#546E7A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#37474F"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+        </Style>
+        <Style x:Key="DarkThemeBorder" TargetType="Border">
+            <Setter Property="BorderBrush" Value="#546E7A"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="#263238"/>
+        </Style>
+        <Style x:Key="DarkThemeListBox" TargetType="ListBox">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Background" Value="#37474F"/>
+            <Setter Property="BorderBrush" Value="#546E7A"/>
+            <Setter Property="Foreground" Value="#E0E0E0"/>
+        </Style>
+        <!-- Стиль для плейсхолдеров -->
+        <Style x:Key="PlaceholderTextBox" TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <ScrollViewer x:Name="PART_ContentHost"/>
+                                <TextBlock x:Name="Placeholder" Foreground="#78909C" Margin="5" IsHitTestVisible="False" Visibility="Collapsed"
+                                           Text="{TemplateBinding Tag}"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Text" Value=""/>
+                                    <Condition Property="IsKeyboardFocusWithin" Value="False"/>
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Анимация появления резюме -->
+        <Style x:Key="AnimatedTextBlock" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="Opacity" Value="0"/>
+            <Setter Property="Margin" Value="20,5,5,2"/>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5"/>
+                            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="20,5,5,2" To="5,5,5,2" Duration="0:0:0.5"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="20" x:Name="MainGrid" Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Панель ввода -->
+        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+            <CheckBox x:Name="DarkThemeCheckBox" Content="Темная тема" Margin="5" Checked="DarkThemeCheckBox_Checked" Unchecked="DarkThemeCheckBox_Unchecked"/>
+            <TextBlock Text="ФИО *" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="FullNameInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите имя и фамилию" 
+                     ToolTip="Пример: Иван Иванов" TextChanged="Input_TextChanged"/>
+            <TextBlock Text="Контакты *" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="ContactInfoInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите email и телефон" 
+                     ToolTip="Пример: ivan@example.com | +7-999-123-45-67" TextChanged="Input_TextChanged"/>
+            <TextBlock Text="Образование *" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="EducationInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите данные об образовании" 
+                     ToolTip="Пример: МГУ, Информатика, 2016-2020" AcceptsReturn="True" Height="80" TextChanged="Input_TextChanged"/>
+            <TextBlock Text="Опыт работы *" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="WorkExperienceInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите опыт работы" 
+                     ToolTip="Пример: ООО Техно, Разработчик, 2020-2023" AcceptsReturn="True" Height="80" TextChanged="Input_TextChanged"/>
+            <TextBlock Text="Навыки *" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="SkillsInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите навыки" 
+                     ToolTip="Пример: C#, SQL, JavaScript" AcceptsReturn="True" Height="60" TextChanged="Input_TextChanged"/>
+            <TextBlock Text="Дополнительно" Style="{StaticResource LightThemeTextBlock}"/>
+            <TextBox x:Name="AdditionalInfoInput" Style="{StaticResource PlaceholderTextBox}" Tag="Введите дополнительные сведения" 
+                     ToolTip="Пример: Сертификаты: PMP" AcceptsReturn="True" Height="60" TextChanged="Input_TextChanged"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Button x:Name="MinimalResumeButton" Content="Минимальное" Click="MinimalResumeButton_Click" Style="{StaticResource LightThemeButton}"/>
+                <Button x:Name="BusinessResumeButton" Content="Бизнес" Click="BusinessResumeButton_Click" Style="{StaticResource LightThemeButton}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Button x:Name="CreativeResumeButton" Content="Креативное" Click="CreativeResumeButton_Click" Style="{StaticResource LightThemeButton}"/>
+                <Button x:Name="AcademicResumeButton" Content="Академическое" Click="AcademicResumeButton_Click" Style="{StaticResource LightThemeButton}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,5,0,0">
+                <Button x:Name="ClearButton" Content="Очистить" Click="ClearButton_Click" Background="#D32F2F" Style="{StaticResource LightThemeButton}"/>
+                <Button x:Name="SaveButton" Content="Сохранить" Click="SaveButton_Click" Background="#388E3C" Style="{StaticResource LightThemeButton}"/>
+            </StackPanel>
+            <TextBlock x:Name="ErrorMessage" Foreground="#D32F2F" Visibility="Collapsed" TextWrapping="Wrap" Style="{StaticResource LightThemeTextBlock}"/>
+        </StackPanel>
+
+        <!-- Панель вывода -->
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="0,0,15,0">
+            <Border x:Name="OutputBorder" Style="{StaticResource LightThemeBorder}" Padding="15">
+                <TextBlock x:Name="ResumeOutput" Style="{StaticResource AnimatedTextBlock}"/>
+            </Border>
+        </ScrollViewer>
+
+        <!-- Панель истории -->
+        <StackPanel Grid.Column="2">
+            <TextBlock Text="История резюме" Style="{StaticResource LightThemeTextBlock}"/>
+            <ListBox x:Name="HistoryListBox" Height="600" Style="{StaticResource LightThemeListBox}" SelectionChanged="HistoryListBox_SelectionChanged"/>
+            <Button x:Name="ClearHistoryButton" Content="Очистить историю" Click="ClearHistoryButton_Click" Background="#D32F2F" Style="{StaticResource LightThemeButton}"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,40 @@
+﻿@using lab12.Models
+@model CalcViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/calculatorStyles.css" />
+</head>
+<body>
+    <input hidden id="targetController" value=@Model.ProcessContorollerName />
+    <main class="main">
+
+        <h1 class="title">@Model.CalcName</h1>
+
+        <div class="calcContainer">
+
+            <form method="post" id="calcForm" asp-action="ProcessManualParsing" enctype="multipart/form-data">
+                <div class="calcContainer_calc">
+                    <input class="calc_valueInput" type="number" id="firstValue" name="firstValue" />
+
+                    <select class="calc_signInput" id="mathOperSign" name="selectedSign">
+                        <option value="add">+</option>
+                        <option value="sub">-</option>
+                        <option value="mult">*</option>
+                        <option value="div">/</option>
+                    </select>
+
+                    <input class="calc_valueInput" type="number" id="secondValue" name="secondValue" />
+                    <div class="calc_resContainer" id="result">
+                        <!-- calculation result -->
+                        <p class="resContainer_eqSign">=</p>
+
+                        <div class="resContainer_res">
+                        </div>
+                    </div>
+                </div>
+                <a class="calcBtn" id="calcBtn">Calculate</a>
+            </form>
+        </div>
+    </main>
+    <script src="~/js/calculatorScript.js"></script>
+</body>

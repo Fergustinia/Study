@@ -1,0 +1,181 @@
+
+body
+{
+	display: flex;
+	flex-direction: column;
+
+	margin: 0px;
+	padding: 0px;
+}
+
+header
+{
+	background-color: #2e5473;
+
+	padding-bottom: 10px;
+	top:0;
+}
+
+.logo {
+	position: relative;
+	width: 80px;
+
+	margin-top: 10px;
+	padding-left: 15%;
+}
+
+.content
+{
+	display: flex;
+	justify-content: center;
+	width: calc(100% - 20px);
+	background-color: #edeef0;
+	padding: 10px;
+}
+
+footer
+{
+	background-color: white;
+	color: #808080;
+
+	text-align: center;
+	font-family: sans-serif;
+}
+
+@media (max-width: 1000px)
+{
+	.right_column
+	{
+		display: none;
+	}
+}
+
+@media (max-width: 700px)
+{
+	.content
+	{
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.left_column a
+	{
+		width: 300px;
+		flex-basis: 30%;
+	}
+}
+
+nav
+{
+	display: flex;
+	flex-direction: column;
+	max-width: 200px;
+
+	@media (max-width: 700px)
+	{
+		flex-direction: row;
+		flex-wrap: wrap;
+		max-width: 100%;
+	}
+}
+
+nav a
+{
+	padding: 10px;
+	color: #507299;
+	text-decoration: none;
+}
+
+.left_column
+{
+	text-decoration: none;
+	width: 200px;
+}
+
+.left_column a
+{
+	text-decoration: inherit;
+	color: #507299;
+	display: flex;
+	padding: 10px;
+	padding-right: 10px;
+}
+
+.left_column a:hover
+{
+	margin-right: 10px;
+	border-radius: 15px;
+	background-color: #b5c9da;
+}
+
+.center_column
+{
+	max-width: 500px;
+	text-align: left;
+	height: max-content;
+	margin-right: 10px;
+}
+
+.center_post
+{
+	display: table;
+	background-color: white;
+	border-radius: 10px;
+	padding: 15px 15px 10px 15px;
+	height: min-content;
+	margin-bottom: 15px;
+	min-height: min-content;
+	margin-right: 10px;
+}
+
+.center_post_header
+{
+	background-color: white;
+	font-weight: bold;
+}
+
+.center_post img
+{
+	max-width: 100%;
+	height: auto;
+}
+
+.right_column
+{
+	margin-right: 10px;
+	margin-left: 100px;
+}
+
+.right_post
+{
+	background-color: white;
+	border-radius: 5px;
+	padding: 15px 10px 15px 10px;
+	margin-bottom: 20px;
+	max-width: 130px;
+}
+
+.right_post_header
+{
+	background-color: white;
+	font-weight: bold;
+}
+
+.right_post p
+{
+	background-color: #edeef0;
+}
+
+::selection
+{
+	background-color:#9e9d9d;
+	color: green
+}
+
+.spacer
+{
+	border-bottom: 3px solid;
+	border-color: #d0d0d0;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}

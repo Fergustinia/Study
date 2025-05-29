@@ -1,0 +1,61 @@
+﻿@using lab13.Models
+@model ResultsViewModel
+
+﻿@{
+    Layout = null;
+}
+
+<div class="resultsContainer">
+
+    <div class="resultsContainer_info">
+        <h1>Overall questions amount: @Model.QuestionsAmount</h1>
+        <h1>Right answers amount: @Model.RightAnswersAmount</h1>
+    </div>
+
+    <div class="resultsContainer_results">
+
+        @foreach (var model in Model.Questions) 
+        {
+            
+            string mathSignName = model.MathSignName;
+            string mathSign = "";
+
+            switch (mathSignName)
+            {
+                case "add":
+                    mathSign = "+";
+                    break;
+
+                case "sub":
+                    mathSign = "-";
+                    break;
+
+                case "mult":
+                    mathSign = "*";
+                    break;
+
+                case "div":
+                    mathSign = "/";
+                    break;
+            }
+
+            var FirstValue = model.FirstValue;
+            var SecondValue = model.SecondValue;
+            var Result = model.UserAnswer;
+            var AnswerIsValid = model.AnswerIsValid;
+
+            @if (AnswerIsValid)
+            {
+                <div class="result_answer">
+                    <h1 class="question_value">@FirstValue @mathSign @SecondValue = @Result</h1>
+                </div>
+            }
+            else 
+            {
+                <div class="result_answer red">
+                    <h1 class="question_value red">@FirstValue @mathSign @SecondValue = @Result</h1>
+                </div>
+            }
+        }
+    </div>
+</div>

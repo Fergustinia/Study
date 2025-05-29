@@ -1,0 +1,21 @@
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\lab 11.exe.config
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\lab 11.exe
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\lab 11.pdb
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.dll
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.pdb
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.xml
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.Wpf.pdb
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\bin\Debug\LiveCharts.Wpf.xml
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.csproj.AssemblyReference.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\MainWindow.baml
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\MainWindow.g.cs
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\App.g.cs
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11_MarkupCompile.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.g.resources
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab_11.Properties.Resources.resources
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.csproj.GenerateResource.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.csproj.CoreCompileInputs.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.csproj.Up2Date
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.exe
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\3 курс\имитационка\lab 11\obj\Debug\lab 11.pdb

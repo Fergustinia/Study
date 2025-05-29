@@ -1,0 +1,113 @@
+object Form1: TForm1
+  Left = 499
+  Height = 528
+  Top = 101
+  Width = 868
+  Caption = 'Круговая Диаграмма'
+  ClientHeight = 0
+  ClientWidth = 0
+  DesignTimePPI = 120
+  Position = poDesktopCenter
+  LCLVersion = '2.2.4.0'
+  object DrawButton: TButton
+    Left = 680
+    Height = 52
+    Top = 40
+    Width = 151
+    Caption = 'Рисовать'
+    OnClick = DrawButtonClick
+    TabOrder = 0
+  end
+  object LegendImage: TImage
+    Left = 424
+    Height = 400
+    Top = 80
+    Width = 204
+  end
+  object CircleImage: TImage
+    Left = 20
+    Height = 401
+    Top = 80
+    Width = 390
+  end
+  object ExitButton: TButton
+    Left = 680
+    Height = 54
+    Top = 426
+    Width = 142
+    Caption = 'Выход'
+    OnClick = ExitButtonClick
+    TabOrder = 1
+  end
+  object langNumEdit1: TEdit
+    Left = 680
+    Height = 28
+    Top = 140
+    Width = 149
+    TabOrder = 2
+  end
+  object TiobeLabel1: TLabel
+    Left = 70
+    Height = 29
+    Top = 10
+    Width = 489
+    Caption = 'THE TIOBE Programming Community index'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -24
+    Font.Name = 'Georgia'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsItalic]
+    ParentColor = False
+    ParentFont = False
+  end
+  object OctLabel1: TLabel
+    Left = 190
+    Height = 29
+    Top = 50
+    Width = 221
+    Caption = 'Октябрь 2022 года'
+    Font.CharSet = ANSI_CHARSET
+    Font.Height = -24
+    Font.Name = 'Georgia'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    Font.Style = [fsItalic]
+    ParentColor = False
+    ParentFont = False
+  end
+  object LangNumLabel1: TLabel
+    Left = 680
+    Height = 20
+    Top = 110
+    Width = 138
+    Caption = 'Количество языков:'
+    ParentColor = False
+  end
+  object NadLang: TLabel
+    Left = 680
+    Height = 20
+    Top = 186
+    Width = 3
+    Caption = '.'
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Color = clMaroon
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+  object NadLang2: TLabel
+    Left = 680
+    Height = 20
+    Top = 230
+    Width = 3
+    Caption = '.'
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Color = clMaroon
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    ParentColor = False
+    ParentFont = False
+  end
+end

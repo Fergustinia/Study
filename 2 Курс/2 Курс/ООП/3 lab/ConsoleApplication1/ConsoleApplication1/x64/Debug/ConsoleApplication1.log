@@ -1,0 +1,15 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(150,13): warning C4552: "+": результат выражения не используется
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(140,39): message : во время компиляции функции-члена класс шаблон "Array<int> &Array<int>::operator +=(T)"
+          with
+          [
+              T=int
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(326,12): message : выполняется компиляция ссылки на экземпляр шаблон функции "Array<int> &Array<int>::operator +=(T)"
+          with
+          [
+              T=int
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(308,23): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "Array<int>"
+ConsoleApplication1.obj : error LNK2019: ссылка на неразрешенный внешний символ "class std::basic_ostream<char,struct std::char_traits<char> > & __cdecl operator<<(class std::basic_ostream<char,struct std::char_traits<char> > &,class Array<int> &)" (??6@YAAEAV?$basic_ostream@DU?$char_traits@D@std@@@std@@AEAV01@AEAV?$Array@H@@@Z) в функции main.
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe : fatal error LNK1120: неразрешенных внешних элементов: 1

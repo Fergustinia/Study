@@ -1,0 +1,33 @@
+﻿  ConsoleApplication1.cpp
+  cstr.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(24,21): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(47,26): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(62,26): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(78,19): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(95,27): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(96,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(113,27): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(114,30): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(135,24): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(101,5): error C2679: бинарный "=": не найден оператор, принимающий правый операнд типа "CStr" (или приемлемое преобразование отсутствует)
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(76,13): message : может быть "CStr &CStr::operator =(char *)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(60,13): message : или       "CStr &CStr::operator =(CStr &)"
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(101,5): message : при попытке сопоставить список аргументов "(_Ty, CStr)"
+          with
+          [
+              _Ty=CStr
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(180,31): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::swap<CStr,0>(_Ty &,_Ty &) noexcept(false)"
+          with
+          [
+              _Ty=CStr
+          ]
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(102,5): error C2679: бинарный "=": не найден оператор, принимающий правый операнд типа "CStr" (или приемлемое преобразование отсутствует)
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(76,13): message : может быть "CStr &CStr::operator =(char *)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\4 lab\ConsoleApplication1\ConsoleApplication1\cstr.cpp(60,13): message : или       "CStr &CStr::operator =(CStr &)"
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\include\utility(102,5): message : при попытке сопоставить список аргументов "(_Ty, CStr)"
+          with
+          [
+              _Ty=CStr
+          ]
+  Создание кода...

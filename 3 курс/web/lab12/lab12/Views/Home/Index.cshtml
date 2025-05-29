@@ -1,0 +1,28 @@
+﻿﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/stylesIndex.css" />
+</head>
+<body>
+    <main class="main">
+        <p class="title">
+            Form parameters parsing demonstration
+        </p>
+        <div class="buttonsContainer">
+            <a class="buttonsContainer_button model" asp-controller="Calc" asp-action="FormManualParsing">
+                Manual parsing in single action
+            </a>
+            <a class="buttonsContainer_button viewData" asp-controller="Calc" asp-action="FormManualParsingSeparateActions">
+                Manual parsing in separate actions
+            </a>
+            <a class="buttonsContainer_button viewBag" asp-controller="Calc" asp-action="ModelBindingParameters">
+                Model binding (parameters)
+            </a>
+            <a class="buttonsContainer_button serviceInj" asp-controller="Calc" asp-action="ModelBindingSeparate">
+                Model binding (separate model)
+            </a>
+        </div>
+    </main>
+</body>

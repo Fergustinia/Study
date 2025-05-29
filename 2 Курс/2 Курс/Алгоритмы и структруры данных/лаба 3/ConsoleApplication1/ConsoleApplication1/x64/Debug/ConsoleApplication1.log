@@ -1,0 +1,7 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 3\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(7,12): warning C4244: аргумент: преобразование "time_t" в "unsigned int", возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 3\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(8,2): warning C4353: нестандартное расширение: константа 0 в качестве выражения функции.  Следует заменить на подставляемую функцию "__noop"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 3\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(10,7): warning C4101: a: неиспользованная локальная переменная
+  Slist.cpp
+  Создание кода...
+  ConsoleApplication1.vcxproj -> C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 3\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe

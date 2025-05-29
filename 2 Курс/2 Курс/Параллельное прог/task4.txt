@@ -1,0 +1,33 @@
+#include <stdlib.h>
+#include <mpi.h>
+#include <iostream>
+using namespace std;
+// function Sendrecv_replace
+// only 2 process !
+int main(int argc,char **argv)
+{
+int rank, size, rc, tag1=6, n1=5, proc;
+float x[n1];
+MPI_Comm comm;
+MPI_Status status;
+rc=MPI_Init(&argc, &argv);
+comm=MPI_COMM_WORLD;
+rc=MPI_Comm_size(comm, &size);
+rc=MPI_Comm_rank(comm, &rank);
+cout <<"size = "<< size << endl;
+for(int j=0; j<=10*(rank+1); j++)
+{ for(int k=0; k<n1; k++)
+ { x[k]=(float)rand()/RAND_MAX; } }
+cout <<"process "<< rank <<" Send x = ";
+for(int k=0; k<n1; k++) cout << x[k] <<" ";
+cout << endl;
+if(rank==0) proc=size-1;
+else if(rank==size-1) proc=0;
+else proc=MPI_PROC_NULL;
+rc=MPI_Sendrecv_replace(&x, n1, MPI_FLOAT, proc, tag1,
+ proc, tag1, comm, &status);
+cout <<"process "<< rank <<" Recv x = ";
+for(int k=0; k<n1; k++) cout << x[k] <<" ";
+cout << endl;
+rc=MPI_Finalize();
+return 0; }

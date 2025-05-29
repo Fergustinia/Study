@@ -1,0 +1,145 @@
+﻿
+input:focus {
+    outline: none;
+    box-shadow: 0px 0px 10px lightgray;
+}
+
+.question_answerInput::-webkit-inner-spin-button,
+.question_answerInput::-webkit-outer-spin-button {
+    -webkit-appearance: none; 
+    margin: 0;
+}
+
+.wrapper {
+    opacity: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content {
+    opacity: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.title {
+    transition: all 0.4s ease;
+}
+
+.questionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.questionContainer_question {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid dimgray;
+    border-radius: 20px;
+    padding: 20px;
+
+    align-items:center;
+
+    width: fit-content;
+}
+
+.question_value {
+    color: black;
+    font-weight: 200;
+    font-size: 40px;
+}
+
+.input-wrapper {
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.question_answerInput {
+    margin-left: 10px;
+    width: 70px;
+    border: 1px solid dimgray;
+    border-radius: 10px;
+    transition: all 0.4s ease-out;
+    font-weight: 200;
+    font-size: 40px;
+    text-align: center;
+}
+
+.buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.buttonsContainer_button {
+    color: black;
+    text-decoration: none;
+    border: 1px solid dimgray;
+    border-radius: 10px;
+    padding: 10px;
+
+    display: flex;
+    margin: 10px 5px 10px 5px;
+
+    width: fit-content;
+
+    transition: all 0.4s ease;
+}
+
+    .buttonsContainer_button:hover {
+        background-color: lightgray;
+        color: black;
+        box-shadow: 0 0 10px lightgray;
+    }
+
+.resultsContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.resultsContainer_info {
+    display:flex;
+    flex-direction: column;
+}
+
+.resultsContainer_results {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.result_answer {
+    display: flex;
+    flex-direction: row;
+    border: 1px solid dimgray;
+    border-radius: 20px;
+    padding: 20px;
+    align-items: center;
+    width: fit-content;
+    margin: 10px;
+    color: dimgray;
+
+    flex-shrink: 0;
+}
+
+    .result_answer.red {
+        
+        border: 1px solid red;
+    }
+
+.question_value.red {
+    color: red;
+}

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\3.2.2\bin\x86_64-win64\fpc.exe" Date="1420791944"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -gw2 -godwarfsets -gl -l -vewnhibq &quot;-FiC:\Users\ВЫХУХОЛЬ\Desktop\Программы\упражнение 0\Задание 4\lib\x86_64-win64&quot; &quot;-FuC:\Users\ВЫХУХОЛЬ\Desktop\Программы\упражнение 0\Задание 4\&quot; &quot;-FUC:\Users\ВЫХУХОЛЬ\Desktop\Программы\упражнение 0\Задание 4\lib\x86_64-win64\&quot; &quot;-FEC:\Users\ВЫХУХОЛЬ\Desktop\Программы\упражнение 0\Задание 4\&quot; &quot;-oC:\Users\ВЫХУХОЛЬ\Desktop\Программы\упражнение 0\Задание 4\project1.exe&quot; Project1.pas"/>
+  <Complete Value="False"/>
+</CONFIG>

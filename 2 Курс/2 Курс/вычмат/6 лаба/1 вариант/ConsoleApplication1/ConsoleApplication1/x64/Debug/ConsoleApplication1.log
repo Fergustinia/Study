@@ -1,0 +1,4 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\вычмат\6 лаба\Новая папка\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(10,21): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\вычмат\6 лаба\Новая папка\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(30,21): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+LINK : fatal error LNK1168: не удается открыть C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\вычмат\6 лаба\Новая папка\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe для записи

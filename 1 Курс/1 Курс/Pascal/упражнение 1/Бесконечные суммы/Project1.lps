@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Default"/>
+    <Units>
+      <Unit>
+        <Filename Value="Project1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="25" Y="23"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="28">
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="31" Column="66" TopLine="7"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="18" Column="11"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="33" Column="13"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="25" Column="17" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="36" Column="5" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="14" Column="55"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="36" Column="5" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="11" Column="84" TopLine="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="18"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="26" Column="30"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="3" Column="7"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="18" Column="21"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="23" Column="15" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="37" Column="98" TopLine="5"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="21" Column="19"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="3" Column="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="16" Column="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="17" Column="9"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="18" Column="12"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="28" Column="34" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="23" Column="9" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="17" TopLine="2"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="24" Column="6"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="19" Column="20" TopLine="3"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="20" Column="15" TopLine="3"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="16" Column="10"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="23" Column="25"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="22" Column="19"/>
+      </Position>
+      <Position>
+        <Filename Value="Project1.pas"/>
+        <Caret Line="21" Column="15"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+</CONFIG>

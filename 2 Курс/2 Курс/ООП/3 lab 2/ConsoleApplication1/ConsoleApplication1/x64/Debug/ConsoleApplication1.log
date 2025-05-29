@@ -1,0 +1,30 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(355,24): warning C4244: =: преобразование "int" в "float", возможна потеря данных
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(260,13): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(259,21): message : во время компиляции функции-члена класс шаблон "int Array<float>::Max(void)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(361,18): message : выполняется компиляция ссылки на экземпляр шаблон функции "int Array<float>::Max(void)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(290,26): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "Array<float>"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(264,22): warning C4244: =: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(273,13): warning C4244: инициализация: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(272,21): message : во время компиляции функции-члена класс шаблон "int Array<float>::Min(void)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(362,18): message : выполняется компиляция ссылки на экземпляр шаблон функции "int Array<float>::Min(void)"
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\ConsoleApplication1\array.h(277,22): warning C4244: =: преобразование "T" в "int", возможна потеря данных
+          with
+          [
+              T=float
+          ]
+  array.cpp
+  Создание кода...
+  ConsoleApplication1.vcxproj -> C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\ООП\3 lab 2\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe

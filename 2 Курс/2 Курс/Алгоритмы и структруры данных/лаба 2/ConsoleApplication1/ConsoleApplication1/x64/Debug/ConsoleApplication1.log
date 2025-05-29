@@ -1,0 +1,4 @@
+﻿  ConsoleApplication1.cpp
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(113,9): warning C4551: в вызове функции отсутствует список аргументов
+C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 2\ConsoleApplication1\ConsoleApplication1\ConsoleApplication1.cpp(131,9): warning C4551: в вызове функции отсутствует список аргументов
+  ConsoleApplication1.vcxproj -> C:\Users\ВЫХУХОЛЬ\Desktop\Labs\2 Курс\Алгоритмы и структруры данных\лаба 2\ConsoleApplication1\x64\Debug\ConsoleApplication1.exe
