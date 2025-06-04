@@ -1,0 +1,125 @@
+﻿<Window x:Class="PasswordManagerApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Password Manager" Height="450" Width="600">
+    <Grid Margin="10">
+        <TabControl x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
+            <!-- Вкладка Профиль -->
+            <TabItem Header="Profile">
+                <Grid>
+                    <Grid x:Name="ProfileAuthGrid" Visibility="Visible">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Enter Master Password" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="MasterPasswordBoxProfile" Width="200" Margin="0,0,0,10"/>
+                            <Button Content="Unlock" Click="Unlock_Click" Width="100"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="ProfileContentGrid" Visibility="Collapsed">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Profile Information" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Name:" Width="80"/>
+                                <TextBox x:Name="ProfileNameTextBox" Width="200"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Email:" Width="80"/>
+                                <TextBox x:Name="ProfileEmailTextBox" Width="200"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10">
+                                <Button Content="Update Profile" Click="UpdateProfile_Click" Width="100" Margin="0,0,10,0"/>
+                                <Button Content="Logout" Click="Logout_Click" Width="100"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка Уведомления -->
+            <TabItem Header="Notifications">
+                <Grid>
+                    <Grid x:Name="NotificationsAuthGrid" Visibility="Visible">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Enter Master Password" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="MasterPasswordBoxNotifications" Width="200" Margin="0,0,0,10"/>
+                            <Button Content="Unlock" Click="Unlock_Click" Width="100"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="NotificationsContentGrid" Visibility="Collapsed">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Notifications" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="New Notification:" Width="80"/>
+                                <TextBox x:Name="NotificationTextBox" Width="200"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10">
+                                <Button Content="Add Notification" Click="AddNotification_Click" Width="120" Margin="0,0,10,0"/>
+                                <Button Content="Logout" Click="Logout_Click" Width="100"/>
+                            </StackPanel>
+                            <ListView x:Name="NotificationsListView" Margin="0,10">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Message" Width="300" DisplayMemberBinding="{Binding}"/>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка Настройки -->
+            <TabItem Header="Settings">
+                <Grid>
+                    <Grid x:Name="SettingsAuthGrid" Visibility="Visible">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Enter Master Password" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="MasterPasswordBoxSettings" Width="200" Margin="0,0,0,10"/>
+                            <Button Content="Unlock" Click="Unlock_Click" Width="100"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="SettingsContentGrid" Visibility="Collapsed">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Settings" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <TextBlock Text="Select Theme:" Margin="0,5"/>
+                            <ComboBox x:Name="ThemeComboBox" Width="150" Margin="0,5" SelectionChanged="ThemeComboBox_SelectionChanged">
+                                <ComboBoxItem Content="Light"/>
+                                <ComboBoxItem Content="Dark"/>
+                            </ComboBox>
+                            <Button Content="Logout" Click="Logout_Click" Width="100" Margin="0,10"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <!-- Вкладка Безопасность -->
+            <TabItem Header="Security">
+                <Grid>
+                    <Grid x:Name="SecurityAuthGrid" Visibility="Visible">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="Enter Master Password" Margin="0,0,0,10"/>
+                            <PasswordBox x:Name="MasterPasswordBoxSecurity" Width="200" Margin="0,0,0,10"/>
+                            <Button Content="Unlock" Click="Unlock_Click" Width="100"/>
+                        </StackPanel>
+                    </Grid>
+                    <Grid x:Name="SecurityContentGrid" Visibility="Collapsed">
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Change Master Password" FontWeight="Bold" Margin="0,0,0,10"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="Old Password:" Width="100"/>
+                                <PasswordBox x:Name="OldPasswordTextBox" Width="200"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <TextBlock Text="New Password:" Width="100"/>
+                                <PasswordBox x:Name="NewPasswordTextBox" Width="200"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,10">
+                                <Button Content="Change Password" Click="ChangePassword_Click" Width="120" Margin="0,0,10,0"/>
+                                <Button Content="Logout" Click="Logout_Click" Width="100"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>

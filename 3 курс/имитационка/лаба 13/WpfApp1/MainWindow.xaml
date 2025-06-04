@@ -1,0 +1,59 @@
+﻿<Window x:Class="GeometricBrownianMotion.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Геометрическое броуновское движение" Height="500" Width="700">
+    <Grid Background="#1E2A44">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+   
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="10" VerticalAlignment="Center">
+            <TextBlock Text="Initial price:" Margin="0,0,5,0" VerticalAlignment="Center" Foreground="White"/>
+            <TextBox x:Name="EuroInitialPrice" Width="80" Text="73.0" Margin="0,0,10,0" VerticalAlignment="Center" Background="#2E4057" Foreground="White"/>
+            <TextBox x:Name="DollarInitialPrice" Width="80" Text="71.0" Margin="0,0,10,0" VerticalAlignment="Center" Background="#2E4057" Foreground="White"/>
+            <Button x:Name="StartStopButton" Content="Start/Stop" Click="StartStopButton_Click" Width="80" Background="#3498DB" Foreground="White" />
+        </StackPanel>
+
+        <Canvas x:Name="ChartCanvas" Grid.Row="1" Width="600" Height="350" Margin="10" Background="#2E4057">
+   
+            <Line X1="50" Y1="300" X2="550" Y2="300" Stroke="White" StrokeThickness="1"/>
+  
+            <Line X1="50" Y1="50" X2="50" Y2="300" Stroke="White" StrokeThickness="1"/>
+   
+ 
+            <Line X1="100" Y1="50" X2="100" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="150" Y1="50" X2="150" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="200" Y1="50" X2="200" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="250" Y1="50" X2="250" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="300" Y1="50" X2="300" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="350" Y1="50" X2="350" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="400" Y1="50" X2="400" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="450" Y1="50" X2="450" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="500" Y1="50" X2="500" Y2="300" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="50" Y1="100" X2="550" Y2="100" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="50" Y1="150" X2="550" Y2="150" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="50" Y1="200" X2="550" Y2="200" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+            <Line X1="50" Y1="250" X2="550" Y2="250" Stroke="LightGray" StrokeThickness="0.5" Opacity="0.5"/>
+ 
+            <TextBlock Text="73.5" Canvas.Left="20" Canvas.Top="50" Foreground="White" FontSize="10"/>
+            <TextBlock Text="73.0" Canvas.Left="20" Canvas.Top="100" Foreground="White" FontSize="10"/>
+            <TextBlock Text="72.5" Canvas.Left="20" Canvas.Top="150" Foreground="White" FontSize="10"/>
+            <TextBlock Text="72.0" Canvas.Left="20" Canvas.Top="200" Foreground="White" FontSize="10"/>
+            <TextBlock Text="71.5" Canvas.Left="20" Canvas.Top="250" Foreground="White" FontSize="10"/>
+            <TextBlock Text="71.0" Canvas.Left="20" Canvas.Top="300" Foreground="White" FontSize="10"/>
+            <TextBlock Text="0" Canvas.Left="50" Canvas.Top="310" Foreground="White" FontSize="10"/>
+            <TextBlock Text="2" Canvas.Left="150" Canvas.Top="310" Foreground="White" FontSize="10"/>
+            <TextBlock Text="4" Canvas.Left="250" Canvas.Top="310" Foreground="White" FontSize="10"/>
+            <TextBlock Text="6" Canvas.Left="350" Canvas.Top="310" Foreground="White" FontSize="10"/>
+            <TextBlock Text="8" Canvas.Left="450" Canvas.Top="310" Foreground="White" FontSize="10"/>
+            <TextBlock Text="10" Canvas.Left="550" Canvas.Top="310" Foreground="White" FontSize="10"/>
+
+            <Rectangle Canvas.Left="500" Canvas.Top="20" Width="20" Height="10" Fill="LimeGreen"/>
+            <TextBlock Canvas.Left="530" Canvas.Top="15" Text="Euro" Foreground="White" FontSize="12"/>
+            <Rectangle Canvas.Left="500" Canvas.Top="40" Width="20" Height="10" Fill="Red"/>
+            <TextBlock Canvas.Left="530" Canvas.Top="35" Text="$" Foreground="White" FontSize="12"/>
+        </Canvas>
+    </Grid>
+</Window>

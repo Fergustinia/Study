@@ -3,36 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scrum доска для управления задачами">
+    <meta name="theme-color" content="#3498db">
     <title>Scrum Доска</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Бэклог</h1>
-        
-        <!-- Форма для добавления задачи -->
-        <div class="task-input">
-            <input type="text" id="taskTitle" placeholder="Название задачи">
-            <button onclick="addTask()">Добавить задачу</button>
+        <header class="app-header">
+            <div class="header-left">
+                <h1><i class="fas fa-tasks"></i> Бэклог</h1>
+                <div class="user-role">
+                    <select id="userRole">
+                        <option value="developer">Разработчик</option>
+                        <option value="po">Product Owner</option>
+                        <option value="sm">Scrum Master</option>
+                    </select>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="theme-switch">
+                    <i class="fas fa-moon"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-sun"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <div class="task-input">
+                <input type="text" id="taskTitle" placeholder="Введите название задачи..." autocomplete="off">
+                <input type="date" id="taskDate">
+                <select id="taskPriority">
+                    <option value="low">Низкий приоритет</option>
+                    <option value="medium">Средний приоритет</option>
+                    <option value="high">Высокий приоритет</option>
+                </select>
+                <select id="taskType">
+                    <option value="feature">Фича</option>
+                    <option value="bug">Баг</option>
+                    <option value="techdebt">Техдолг</option>
+                </select>
+                <select id="taskPoints">
+                    <option value="1">1 SP</option>
+                    <option value="2">2 SP</option>
+                    <option value="3">3 SP</option>
+                    <option value="5">5 SP</option>
+                    <option value="8">8 SP</option>
+                    <option value="13">13 SP</option>
+                </select>
+                <select id="taskAssignee">
+                    <option value="">Назначить исполнителя</option>
+                    <option value="user1">Иван Иванов</option>
+                    <option value="user2">Петр Петров</option>
+                    <option value="user3">Анна Сидорова</option>
+                </select>
+                <button onclick="addTask()" class="add-task-btn">
+                    <i class="fas fa-plus"></i> Добавить задачу
+                </button>
+            </div>
+            <div class="search-filter">
+                <input type="text" id="searchTask" placeholder="Поиск задач...">
+                <select id="filterPriority">
+                    <option value="all">Все приоритеты</option>
+                    <option value="low">Низкий</option>
+                    <option value="medium">Средний</option>
+                    <option value="high">Высокий</option>
+                </select>
+                <select id="filterType">
+                    <option value="all">Все типы</option>
+                    <option value="feature">Фичи</option>
+                    <option value="bug">Баги</option>
+                    <option value="techdebt">Техдолг</option>
+                </select>
+                <select id="filterAssignee">
+                    <option value="all">Все исполнители</option>
+                    <option value="user1">Иван Иванов</option>
+                    <option value="user2">Петр Петров</option>
+                    <option value="user3">Анна Сидорова</option>
+                </select>
+                <button onclick="clearFilters()" class="clear-filters-btn">
+                    <i class="fas fa-times"></i> Сбросить фильтры
+                </button>
+            </div>
+        </div>
+
+        <!-- Статистика и графики -->
+        <div class="analytics">
+            <div class="statistics">
+                <div class="stat-card">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Всего задач</h3>
+                    <span id="totalTasks">0</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>В процессе</h3>
+                    <span id="inProgressTasks">0</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-check"></i>
+                    <h3>Выполнено</h3>
+                    <span id="completedTasks">0</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Story Points</h3>
+                    <span id="totalPoints">0</span>
+                </div>
+            </div>
+            <div class="charts">
+                <div class="chart-container">
+                    <canvas id="burndownChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="velocityChart"></canvas>
+                </div>
+            </div>
         </div>
         
-        <!-- Kanban-доска -->
         <div class="kanban-board">
             <div class="column" id="todo">
-                <h2>Нужно сделать</h2>
+                <div class="column-header">
+                    <h2><i class="fas fa-list"></i> Нужно сделать</h2>
+                    <span class="task-count">0</span>
+                </div>
                 <div class="task-list" id="todo-tasks"></div>
             </div>
             <div class="column" id="inProgress">
-                <h2>В процессе</h2>
+                <div class="column-header">
+                    <h2><i class="fas fa-spinner"></i> В процессе</h2>
+                    <span class="task-count">0</span>
+                </div>
                 <div class="task-list" id="in-progress-tasks"></div>
             </div>
             <div class="column" id="done">
-                <h2>Выполнено</h2>
+                <div class="column-header">
+                    <h2><i class="fas fa-check-circle"></i> Выполнено</h2>
+                    <span class="task-count">0</span>
+                </div>
                 <div class="task-list" id="done-tasks"></div>
             </div>
         </div>
+
+        <!-- Модальное окно для редактирования задачи -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Редактировать задачу</h2>
+                <div class="modal-form">
+                    <input type="text" id="editTaskTitle" placeholder="Название задачи">
+                    <input type="date" id="editTaskDate">
+                    <select id="editTaskPriority">
+                        <option value="low">Низкий приоритет</option>
+                        <option value="medium">Средний приоритет</option>
+                        <option value="high">Высокий приоритет</option>
+                    </select>
+                    <select id="editTaskType">
+                        <option value="feature">Фича</option>
+                        <option value="bug">Баг</option>
+                        <option value="techdebt">Техдолг</option>
+                    </select>
+                    <select id="editTaskPoints">
+                        <option value="1">1 SP</option>
+                        <option value="2">2 SP</option>
+                        <option value="3">3 SP</option>
+                        <option value="5">5 SP</option>
+                        <option value="8">8 SP</option>
+                        <option value="13">13 SP</option>
+                    </select>
+                    <select id="editTaskAssignee">
+                        <option value="">Назначить исполнителя</option>
+                        <option value="user1">Иван Иванов</option>
+                        <option value="user2">Петр Петров</option>
+                        <option value="user3">Анна Сидорова</option>
+                    </select>
+                    <textarea id="editTaskDescription" placeholder="Описание задачи..."></textarea>
+                    <div class="task-comments">
+                        <h3>Комментарии</h3>
+                        <div id="commentsList"></div>
+                        <div class="add-comment">
+                            <textarea id="newComment" placeholder="Добавить комментарий..."></textarea>
+                            <button onclick="addComment()">Добавить</button>
+                        </div>
+                    </div>
+                    <button onclick="saveTaskEdit()" class="save-edit-btn">Сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экспорт данных -->
+        <div class="export-controls">
+            <button onclick="exportToCSV()" class="export-btn">
+                <i class="fas fa-file-csv"></i> Экспорт в CSV
+            </button>
+            <button onclick="exportToPDF()" class="export-btn">
+                <i class="fas fa-file-pdf"></i> Экспорт в PDF
+            </button>
+        </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
