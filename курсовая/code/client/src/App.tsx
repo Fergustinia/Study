@@ -42,26 +42,26 @@ const App: React.FC = () => {
         <Router>
           <div className="App">
             <ThemeToggle toggleTheme={toggleTheme} />
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <Layout />
-                  </PrivateRoute>
-                }
-              >
-                <Route index element={<Navigate to="/projects" replace />} />
-                <Route path="projects" element={<Projects />} />
-                <Route path="projects/:id" element={<ProjectDetails />} />
-                <Route path="sprints" element={<Sprints />} />
-                <Route path="tasks" element={<Tasks />} />
-                <Route path="profile" element={<Profile />} />
-              </Route>
-            </Routes>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            <Route
+              path="/"
+              element={
+                <PrivateRoute>
+                  <Layout />
+                </PrivateRoute>
+              }
+            >
+              <Route index element={<Navigate to="/projects" replace />} />
+              <Route path="projects" element={<Projects />} />
+              <Route path="projects/:id" element={<ProjectDetails />} />
+              <Route path="sprints" element={<Sprints />} />
+              <Route path="tasks" element={<Tasks />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+          </Routes>
           </div>
         </Router>
       </ThemeProvider>

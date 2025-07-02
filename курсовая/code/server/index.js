@@ -4,9 +4,10 @@ const cors = require('cors');
 const http = require('http');
 const socketIo = require('socket.io');
 const dotenv = require('dotenv');
+const path = require('path');
 
 // Загрузка переменных окружения
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, 'server.env') });
 
 const app = express();
 const server = http.createServer(app);
