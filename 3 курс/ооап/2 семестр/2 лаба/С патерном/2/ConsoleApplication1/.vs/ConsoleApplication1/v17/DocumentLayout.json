@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u0412\u042B\u0425\u0423\u0425\u041E\u041B\u042C\\Desktop\\Labs\\Study\\3 \u043A\u0443\u0440\u0441\\\u043E\u043E\u0430\u043F\\2 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\2 \u043B\u0430\u0431\u0430\\\u0421 \u043F\u0430\u0442\u0435\u0440\u043D\u043E\u043C\\2\\ConsoleApplication1\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{275B2306-FB5E-4DAC-94B6-7D52B5B945C2}|ConsoleApplication1\\ConsoleApplication1.vcxproj|C:\\Users\\\u0412\u042B\u0425\u0423\u0425\u041E\u041B\u042C\\Desktop\\Labs\\Study\\3 \u043A\u0443\u0440\u0441\\\u043E\u043E\u0430\u043F\\2 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\2 \u043B\u0430\u0431\u0430\\\u0421 \u043F\u0430\u0442\u0435\u0440\u043D\u043E\u043C\\2\\ConsoleApplication1\\ConsoleApplication1\\ConsoleApplication1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{275B2306-FB5E-4DAC-94B6-7D52B5B945C2}|ConsoleApplication1\\ConsoleApplication1.vcxproj|solutionrelative:ConsoleApplication1\\ConsoleApplication1.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ConsoleApplication1.cpp",
+              "DocumentMoniker": "C:\\Users\\\u0412\u042B\u0425\u0423\u0425\u041E\u041B\u042C\\Desktop\\Labs\\Study\\3 \u043A\u0443\u0440\u0441\\\u043E\u043E\u0430\u043F\\2 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\2 \u043B\u0430\u0431\u0430\\\u0421 \u043F\u0430\u0442\u0435\u0440\u043D\u043E\u043C\\2\\ConsoleApplication1\\ConsoleApplication1\\ConsoleApplication1.cpp",
+              "RelativeDocumentMoniker": "ConsoleApplication1\\ConsoleApplication1.cpp",
+              "ToolTip": "C:\\Users\\\u0412\u042B\u0425\u0423\u0425\u041E\u041B\u042C\\Desktop\\Labs\\Study\\3 \u043A\u0443\u0440\u0441\\\u043E\u043E\u0430\u043F\\2 \u0441\u0435\u043C\u0435\u0441\u0442\u0440\\2 \u043B\u0430\u0431\u0430\\\u0421 \u043F\u0430\u0442\u0435\u0440\u043D\u043E\u043C\\2\\ConsoleApplication1\\ConsoleApplication1\\ConsoleApplication1.cpp",
+              "RelativeToolTip": "ConsoleApplication1\\ConsoleApplication1.cpp",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAAAFIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-30T12:03:19.004Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
