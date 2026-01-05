@@ -1,0 +1,83 @@
+{
+    "alphabet": [
+        "a",
+        "b",
+        "c",
+        "d"
+    ],
+    "states": {
+        "q0": {
+            "comment": "λ R qR",
+            "a": "R",
+            "b": "R",
+            "λ": "!",
+            "c": "R",
+            "d": "λ R qR"
+        },
+        "qR": {
+            "comment": "",
+            "a": "λ L qWA",
+            "b": "λ L qWB",
+            "c": "λ L qWC",
+            "d": "λ L qWD",
+            "λ": "λ L qB0"
+        },
+        "qWA": {
+            "comment": "",
+            "a": "!",
+            "b": "!",
+            "c": "!",
+            "d": "!",
+            "λ": "a R qH"
+        },
+        "qWB": {
+            "comment": "",
+            "a": "!",
+            "b": "!",
+            "c": "!",
+            "d": "!",
+            "λ": "b R qH"
+        },
+        "qWC": {
+            "comment": "",
+            "a": "!",
+            "b": "!",
+            "c": "!",
+            "d": "!",
+            "λ": "c R qH"
+        },
+        "qWD": {
+            "comment": "",
+            "a": "!",
+            "b": "!",
+            "c": "!",
+            "d": "!",
+            "λ": "d R qH"
+        },
+        "qH": {
+            "comment": "",
+            "a": "!",
+            "b": "!",
+            "c": "!",
+            "d": "!",
+            "λ": "λ R qR"
+        },
+        "qB0": {
+            "comment": "",
+            "a": "a L qBack",
+            "b": "b L qBack",
+            "c": "c L qBack",
+            "d": "d L qBack",
+            "λ": "L"
+        },
+        "qBack": {
+            "comment": "",
+            "a": "L",
+            "b": "L",
+            "c": "L",
+            "d": "L",
+            "λ": "λ R q0"
+        }
+    },
+    "word": "adbcddaac"
+}
