@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Менеджер паролей - безопасное хранение ваших паролей">
+    <meta name="theme-color" content="#2196F3">
+    <title>Менеджер паролей</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔐 Менеджер паролей</h1>
+            <button id="installBtn" class="install-btn" style="display: none;">Установить приложение</button>
+        </header>
+
+        <main>
+            <!-- Форма добавления нового пароля -->
+            <section class="add-password-section">
+                <h2>Добавить новый пароль</h2>
+                <form id="passwordForm" class="password-form">
+                    <div class="form-group">
+                        <label for="url">URL/Сайт:</label>
+                        <input type="url" id="url" placeholder="https://example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login">Логин/Email:</label>
+                        <input type="text" id="login" placeholder="user@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль:</label>
+                        <div class="password-input-group">
+                            <input type="password" id="password" placeholder="Введите пароль" required>
+                            <button type="button" id="generatePassword" class="btn-generate">Сгенерировать</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="showPassword">
+                            <input type="checkbox" id="showPassword"> Показать пароль
+                        </label>
+                    </div>
+                    <div class="password-options" id="passwordOptions" style="display: none;">
+                        <h3>Настройки генератора паролей</h3>
+                        <div class="form-group">
+                            <label for="passwordLength">Длина пароля:</label>
+                            <input type="range" id="passwordLength" min="8" max="32" value="16">
+                            <span id="lengthValue">16</span>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="useUppercase" checked> Заглавные буквы (A-Z)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="useLowercase" checked> Строчные буквы (a-z)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="useNumbers" checked> Цифры (0-9)
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="useSymbols" checked> Символы (!@#$%^&*)
+                            </label>
+                        </div>
+                        <button type="button" id="generateBtn" class="btn-primary">Сгенерировать пароль</button>
+                    </div>
+                    <button type="submit" class="btn-primary">Сохранить пароль</button>
+                </form>
+            </section>
+
+            <!-- Список сохраненных паролей -->
+            <section class="passwords-section">
+                <h2>Сохраненные пароли</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Поиск по URL или логину...">
+                </div>
+                <div id="passwordsList" class="passwords-list">
+                    <p class="empty-message">Нет сохраненных паролей</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
