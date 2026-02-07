@@ -1,20 +1,29 @@
-const jwt = require('jsonwebtoken');
+/**
+ * JWT authentication middleware.
+ * Verifies token and attaches user to request.
+ */
 
-module.exports = (req, res, next) => {
-  // Получаем токен из заголовка
-  const token = req.header('x-auth-token');
+import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../config.js';
+import db from '../db.js';
 
-  // Проверяем наличие токена
+export function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
   if (!token) {
-    return res.status(401).json({ message: 'No token, authorization denied' });
+    return res.status(401).json({ error: 'Authentication required' });
   }
 
   try {
-    // Проверяем токен
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user;
+    const payload = jwt.verify(token, JWT_SECRET);
+    const user = db.prepare('SELECT id, name, email FROM users WHERE id = ?').get(payload.userId);
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+    req.user = user;
     next();
-  } catch (error) {
-    res.status(401).json({ message: 'Token is not valid' });
+  } catch (err) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
-}; 
+}
