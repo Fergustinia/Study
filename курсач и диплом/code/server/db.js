@@ -105,6 +105,13 @@ db.exec(`
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS idx_activity_project ON activity(project_id);
+
+  CREATE TABLE IF NOT EXISTS project_members (
+    project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    PRIMARY KEY (project_id, user_id)
+  );
+  CREATE INDEX IF NOT EXISTS idx_project_members_project ON project_members(project_id);
 `);
 
 export default db;

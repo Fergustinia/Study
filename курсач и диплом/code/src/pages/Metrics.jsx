@@ -1,10 +1,9 @@
-import { useState } from 'react';
 import { useStorage } from '../context/StorageContext';
+import { useProjectContext } from '../context/ProjectContext';
 
 export default function Metrics() {
   const { projects, getSprints, getTasks, tasks } = useStorage();
-  const [projectId, setProjectId] = useState('');
-  const [sprintId, setSprintId] = useState('');
+  const { projectId, sprintId } = useProjectContext();
 
   const sprints = getSprints(projectId).sort((a, b) => a.startDate.localeCompare(b.startDate));
 
@@ -132,24 +131,14 @@ export default function Metrics() {
 
   return (
     <section className="view">
-      <h1>Scrum-метрики</h1>
+      <header className="page-header-block">
+        <h1>Scrum-метрики</h1>
+        <p className="page-subtitle">Velocity, Burndown, Cycle time и др.</p>
+      </header>
       <div className="toolbar">
-        <select value={projectId} onChange={(e) => { setProjectId(e.target.value); setSprintId(''); }}>
-          <option value="">Выберите проект</option>
-          {projects.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
-          ))}
-        </select>
-        <select value={sprintId} onChange={(e) => setSprintId(e.target.value)}>
-          <option value="">Все спринты</option>
-          {sprints.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        {!projectId && projects.length > 0 && (
+          <span className="page-hint">Выберите проект в панели выше</span>
+        )}
         <button type="button" className="btn btn-secondary" onClick={exportCsv} disabled={!projectId}>
           Скачать отчёт (CSV)
         </button>

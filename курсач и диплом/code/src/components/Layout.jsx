@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import Notifications from './Notifications';
 import GlobalSearch from './GlobalSearch';
 import ThemeToggle from './ThemeToggle';
+import ProjectSprintBar from './ProjectSprintBar';
 
 export default function Layout({ children }) {
   const { currentUser, logout } = useAuth();
@@ -62,6 +63,7 @@ export default function Layout({ children }) {
           </div>
         </div>
       </header>
+      <ProjectSprintBar />
       <main className="main">{children}</main>
     </>
   );

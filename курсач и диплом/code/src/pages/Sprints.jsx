@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useStorage } from '../context/StorageContext';
+import { useProjectContext } from '../context/ProjectContext';
 import Modal from '../components/Modal';
 
 export default function Sprints() {
   const { projects, getSprints, getTasks, saveSprint, deleteSprint, genId } = useStorage();
-  const [projectId, setProjectId] = useState('');
+  const { projectId } = useProjectContext();
   const [modalOpen, setModalOpen] = useState(false);
   const [editingSprint, setEditingSprint] = useState(null);
   const [name, setName] = useState('');
@@ -68,16 +69,14 @@ export default function Sprints() {
   return (
     <section className="view">
       <div className="page-head">
-        <h1>Спринты</h1>
+        <div>
+          <h1>Спринты</h1>
+          <p className="page-subtitle">Итерации и цели</p>
+        </div>
         <div className="toolbar">
-          <select value={projectId} onChange={(e) => setProjectId(e.target.value)}>
-            <option value="">Выберите проект</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
+          {!projectId && projects.length > 0 && (
+            <span className="page-hint">Выберите проект в панели выше</span>
+          )}
           <button type="button" className="btn btn-primary" onClick={openCreate} disabled={!projectId}>
             Новый спринт
           </button>

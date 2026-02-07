@@ -4,7 +4,7 @@
 
 import db from '../db.js';
 import { genId } from '../utils/id.js';
-import { isProjectOwnedBy } from './projectService.js';
+import { isProjectAccessibleBy, getAccessibleProjectIds } from './projectService.js';
 import * as activityService from './activityService.js';
 import * as notificationService from './notificationService.js';
 
@@ -29,7 +29,7 @@ function rowToTask(row) {
 }
 
 export function listTasks(projectId, sprintId, userId) {
-  if (!isProjectOwnedBy(projectId, userId)) return [];
+  if (!isProjectAccessibleBy(projectId, userId)) return [];
   let sql = 'SELECT * FROM tasks WHERE project_id = ?';
   const params = [projectId];
   if (sprintId === null) {
@@ -44,7 +44,7 @@ export function listTasks(projectId, sprintId, userId) {
 }
 
 export function listTasksByUser(userId) {
-  const projectIds = db.prepare('SELECT id FROM projects WHERE owner_id = ?').all(userId).map((r) => r.id);
+  const projectIds = getAccessibleProjectIds(userId);
   if (projectIds.length === 0) return [];
   const placeholders = projectIds.map(() => '?').join(',');
   const rows = db.prepare(`SELECT * FROM tasks WHERE project_id IN (${placeholders}) ORDER BY created_at`).all(...projectIds);
@@ -53,12 +53,12 @@ export function listTasksByUser(userId) {
 
 export function getTask(id, userId) {
   const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
-  if (!row || !isProjectOwnedBy(row.project_id, userId)) return null;
+  if (!row || !isProjectAccessibleBy(row.project_id, userId)) return null;
   return rowToTask(row);
 }
 
 export function createTask(data, userId) {
-  if (!isProjectOwnedBy(data.projectId, userId)) return null;
+  if (!isProjectAccessibleBy(data.projectId, userId)) return null;
   const id = data.id || genId();
   const now = new Date().toISOString();
   db.prepare(

@@ -38,4 +38,29 @@ router.delete('/:id', (req, res) => {
   res.status(204).send();
 });
 
+router.get('/:id/members', (req, res) => {
+  if (!projectService.isProjectAccessibleBy(req.params.id, req.user.id)) {
+    return res.status(404).json({ error: 'Project not found' });
+  }
+  const list = projectService.getProjectMembers(req.params.id, req.user.id);
+  res.json(list);
+});
+
+router.post('/:id/members', (req, res) => {
+  const { userId } = req.body || {};
+  if (!userId) return res.status(400).json({ error: 'userId required' });
+  const list = projectService.addProjectMember(req.params.id, userId, req.user.id);
+  if (!list) return res.status(403).json({ error: 'Only project owner can add members' });
+  res.json(list);
+});
+
+router.delete('/:id/members/:userId', (req, res) => {
+  const list = projectService.removeProjectMember(req.params.id, req.params.userId, req.user.id);
+  if (!list && !projectService.isProjectAccessibleBy(req.params.id, req.user.id)) {
+    return res.status(404).json({ error: 'Project not found' });
+  }
+  if (!list) return res.status(403).json({ error: 'Only project owner can remove members' });
+  res.json(list);
+});
+
 export default router;

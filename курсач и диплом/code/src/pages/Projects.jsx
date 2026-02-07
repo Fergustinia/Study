@@ -1,12 +1,15 @@
 import { useState, useRef } from 'react';
 import { useStorage } from '../context/StorageContext';
 import Modal from '../components/Modal';
+import ProjectMembers from '../components/ProjectMembers';
 
 export default function Projects() {
   const { projects, getSprints, getTasks, saveProject, saveSprint, saveTask, deleteProject, genId, loadFromApi } = useStorage();
   const importInputRef = useRef(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [membersModalOpen, setMembersModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [membersProject, setMembersProject] = useState(null);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
@@ -116,7 +119,10 @@ export default function Projects() {
   return (
     <section className="view">
       <div className="page-head">
-        <h1>Проекты</h1>
+        <div>
+          <h1>Проекты</h1>
+          <p className="page-subtitle">Создание и управление проектами</p>
+        </div>
         <div className="toolbar">
           <input
             ref={importInputRef}
@@ -153,6 +159,9 @@ export default function Projects() {
                 </p>
                 <p className="meta">Задач: {taskCount}</p>
                 <div className="form-actions" style={{ marginTop: '0.75rem' }}>
+                  <button type="button" className="btn btn-secondary btn-small" onClick={() => { setMembersProject(p); setMembersModalOpen(true); }}>
+                    Участники
+                  </button>
                   <button type="button" className="btn btn-secondary btn-small" onClick={() => exportProject(p)}>
                     Экспорт
                   </button>
@@ -168,6 +177,11 @@ export default function Projects() {
           })
         )}
       </div>
+      <ProjectMembers
+        open={membersModalOpen}
+        onClose={() => { setMembersModalOpen(false); setMembersProject(null); }}
+        project={membersProject}
+      />
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title={editingId ? 'Редактировать проект' : 'Новый проект'}>
         <form onSubmit={handleSubmit}>
           <label>

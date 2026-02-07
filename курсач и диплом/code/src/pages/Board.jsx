@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useStorage } from '../context/StorageContext';
 import { useAuth } from '../context/AuthContext';
+import { useProjectContext } from '../context/ProjectContext';
 import Modal from '../components/Modal';
 import TaskComments from '../components/TaskComments';
 
@@ -26,10 +27,11 @@ const TASK_TYPES = [
 
 export default function Board() {
   const [searchParams] = useSearchParams();
-  const { projects, getSprints, getTasks, saveTask, setTaskStatus, genId, tasks } = useStorage();
+  const { projects, getSprints, getTasks, saveTask, setTaskStatus, genId, tasks, getProjectMembers } = useStorage();
   const { users } = useAuth();
-  const [projectId, setProjectId] = useState(searchParams.get('project') || '');
-  const [sprintId, setSprintId] = useState('');
+  const { projectId, sprintId, setProjectId, setSprintId } = useProjectContext();
+  const [boardMembers, setBoardMembers] = useState([]);
+  const [formMembers, setFormMembers] = useState([]);
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [taskProjectId, setTaskProjectId] = useState('');
@@ -49,8 +51,8 @@ export default function Board() {
 
   useEffect(() => {
     const p = searchParams.get('project');
-    if (p && p !== projectId) setProjectId(p);
-  }, [searchParams]);
+    if (p && p !== projectId && projects.some((x) => x.id === p)) setProjectId(p);
+  }, [searchParams.get('project')]);
 
   useEffect(() => {
     const taskId = searchParams.get('task');
@@ -61,6 +63,30 @@ export default function Board() {
       openTaskForm(task.sprintId, task.status, task);
     }
   }, [searchParams, projectId, tasks]);
+
+  useEffect(() => {
+    if (!projectId) {
+      setBoardMembers([]);
+      return;
+    }
+    let cancelled = false;
+    getProjectMembers(projectId).then((list) => {
+      if (!cancelled) setBoardMembers(Array.isArray(list) ? list : []);
+    });
+    return () => { cancelled = true; };
+  }, [projectId, getProjectMembers]);
+
+  useEffect(() => {
+    if (!taskModalOpen || !taskProjectId || taskProjectId === projectId) {
+      setFormMembers([]);
+      return;
+    }
+    let cancelled = false;
+    getProjectMembers(taskProjectId).then((list) => {
+      if (!cancelled) setFormMembers(Array.isArray(list) ? list : []);
+    });
+    return () => { cancelled = true; };
+  }, [taskModalOpen, taskProjectId, projectId, getProjectMembers]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -84,7 +110,10 @@ export default function Board() {
       if (filterAssigneeId && (t.assigneeId || '') !== filterAssigneeId) return false;
       return true;
     });
-  const getAssigneeName = (id) => (id ? (users.find((u) => u.id === id)?.name || id) : null);
+  const assigneeOptionsForForm = (taskProjectId === projectId ? boardMembers : formMembers).length
+    ? (taskProjectId === projectId ? boardMembers : formMembers)
+    : (users || []);
+  const getAssigneeName = (id) => (id ? (boardMembers.find((u) => u.id === id)?.name || users?.find((u) => u.id === id)?.name || id) : null);
   const isOverdue = (task) => task.dueAt && task.status !== 'done' && new Date(task.dueAt) < new Date();
   const backlog = filterTasks(backlogRaw);
   const sprintTasks = filterTasks(sprintTasksRaw);
@@ -164,24 +193,16 @@ export default function Board() {
   return (
     <section className="view">
       <div className="page-head">
-        <h1>Канбан-доска</h1>
+        <div>
+          <h1>Канбан-доска</h1>
+          <p className="page-subtitle">Задачи по статусам</p>
+        </div>
         <div className="toolbar board-toolbar">
-          <select value={projectId} onChange={(e) => { setProjectId(e.target.value); setSprintId(''); }}>
-            <option value="">Выберите проект</option>
-            {projects.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          <select value={sprintId} onChange={(e) => setSprintId(e.target.value)}>
-            <option value="">Бэклог</option>
-            {sprints.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
+          {projectId && (
+            <span className="board-context-hint">
+              Проект и спринт — в панели выше
+            </span>
+          )}
           <span className="toolbar-sep">Фильтр:</span>
           <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} title="Приоритет">
             <option value="">Все приоритеты</option>
@@ -201,7 +222,7 @@ export default function Board() {
           </select>
           <select value={filterAssigneeId} onChange={(e) => setFilterAssigneeId(e.target.value)} title="Исполнитель">
             <option value="">Все исполнители</option>
-            {users.map((u) => (
+            {(projectId ? boardMembers : users || []).map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>
@@ -317,7 +338,7 @@ export default function Board() {
             Исполнитель
             <select value={taskAssigneeId} onChange={(e) => setTaskAssigneeId(e.target.value)}>
               <option value="">— не назначен —</option>
-              {users.map((u) => (
+              {assigneeOptionsForForm.map((u) => (
                 <option key={u.id} value={u.id}>
                   {u.name}
                 </option>

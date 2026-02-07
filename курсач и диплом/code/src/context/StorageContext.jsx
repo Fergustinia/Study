@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   sprints: 'scrum_pm_sprints',
   tasks: 'scrum_pm_tasks',
   comments: 'scrum_pm_comments',
+  projectMembers: 'scrum_pm_project_members',
 };
 
 // In local mode, data is stored per user so different accounts don't share projects/sprints/tasks
@@ -26,6 +27,19 @@ function read(key, userId) {
 
 function write(key, value, userId) {
   localStorage.setItem(storageKey(key, userId), JSON.stringify(value));
+}
+
+function readProjectMembers(userId) {
+  try {
+    const raw = localStorage.getItem(storageKey('projectMembers', userId));
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeProjectMembers(obj, userId) {
+  localStorage.setItem(storageKey('projectMembers', userId), JSON.stringify(obj));
 }
 
 function genId() {
@@ -104,6 +118,9 @@ export function StorageProvider({ children }) {
       write('projects', read('projects', localUserId).filter((p) => p.id !== projectId), localUserId);
       write('sprints', read('sprints', localUserId).filter((s) => s.projectId !== projectId), localUserId);
       write('tasks', read('tasks', localUserId).filter((t) => t.projectId !== projectId), localUserId);
+      const pm = readProjectMembers(localUserId);
+      delete pm[projectId];
+      writeProjectMembers(pm, localUserId);
       refresh();
     },
     [refresh, loadFromApi, localUserId]
@@ -261,11 +278,73 @@ export function StorageProvider({ children }) {
     [refresh, localUserId, currentUser?.id]
   );
 
+  const getProjectMembers = useCallback(
+    async (projectId) => {
+      if (isApiEnabled()) {
+        try {
+          return await apiRequest(`/api/projects/${projectId}/members`);
+        } catch {
+          return [];
+        }
+      }
+      const pm = readProjectMembers(localUserId);
+      const memberIds = pm[projectId] || [];
+      const owner = currentUser ? [{ id: currentUser.id, name: currentUser.name, email: currentUser.email || '', role: 'owner' }] : [];
+      const members = memberIds.map((id) => ({ id, name: '', email: '', role: 'member' }));
+      return [...owner, ...members];
+    },
+    [localUserId, currentUser]
+  );
+
+  const addProjectMember = useCallback(
+    async (projectId, userId) => {
+      if (isApiEnabled()) {
+        await apiRequest(`/api/projects/${projectId}/members`, { method: 'POST', body: JSON.stringify({ userId }) });
+        return;
+      }
+      const pm = readProjectMembers(localUserId);
+      if (!pm[projectId]) pm[projectId] = [];
+      if (!pm[projectId].includes(userId)) pm[projectId].push(userId);
+      writeProjectMembers(pm, localUserId);
+      refresh();
+    },
+    [refresh, localUserId]
+  );
+
+  const removeProjectMember = useCallback(
+    async (projectId, userId) => {
+      if (isApiEnabled()) {
+        await apiRequest(`/api/projects/${projectId}/members/${userId}`, { method: 'DELETE' });
+        return;
+      }
+      const pm = readProjectMembers(localUserId);
+      if (pm[projectId]) pm[projectId] = pm[projectId].filter((id) => id !== userId);
+      writeProjectMembers(pm, localUserId);
+      refresh();
+    },
+    [refresh, localUserId]
+  );
+
+  const isProjectOwner = useCallback(
+    (projectId) => {
+      if (isApiEnabled()) {
+        const p = (apiData.projects || []).find((x) => x.id === projectId);
+        return p && p.ownerId === currentUser?.id;
+      }
+      return true;
+    },
+    [isApiEnabled(), apiData.projects, currentUser?.id]
+  );
+
   const value = {
     ...data,
     genId,
     saveProject,
     deleteProject,
+    getProjectMembers,
+    addProjectMember,
+    removeProjectMember,
+    isProjectOwner,
     saveSprint,
     deleteSprint,
     saveTask,

@@ -4,7 +4,7 @@
 
 import db from '../db.js';
 import { genId } from '../utils/id.js';
-import { isProjectOwnedBy } from './projectService.js';
+import { isProjectAccessibleBy } from './projectService.js';
 
 function rowToActivity(row) {
   if (!row) return null;
@@ -22,7 +22,7 @@ function rowToActivity(row) {
 }
 
 export function log(projectId, userId, action, entityType, entityId, details = null) {
-  if (!isProjectOwnedBy(projectId, userId)) return null;
+  if (!isProjectAccessibleBy(projectId, userId)) return null;
   const id = genId();
   const detailsStr = details != null ? JSON.stringify(details) : null;
   db.prepare(
@@ -32,7 +32,7 @@ export function log(projectId, userId, action, entityType, entityId, details = n
 }
 
 export function listByProject(projectId, userId, limit = 50) {
-  if (!isProjectOwnedBy(projectId, userId)) return [];
+  if (!isProjectAccessibleBy(projectId, userId)) return [];
   const rows = db.prepare(
     `SELECT a.*, u.name as user_name FROM activity a
      LEFT JOIN users u ON a.user_id = u.id

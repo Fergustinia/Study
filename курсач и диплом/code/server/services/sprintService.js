@@ -4,7 +4,7 @@
 
 import db from '../db.js';
 import { genId } from '../utils/id.js';
-import { isProjectOwnedBy } from './projectService.js';
+import { isProjectAccessibleBy, getAccessibleProjectIds } from './projectService.js';
 
 function rowToSprint(row) {
   if (!row) return null;
@@ -21,13 +21,13 @@ function rowToSprint(row) {
 }
 
 export function listSprintsByProject(projectId, userId) {
-  if (!isProjectOwnedBy(projectId, userId)) return [];
+  if (!isProjectAccessibleBy(projectId, userId)) return [];
   const rows = db.prepare('SELECT * FROM sprints WHERE project_id = ? ORDER BY start_date').all(projectId);
   return rows.map(rowToSprint);
 }
 
 export function listSprintsByUser(userId) {
-  const projectIds = db.prepare('SELECT id FROM projects WHERE owner_id = ?').all(userId).map((r) => r.id);
+  const projectIds = getAccessibleProjectIds(userId);
   if (projectIds.length === 0) return [];
   const placeholders = projectIds.map(() => '?').join(',');
   const rows = db.prepare(`SELECT * FROM sprints WHERE project_id IN (${placeholders}) ORDER BY start_date`).all(...projectIds);
@@ -36,12 +36,12 @@ export function listSprintsByUser(userId) {
 
 export function getSprint(id, userId) {
   const row = db.prepare('SELECT * FROM sprints WHERE id = ?').get(id);
-  if (!row || !isProjectOwnedBy(row.project_id, userId)) return null;
+  if (!row || !isProjectAccessibleBy(row.project_id, userId)) return null;
   return rowToSprint(row);
 }
 
 export function createSprint(data, userId) {
-  if (!isProjectOwnedBy(data.projectId, userId)) return null;
+  if (!isProjectAccessibleBy(data.projectId, userId)) return null;
   const id = data.id || genId();
   db.prepare(
     'INSERT INTO sprints (id, project_id, name, goal, retro, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)'

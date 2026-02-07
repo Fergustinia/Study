@@ -27,7 +27,8 @@ API base: `http://localhost:3001`
 
 ### Protected (header: `Authorization: Bearer <token>`)
 
-- **Projects:** `GET/POST /api/projects`, `GET/PATCH/DELETE /api/projects/:id`
+- **Projects:** `GET/POST /api/projects`, `GET/PATCH/DELETE /api/projects/:id`. Projects list includes those where user is owner or member.  
+  **Members:** `GET /api/projects/:id/members`, `POST /api/projects/:id/members` body `{ userId }`, `DELETE /api/projects/:id/members/:userId` (only owner).
 - **Sprints:** `GET /api/sprints?projectId=`, `POST /api/sprints`, `GET/PATCH/DELETE /api/sprints/:id`
 - **Tasks:** `GET /api/tasks?projectId=&sprintId=`, `POST /api/tasks`, `GET/PATCH/DELETE /api/tasks/:id`, `POST /api/tasks/:id/status` body `{ status, sprintId? }`
 - **Analytics:**  

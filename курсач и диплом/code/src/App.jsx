@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ProjectProvider } from './context/ProjectContext';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import Sprints from './pages/Sprints';
@@ -17,7 +18,8 @@ export default function App() {
         path="/*"
         element={
           <ProtectedRoute>
-            <Layout>
+            <ProjectProvider>
+              <Layout>
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/projects" element={<Projects />} />
@@ -28,6 +30,7 @@ export default function App() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Layout>
+            </ProjectProvider>
           </ProtectedRoute>
         }
       />

@@ -19,7 +19,10 @@ export default function Dashboard() {
 
   return (
     <section className="view">
-      <h1>Дашборд</h1>
+      <header className="page-header-block">
+        <h1>Дашборд</h1>
+        <p className="page-subtitle">Обзор проектов и прогресса</p>
+      </header>
       <div className="dashboard-cards">
         <div className="dashboard-card">
           <span className="value">{projects.length}</span>
@@ -57,7 +60,7 @@ export default function Dashboard() {
               const projectTasks = getTasks(p.id);
               const done = projectTasks.filter((t) => t.status === 'done').length;
               return (
-                <Link to="/board" key={p.id} className="card">
+                <Link to={`/board?project=${p.id}`} key={p.id} className="card">
                   <h3>{p.name}</h3>
                   <p className="meta">
                     Задач: {done}/{projectTasks.length}
