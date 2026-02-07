@@ -47,3 +47,33 @@ export function markRead(id, userId) {
 export function markAllRead(userId) {
   db.prepare('UPDATE notifications SET read_at = datetime(\'now\') WHERE user_id = ? AND read_at IS NULL').run(userId);
 }
+
+/** Create notifications for sprints ending in 1–2 days (at most one per sprint per day). */
+export function ensureSprintReminders(userId) {
+  const projects = db.prepare('SELECT id FROM projects WHERE owner_id = ?').all(userId);
+  if (projects.length === 0) return [];
+  const projectIds = projects.map((p) => p.id);
+  const placeholders = projectIds.map(() => '?').join(',');
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfter = new Date(now);
+  dayAfter.setDate(dayAfter.getDate() + 2);
+  const tomorrowStr = tomorrow.toISOString().slice(0, 10);
+  const dayAfterStr = dayAfter.toISOString().slice(0, 10);
+  const sprints = db.prepare(
+    `SELECT id, name, end_date, project_id FROM sprints WHERE project_id IN (${placeholders}) AND (date(end_date) = date(?) OR date(end_date) = date(?))`
+  ).all(...projectIds, tomorrowStr, dayAfterStr);
+  const created = [];
+  for (const s of sprints) {
+    const existing = db.prepare(
+      `SELECT id FROM notifications WHERE user_id = ? AND type = 'sprint_ending' AND body = ? AND datetime(created_at) > datetime('now', '-1 day')`
+    ).get(userId, s.id);
+    if (existing) continue;
+    const daysLeft = Math.ceil((new Date(s.end_date) - now) / (24 * 60 * 60 * 1000));
+    const title = daysLeft === 1 ? `Спринт «${s.name}» завтра заканчивается` : `До конца спринта «${s.name}» 2 дня`;
+    const n = create(userId, 'sprint_ending', title, s.id);
+    if (n) created.push(n);
+  }
+  return created;
+}

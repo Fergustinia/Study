@@ -13,6 +13,7 @@ function rowToSprint(row) {
     projectId: row.project_id,
     name: row.name,
     goal: row.goal || '',
+    retro: row.retro || '',
     startDate: row.start_date,
     endDate: row.end_date,
     createdAt: row.created_at,
@@ -43,12 +44,13 @@ export function createSprint(data, userId) {
   if (!isProjectOwnedBy(data.projectId, userId)) return null;
   const id = data.id || genId();
   db.prepare(
-    'INSERT INTO sprints (id, project_id, name, goal, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)'
+    'INSERT INTO sprints (id, project_id, name, goal, retro, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?, ?)'
   ).run(
     id,
     data.projectId,
     (data.name || '').trim(),
     (data.goal || '').trim(),
+    (data.retro || '').trim(),
     data.startDate,
     data.endDate
   );
@@ -59,10 +61,11 @@ export function updateSprint(id, data, userId) {
   const s = getSprint(id, userId);
   if (!s) return null;
   db.prepare(
-    'UPDATE sprints SET name = ?, goal = ?, start_date = ?, end_date = ? WHERE id = ?'
+    'UPDATE sprints SET name = ?, goal = ?, retro = ?, start_date = ?, end_date = ? WHERE id = ?'
   ).run(
     (data.name ?? s.name).trim(),
     (data.goal ?? s.goal).trim(),
+    (data.retro ?? s.retro ?? '').trim(),
     data.startDate ?? s.startDate,
     data.endDate ?? s.endDate,
     id

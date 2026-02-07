@@ -9,6 +9,7 @@ export default function Sprints() {
   const [editingSprint, setEditingSprint] = useState(null);
   const [name, setName] = useState('');
   const [goal, setGoal] = useState('');
+  const [retro, setRetro] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -19,6 +20,7 @@ export default function Sprints() {
     setEditingSprint(null);
     setName('');
     setGoal('');
+    setRetro('');
     setStartDate('');
     setEndDate('');
     setModalOpen(true);
@@ -28,6 +30,7 @@ export default function Sprints() {
     setEditingSprint(s);
     setName(s.name);
     setGoal(s.goal || '');
+    setRetro(s.retro || '');
     setStartDate(s.startDate);
     setEndDate(s.endDate);
     setModalOpen(true);
@@ -42,6 +45,7 @@ export default function Sprints() {
         projectId: pid,
         name: name.trim(),
         goal: goal.trim(),
+        retro: retro.trim(),
         startDate: startDate,
         endDate: endDate,
       });
@@ -101,6 +105,8 @@ export default function Sprints() {
                   <p className="dates">
                     {s.startDate} — {s.endDate}
                   </p>
+                  {s.goal && <p className="sprint-goal">{s.goal}</p>}
+                  {s.retro && <p className="sprint-retro">{s.retro}</p>}
                   <p className="meta">
                     Задач: {done}/{taskList.length} · SP: {donePoints}/{points}
                   </p>
@@ -124,6 +130,10 @@ export default function Sprints() {
           <label>
             Цель спринта
             <input type="text" value={goal} onChange={(e) => setGoal(e.target.value)} placeholder="Что планируем достичь" />
+          </label>
+          <label>
+            Ретроспектива / заметки
+            <textarea rows={2} value={retro} onChange={(e) => setRetro(e.target.value)} placeholder="Итоги спринта, что улучшить" />
           </label>
           <label>
             Начало

@@ -39,10 +39,19 @@ db.exec(`
     project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
     name TEXT NOT NULL,
     goal TEXT DEFAULT '',
+    retro TEXT DEFAULT '',
     start_date TEXT NOT NULL,
     end_date TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+`);
+try {
+  db.exec(`ALTER TABLE sprints ADD COLUMN retro TEXT DEFAULT ''`);
+} catch (_) {}
+try {
+  db.exec(`ALTER TABLE tasks ADD COLUMN due_at TEXT`);
+} catch (_) {}
+db.exec(`
 
   CREATE TABLE IF NOT EXISTS tasks (
     id TEXT PRIMARY KEY,
@@ -55,6 +64,7 @@ db.exec(`
     priority TEXT NOT NULL DEFAULT 'medium',
     type TEXT NOT NULL DEFAULT 'task',
     assignee_id TEXT REFERENCES users(id),
+    due_at TEXT,
     created_at TEXT,
     started_at TEXT,
     completed_at TEXT

@@ -23,6 +23,16 @@ export default function Notifications() {
   }, []);
 
   useEffect(() => {
+    const checkReminders = async () => {
+      try {
+        await apiRequest('/api/notifications/check-sprint-reminders', { method: 'POST' });
+        load();
+      } catch {}
+    };
+    checkReminders();
+  }, []);
+
+  useEffect(() => {
     const onOutside = (e) => {
       if (ref.current && !ref.current.contains(e.target)) setOpen(false);
     };

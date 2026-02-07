@@ -16,6 +16,21 @@
   --shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
+[data-theme="dark"] {
+  --bg: #0d1117;
+  --bg-card: #161b22;
+  --bg-hover: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #58a6ff;
+  --accent-dim: #58a6ff33;
+  --success: #3fb950;
+  --warning: #d29922;
+  --danger: #f85149;
+  --shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -350,12 +365,32 @@ select {
   color: var(--text-muted);
 }
 
+.sprint-card .sprint-goal {
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+}
+
+.sprint-card .sprint-retro {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 0.25rem 0 0;
+  font-style: italic;
+}
+
 .sprint-card .actions {
   display: flex;
   gap: 0.5rem;
 }
 
 /* Board */
+.board-sprint-goal {
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  background: var(--bg-hover);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+}
+
 .board-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -466,6 +501,21 @@ select {
 .task-assignee {
   font-size: 0.75rem;
   color: var(--text-muted);
+}
+
+.task-due {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.task-due.overdue {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.task-card-overdue {
+  border-color: var(--danger);
+  background: rgba(239, 68, 68, 0.06);
 }
 
 .add-task-btn {
@@ -878,6 +928,20 @@ select {
 }
 
 .header-notifications-btn:hover {
+  background: var(--bg-hover);
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  padding: 0.35rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: var(--radius);
+  line-height: 1;
+}
+
+.theme-toggle:hover {
   background: var(--bg-hover);
 }
 

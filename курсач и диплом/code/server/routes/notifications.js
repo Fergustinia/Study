@@ -22,4 +22,9 @@ router.post('/read-all', (req, res) => {
   res.json({ ok: true });
 });
 
+router.post('/check-sprint-reminders', (req, res) => {
+  const created = notificationService.ensureSprintReminders(req.user.id);
+  res.json({ created: created.length });
+});
+
 export default router;

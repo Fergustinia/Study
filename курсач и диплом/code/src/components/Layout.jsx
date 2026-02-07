@@ -1,11 +1,24 @@
+import { useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Notifications from './Notifications';
 import GlobalSearch from './GlobalSearch';
+import ThemeToggle from './ThemeToggle';
 
 export default function Layout({ children }) {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === '/' && !e.target.matches('input, textarea, select')) {
+        e.preventDefault();
+        document.querySelector('.global-search-input')?.focus();
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -38,6 +51,7 @@ export default function Layout({ children }) {
           </nav>
           <GlobalSearch />
           <div className="header-user">
+            <ThemeToggle />
             <Notifications />
             <NavLink to="/profile" className="header-user-name">
               {currentUser?.name}

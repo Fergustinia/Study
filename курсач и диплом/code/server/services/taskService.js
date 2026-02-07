@@ -21,6 +21,7 @@ function rowToTask(row) {
     priority: row.priority || 'medium',
     type: row.type || 'task',
     assigneeId: row.assignee_id,
+    dueAt: row.due_at,
     createdAt: row.created_at,
     startedAt: row.started_at,
     completedAt: row.completed_at,
@@ -61,8 +62,8 @@ export function createTask(data, userId) {
   const id = data.id || genId();
   const now = new Date().toISOString();
   db.prepare(
-    `INSERT INTO tasks (id, project_id, sprint_id, title, description, story_points, status, priority, type, assignee_id, created_at, started_at, completed_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    `INSERT INTO tasks (id, project_id, sprint_id, title, description, story_points, status, priority, type, assignee_id, due_at, created_at, started_at, completed_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
   ).run(
     id,
     data.projectId,
@@ -74,6 +75,7 @@ export function createTask(data, userId) {
     data.priority || 'medium',
     data.type || 'task',
     data.assigneeId || null,
+    data.dueAt || null,
     data.createdAt || now,
     data.startedAt || null,
     data.completedAt || null
@@ -99,7 +101,7 @@ export function updateTask(id, data, userId) {
   if (status === 'done') completedAt = new Date().toISOString();
 
   db.prepare(
-    `UPDATE tasks SET project_id = ?, sprint_id = ?, title = ?, description = ?, story_points = ?, status = ?, priority = ?, type = ?, assignee_id = ?, started_at = ?, completed_at = ? WHERE id = ?`
+    `UPDATE tasks SET project_id = ?, sprint_id = ?, title = ?, description = ?, story_points = ?, status = ?, priority = ?, type = ?, assignee_id = ?, due_at = ?, started_at = ?, completed_at = ? WHERE id = ?`
   ).run(
     data.projectId ?? t.projectId,
     sprintId,
@@ -110,6 +112,7 @@ export function updateTask(id, data, userId) {
     data.priority ?? t.priority,
     data.type ?? t.type,
     data.assigneeId !== undefined ? data.assigneeId : t.assigneeId,
+    data.dueAt !== undefined ? data.dueAt : t.dueAt,
     startedAt,
     completedAt,
     id

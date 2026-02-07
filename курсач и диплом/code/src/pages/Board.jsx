@@ -40,6 +40,7 @@ export default function Board() {
   const [taskPriority, setTaskPriority] = useState('medium');
   const [taskType, setTaskType] = useState('task');
   const [taskAssigneeId, setTaskAssigneeId] = useState('');
+  const [taskDueAt, setTaskDueAt] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterAssigneeId, setFilterAssigneeId] = useState('');
@@ -61,7 +62,19 @@ export default function Board() {
     }
   }, [searchParams, projectId, tasks]);
 
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.key === 'n' || e.key === 'N') && !taskModalOpen && !e.target.matches('input, textarea, select') && projectId) {
+        e.preventDefault();
+        openTaskForm(sprintId || null, 'todo');
+      }
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [taskModalOpen, projectId, sprintId]);
+
   const sprints = getSprints(projectId);
+  const currentSprint = sprintId ? sprints.find((s) => s.id === sprintId) : null;
   const backlogRaw = getTasks(projectId, null);
   const sprintTasksRaw = sprintId ? getTasks(projectId, sprintId) : [];
   const filterTasks = (list) =>
@@ -72,6 +85,7 @@ export default function Board() {
       return true;
     });
   const getAssigneeName = (id) => (id ? (users.find((u) => u.id === id)?.name || id) : null);
+  const isOverdue = (task) => task.dueAt && task.status !== 'done' && new Date(task.dueAt) < new Date();
   const backlog = filterTasks(backlogRaw);
   const sprintTasks = filterTasks(sprintTasksRaw);
   const byStatus = (arr, status) => arr.filter((t) => t.status === status);
@@ -85,6 +99,7 @@ export default function Board() {
     setTaskPriority(task?.priority ?? 'medium');
     setTaskType(task?.type ?? 'task');
     setTaskAssigneeId(task?.assigneeId ?? '');
+    setTaskDueAt(task?.dueAt ? task.dueAt.slice(0, 10) : '');
     setEditingTask(task);
     setTaskModalOpen(true);
   };
@@ -104,6 +119,7 @@ export default function Board() {
         priority: taskPriority,
         type: taskType,
         assigneeId: taskAssigneeId || null,
+        dueAt: taskDueAt || null,
         status: existing?.status ?? 'todo',
         completedAt: existing?.completedAt,
         startedAt: existing?.startedAt,
@@ -193,6 +209,11 @@ export default function Board() {
           </select>
         </div>
       </div>
+      {currentSprint?.goal && (
+        <div className="board-sprint-goal">
+          <strong>Цель спринта:</strong> {currentSprint.goal}
+        </div>
+      )}
       <div className="board-container">
         {COLUMNS.map((col) => (
           <div
@@ -207,7 +228,7 @@ export default function Board() {
               {getColumnTasks(col.id).map((t) => (
                 <div
                   key={t.id}
-                  className="task-card"
+                  className={`task-card ${isOverdue(t) ? 'task-card-overdue' : ''}`}
                   draggable
                   onDragStart={(e) => handleDragStart(e, t.id)}
                   onClick={() => openTaskForm(null, t.status, t)}
@@ -223,6 +244,11 @@ export default function Board() {
                   <div>{t.title}</div>
                   <div className="task-card-footer">
                     <span className="points">{t.storyPoints || 0} SP</span>
+                    {t.dueAt && (
+                      <span className={`task-due ${isOverdue(t) ? 'overdue' : ''}`} title="Срок">
+                        {new Date(t.dueAt).toLocaleDateString()}
+                      </span>
+                    )}
                     {getAssigneeName(t.assigneeId) && (
                       <span className="task-assignee" title="Исполнитель">{getAssigneeName(t.assigneeId)}</span>
                     )}
@@ -282,6 +308,10 @@ export default function Board() {
           <label>
             Story points
             <input type="number" min={0} value={taskPoints} onChange={(e) => setTaskPoints(e.target.value)} />
+          </label>
+          <label>
+            Срок (дата)
+            <input type="date" value={taskDueAt} onChange={(e) => setTaskDueAt(e.target.value)} />
           </label>
           <label>
             Исполнитель

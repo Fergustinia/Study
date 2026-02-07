@@ -39,5 +39,7 @@ API base: `http://localhost:3001`
   - `GET /api/analytics/done-by-type?projectId=`
 - **Users (for assignee):** `GET /api/auth/users` — list users (id, name, email).
 - **Comments:** `GET /api/comments/task/:taskId`, `POST /api/comments/task/:taskId` body `{ text }`.
-- **Notifications:** `GET /api/notifications`, `PATCH /api/notifications/:id/read`, `POST /api/notifications/read-all`.
+- **Notifications:** `GET /api/notifications`, `PATCH /api/notifications/:id/read`, `POST /api/notifications/read-all`, `POST /api/notifications/check-sprint-reminders` (creates reminders for sprints ending in 1–2 days).
 - **Activity:** `GET /api/activity?projectId=`
+
+Tasks support `dueAt` (ISO date); sprints support `retro` (retrospective notes).

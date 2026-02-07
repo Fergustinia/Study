@@ -160,7 +160,7 @@ export function StorageProvider({ children }) {
         return;
       }
       const tasks = read('tasks', localUserId);
-      const full = { ...task, assigneeId: task.assigneeId ?? null };
+      const full = { ...task, assigneeId: task.assigneeId ?? null, dueAt: task.dueAt ?? null };
       const idx = tasks.findIndex((t) => t.id === full.id);
       if (idx >= 0) tasks[idx] = full;
       else tasks.push(full);
