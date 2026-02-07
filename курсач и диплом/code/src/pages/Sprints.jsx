@@ -33,22 +33,32 @@ export default function Sprints() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const pid = editingSprint ? editingSprint.projectId : projectId;
-    saveSprint({
-      id: editingSprint?.id || genId(),
-      projectId: pid,
-      name: name.trim(),
-      goal: goal.trim(),
-      startDate: startDate,
-      endDate: endDate,
-    });
-    setModalOpen(false);
+    try {
+      await saveSprint({
+        id: editingSprint?.id || genId(),
+        projectId: pid,
+        name: name.trim(),
+        goal: goal.trim(),
+        startDate: startDate,
+        endDate: endDate,
+      });
+      setModalOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Удалить спринт? Задачи вернутся в бэклог.')) deleteSprint(id);
+  const handleDelete = async (id) => {
+    if (window.confirm('Удалить спринт? Задачи вернутся в бэклог.')) {
+      try {
+        await deleteSprint(id);
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (

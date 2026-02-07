@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import Notifications from './Notifications';
+import GlobalSearch from './GlobalSearch';
 
 export default function Layout({ children }) {
   const { currentUser, logout } = useAuth();
@@ -34,7 +36,9 @@ export default function Layout({ children }) {
               Метрики
             </NavLink>
           </nav>
+          <GlobalSearch />
           <div className="header-user">
+            <Notifications />
             <NavLink to="/profile" className="header-user-name">
               {currentUser?.name}
             </NavLink>

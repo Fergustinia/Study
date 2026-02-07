@@ -4,6 +4,7 @@
 
 import db from '../db.js';
 import { genId } from '../utils/id.js';
+import { isProjectOwnedBy } from './projectService.js';
 
 function rowToSprint(row) {
   if (!row) return null;
@@ -18,16 +19,28 @@ function rowToSprint(row) {
   };
 }
 
-export function listSprintsByProject(projectId) {
+export function listSprintsByProject(projectId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return [];
   const rows = db.prepare('SELECT * FROM sprints WHERE project_id = ? ORDER BY start_date').all(projectId);
   return rows.map(rowToSprint);
 }
 
-export function getSprint(id) {
-  return rowToSprint(db.prepare('SELECT * FROM sprints WHERE id = ?').get(id));
+export function listSprintsByUser(userId) {
+  const projectIds = db.prepare('SELECT id FROM projects WHERE owner_id = ?').all(userId).map((r) => r.id);
+  if (projectIds.length === 0) return [];
+  const placeholders = projectIds.map(() => '?').join(',');
+  const rows = db.prepare(`SELECT * FROM sprints WHERE project_id IN (${placeholders}) ORDER BY start_date`).all(...projectIds);
+  return rows.map(rowToSprint);
 }
 
-export function createSprint(data) {
+export function getSprint(id, userId) {
+  const row = db.prepare('SELECT * FROM sprints WHERE id = ?').get(id);
+  if (!row || !isProjectOwnedBy(row.project_id, userId)) return null;
+  return rowToSprint(row);
+}
+
+export function createSprint(data, userId) {
+  if (!isProjectOwnedBy(data.projectId, userId)) return null;
   const id = data.id || genId();
   db.prepare(
     'INSERT INTO sprints (id, project_id, name, goal, start_date, end_date) VALUES (?, ?, ?, ?, ?, ?)'
@@ -39,11 +52,11 @@ export function createSprint(data) {
     data.startDate,
     data.endDate
   );
-  return getSprint(id);
+  return getSprint(id, userId);
 }
 
-export function updateSprint(id, data) {
-  const s = getSprint(id);
+export function updateSprint(id, data, userId) {
+  const s = getSprint(id, userId);
   if (!s) return null;
   db.prepare(
     'UPDATE sprints SET name = ?, goal = ?, start_date = ?, end_date = ? WHERE id = ?'
@@ -54,10 +67,12 @@ export function updateSprint(id, data) {
     data.endDate ?? s.endDate,
     id
   );
-  return getSprint(id);
+  return getSprint(id, userId);
 }
 
-export function deleteSprint(id) {
+export function deleteSprint(id, userId) {
+  const s = getSprint(id, userId);
+  if (!s) return;
   db.prepare('UPDATE tasks SET sprint_id = NULL WHERE sprint_id = ?').run(id);
   db.prepare('DELETE FROM sprints WHERE id = ?').run(id);
 }

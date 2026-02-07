@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { isApiEnabled, apiRequest, setToken, getToken, removeToken } from '../api/client.js';
 
 const USERS_KEY = 'scrum_pm_users';
 const CURRENT_USER_KEY = 'scrum_pm_current_user_id';
@@ -29,7 +30,7 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
-function getInitialUser() {
+function getInitialUserLocal() {
   const id = readCurrentId();
   if (!id) return null;
   const list = readUsers();
@@ -39,20 +40,60 @@ function getInitialUser() {
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(getInitialUser);
+  const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState(readUsers);
+  const [loading, setLoading] = useState(isApiEnabled());
 
-  const loadCurrentUser = useCallback(() => {
-    setCurrentUser(getInitialUser());
-    setUsers(readUsers());
+  const loadCurrentUser = useCallback(async () => {
+    if (isApiEnabled()) {
+      if (!getToken()) {
+        setCurrentUser(null);
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+      try {
+        const { user } = await apiRequest('/api/auth/me');
+        setCurrentUser(user);
+        try {
+          const userList = await apiRequest('/api/auth/users');
+          setUsers(Array.isArray(userList) ? userList : []);
+        } catch {
+          setUsers([]);
+        }
+      } catch {
+        removeToken();
+        setCurrentUser(null);
+        setUsers([]);
+      }
+      setLoading(false);
+    } else {
+      setCurrentUser(getInitialUserLocal());
+      setUsers(readUsers());
+    }
   }, []);
 
   useEffect(() => {
-    loadCurrentUser();
+    if (isApiEnabled()) {
+      loadCurrentUser();
+    } else {
+      setCurrentUser(getInitialUserLocal());
+      setUsers(readUsers());
+      setLoading(false);
+    }
   }, [loadCurrentUser]);
 
   const register = useCallback(
-    (name, email = '') => {
+    async (name, email = '', password = '') => {
+      if (isApiEnabled()) {
+        const { user, token } = await apiRequest('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({ name: (name || '').trim(), email: (email || '').trim(), password }),
+        });
+        setToken(token);
+        setCurrentUser(user);
+        return user;
+      }
       const list = readUsers();
       const trimmed = (name || '').trim();
       if (!trimmed) return null;
@@ -73,40 +114,66 @@ export function AuthProvider({ children }) {
     []
   );
 
-  const login = useCallback((userId) => {
-    const list = readUsers();
-    const user = list.find((u) => u.id === userId) || null;
-    if (user) {
-      writeCurrentId(user.id);
-      setCurrentUser(user);
-    }
-    return user;
-  }, []);
+  const login = useCallback(
+    async (userIdOrNameOrEmail, password) => {
+      if (isApiEnabled()) {
+        const { user, token } = await apiRequest('/api/auth/login', {
+          method: 'POST',
+          body: JSON.stringify({ nameOrEmail: (userIdOrNameOrEmail || '').trim(), password: password || '' }),
+        });
+        setToken(token);
+        setCurrentUser(user);
+        return user;
+      }
+      const list = readUsers();
+      const user = list.find((u) => u.id === userIdOrNameOrEmail) || null;
+      if (user) {
+        writeCurrentId(user.id);
+        setCurrentUser(user);
+      }
+      return user;
+    },
+    []
+  );
 
   const logout = useCallback(() => {
-    writeCurrentId(null);
+    if (isApiEnabled()) removeToken();
+    else writeCurrentId(null);
     setCurrentUser(null);
   }, []);
 
-  const updateProfile = useCallback((updates) => {
-    const id = readCurrentId();
-    if (!id) return null;
-    const list = readUsers();
-    const idx = list.findIndex((u) => u.id === id);
-    if (idx < 0) return null;
-    const updated = { ...list[idx], ...updates };
-    if (updates.name !== undefined) updated.name = (updates.name || '').trim();
-    if (updates.email !== undefined) updated.email = (updates.email || '').trim();
-    list[idx] = updated;
-    writeUsers(list);
-    setCurrentUser(updated);
-    setUsers(list);
-    return updated;
-  }, []);
+  const updateProfile = useCallback(
+    async (updates) => {
+      if (isApiEnabled()) {
+        const { user } = await apiRequest('/api/auth/profile', {
+          method: 'PATCH',
+          body: JSON.stringify(updates),
+        });
+        setCurrentUser(user);
+        return user;
+      }
+      const id = readCurrentId();
+      if (!id) return null;
+      const list = readUsers();
+      const idx = list.findIndex((u) => u.id === id);
+      if (idx < 0) return null;
+      const updated = { ...list[idx], ...updates };
+      if (updates.name !== undefined) updated.name = (updates.name || '').trim();
+      if (updates.email !== undefined) updated.email = (updates.email || '').trim();
+      list[idx] = updated;
+      writeUsers(list);
+      setCurrentUser(updated);
+      setUsers(list);
+      return updated;
+    },
+    []
+  );
 
   const value = {
     currentUser,
     users,
+    loading,
+    isApiMode: isApiEnabled(),
     register,
     login,
     logout,

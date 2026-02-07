@@ -1,9 +1,12 @@
 /**
- * Task management service: CRUD, status changes, assignee, change history consideration.
+ * Task management service: CRUD, status changes, assignee, activity and notifications.
  */
 
 import db from '../db.js';
 import { genId } from '../utils/id.js';
+import { isProjectOwnedBy } from './projectService.js';
+import * as activityService from './activityService.js';
+import * as notificationService from './notificationService.js';
 
 function rowToTask(row) {
   if (!row) return null;
@@ -24,7 +27,8 @@ function rowToTask(row) {
   };
 }
 
-export function listTasks(projectId, sprintId) {
+export function listTasks(projectId, sprintId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return [];
   let sql = 'SELECT * FROM tasks WHERE project_id = ?';
   const params = [projectId];
   if (sprintId === null) {
@@ -38,11 +42,22 @@ export function listTasks(projectId, sprintId) {
   return rows.map(rowToTask);
 }
 
-export function getTask(id) {
-  return rowToTask(db.prepare('SELECT * FROM tasks WHERE id = ?').get(id));
+export function listTasksByUser(userId) {
+  const projectIds = db.prepare('SELECT id FROM projects WHERE owner_id = ?').all(userId).map((r) => r.id);
+  if (projectIds.length === 0) return [];
+  const placeholders = projectIds.map(() => '?').join(',');
+  const rows = db.prepare(`SELECT * FROM tasks WHERE project_id IN (${placeholders}) ORDER BY created_at`).all(...projectIds);
+  return rows.map(rowToTask);
 }
 
-export function createTask(data) {
+export function getTask(id, userId) {
+  const row = db.prepare('SELECT * FROM tasks WHERE id = ?').get(id);
+  if (!row || !isProjectOwnedBy(row.project_id, userId)) return null;
+  return rowToTask(row);
+}
+
+export function createTask(data, userId) {
+  if (!isProjectOwnedBy(data.projectId, userId)) return null;
   const id = data.id || genId();
   const now = new Date().toISOString();
   db.prepare(
@@ -63,11 +78,18 @@ export function createTask(data) {
     data.startedAt || null,
     data.completedAt || null
   );
-  return getTask(id);
+  const task = getTask(id, userId);
+  if (task) {
+    activityService.log(data.projectId, userId, 'task_created', 'task', id, { title: task.title });
+    if (data.assigneeId && data.assigneeId !== userId) {
+      notificationService.create(data.assigneeId, 'task_assigned', 'You were assigned to a task', task.title);
+    }
+  }
+  return task;
 }
 
-export function updateTask(id, data) {
-  const t = getTask(id);
+export function updateTask(id, data, userId) {
+  const t = getTask(id, userId);
   if (!t) return null;
   const sprintId = data.sprintId !== undefined ? data.sprintId : t.sprintId;
   const status = data.status !== undefined ? data.status : t.status;
@@ -92,15 +114,28 @@ export function updateTask(id, data) {
     completedAt,
     id
   );
-  return getTask(id);
+  const updated = getTask(id, userId);
+  if (updated) {
+    const newAssigneeId = data.assigneeId !== undefined ? data.assigneeId : t.assigneeId;
+    if (newAssigneeId && newAssigneeId !== t.assigneeId) {
+      notificationService.create(newAssigneeId, 'task_assigned', 'You were assigned to a task', updated.title);
+      activityService.log(t.projectId, userId, 'assignee_changed', 'task', id, { title: updated.title });
+    }
+    if (status !== t.status) {
+      activityService.log(t.projectId, userId, 'status_changed', 'task', id, { from: t.status, to: status, title: updated.title });
+    }
+  }
+  return updated;
 }
 
-export function setTaskStatus(taskId, status, sprintId) {
-  const t = getTask(taskId);
+export function setTaskStatus(taskId, status, sprintId, userId) {
+  const t = getTask(taskId, userId);
   if (!t) return null;
-  return updateTask(taskId, { ...t, status, sprintId: sprintId !== undefined ? sprintId : t.sprintId });
+  return updateTask(taskId, { ...t, status, sprintId: sprintId !== undefined ? sprintId : t.sprintId }, userId);
 }
 
-export function deleteTask(id) {
+export function deleteTask(id, userId) {
+  const t = getTask(id, userId);
+  if (!t) return;
   db.prepare('DELETE FROM tasks WHERE id = ?').run(id);
 }

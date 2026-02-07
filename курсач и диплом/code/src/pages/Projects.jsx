@@ -23,18 +23,28 @@ export default function Projects() {
     setModalOpen(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    saveProject({
-      id: editingId || genId(),
-      name: name.trim(),
-      description: description.trim(),
-    });
-    setModalOpen(false);
+    try {
+      await saveProject({
+        id: editingId || genId(),
+        name: name.trim(),
+        description: description.trim(),
+      });
+      setModalOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Удалить проект?')) deleteProject(id);
+  const handleDelete = async (id) => {
+    if (window.confirm('Удалить проект?')) {
+      try {
+        await deleteProject(id);
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (

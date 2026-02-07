@@ -25,8 +25,14 @@ db.exec(`
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     description TEXT DEFAULT '',
+    owner_id TEXT REFERENCES users(id),
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+`);
+try {
+  db.exec(`ALTER TABLE projects ADD COLUMN owner_id TEXT REFERENCES users(id)`);
+} catch (_) {}
+db.exec(`
 
   CREATE TABLE IF NOT EXISTS sprints (
     id TEXT PRIMARY KEY,
@@ -57,6 +63,38 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS idx_tasks_project ON tasks(project_id);
   CREATE INDEX IF NOT EXISTS idx_tasks_sprint ON tasks(sprint_id);
   CREATE INDEX IF NOT EXISTS idx_sprints_project ON sprints(project_id);
+
+  CREATE TABLE IF NOT EXISTS comments (
+    id TEXT PRIMARY KEY,
+    task_id TEXT NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    text TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_comments_task ON comments(task_id);
+
+  CREATE TABLE IF NOT EXISTS notifications (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES users(id),
+    type TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT DEFAULT '',
+    read_at TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id);
+
+  CREATE TABLE IF NOT EXISTS activity (
+    id TEXT PRIMARY KEY,
+    project_id TEXT NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    user_id TEXT REFERENCES users(id),
+    action TEXT NOT NULL,
+    entity_type TEXT NOT NULL,
+    entity_id TEXT,
+    details TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_activity_project ON activity(project_id);
 `);
 
 export default db;

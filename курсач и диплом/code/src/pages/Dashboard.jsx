@@ -1,8 +1,18 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { isApiEnabled } from '../api/client';
 import { useStorage } from '../context/StorageContext';
+import ActivityFeed from '../components/ActivityFeed';
 
 export default function Dashboard() {
   const { projects, sprints, tasks, getTasks } = useStorage();
+  const [activityProjectId, setActivityProjectId] = useState('');
+  useEffect(() => {
+    if (projects.length && !activityProjectId) setActivityProjectId(projects[0].id);
+    if (projects.length && activityProjectId && !projects.find((p) => p.id === activityProjectId)) {
+      setActivityProjectId(projects[0].id);
+    }
+  }, [projects, activityProjectId]);
   const doneTasks = tasks.filter((t) => t.status === 'done');
   const totalPoints = tasks.reduce((s, t) => s + (t.storyPoints || 0), 0);
   const donePoints = doneTasks.reduce((s, t) => s + (t.storyPoints || 0), 0);
@@ -58,6 +68,22 @@ export default function Dashboard() {
           )}
         </div>
       </div>
+      {isApiEnabled() && projects.length > 0 && (
+        <div className="dashboard-activity">
+          <select
+            value={activityProjectId}
+            onChange={(e) => setActivityProjectId(e.target.value)}
+            className="activity-project-select"
+          >
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          <ActivityFeed projectId={activityProjectId} />
+        </div>
+      )}
     </section>
   );
 }

@@ -1,22 +1,31 @@
 import { createContext, useContext, useCallback, useState, useEffect } from 'react';
+import { isApiEnabled, apiRequest, getToken } from '../api/client.js';
+import { useAuth } from './AuthContext.jsx';
 
 const STORAGE_KEYS = {
   projects: 'scrum_pm_projects',
   sprints: 'scrum_pm_sprints',
   tasks: 'scrum_pm_tasks',
+  comments: 'scrum_pm_comments',
 };
 
-function read(key) {
+// In local mode, data is stored per user so different accounts don't share projects/sprints/tasks
+function storageKey(key, userId) {
+  const base = STORAGE_KEYS[key];
+  return userId ? `${base}_${userId}` : base;
+}
+
+function read(key, userId) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEYS[key]);
+    const raw = localStorage.getItem(storageKey(key, userId));
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
 }
 
-function write(key, value) {
-  localStorage.setItem(STORAGE_KEYS[key], JSON.stringify(value));
+function write(key, value, userId) {
+  localStorage.setItem(storageKey(key, userId), JSON.stringify(value));
 }
 
 function genId() {
@@ -26,100 +35,231 @@ function genId() {
 const StorageContext = createContext(null);
 
 export function StorageProvider({ children }) {
+  const { currentUser } = useAuth();
   const [version, setVersion] = useState(0);
+  const [apiData, setApiData] = useState({ projects: [], sprints: [], tasks: [] });
+  const [apiLoading, setApiLoading] = useState(false);
+
+  const loadFromApi = useCallback(async () => {
+    if (!isApiEnabled() || !getToken()) return;
+    setApiLoading(true);
+    try {
+      const [projects, sprints, tasks] = await Promise.all([
+        apiRequest('/api/projects'),
+        apiRequest('/api/sprints'),
+        apiRequest('/api/tasks'),
+      ]);
+      setApiData({ projects: projects || [], sprints: sprints || [], tasks: tasks || [] });
+    } catch {
+      setApiData({ projects: [], sprints: [], tasks: [] });
+    } finally {
+      setApiLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isApiEnabled() && getToken()) loadFromApi();
+    else if (isApiEnabled()) setApiData({ projects: [], sprints: [], tasks: [] });
+  }, [isApiEnabled(), loadFromApi, version, currentUser?.id]);
+
+  const localUserId = !isApiEnabled() ? (currentUser?.id || '_guest') : '';
   const data = {
     _version: version,
-    projects: read('projects'),
-    sprints: read('sprints'),
-    tasks: read('tasks'),
+    projects: isApiEnabled() ? apiData.projects : read('projects', localUserId),
+    sprints: isApiEnabled() ? apiData.sprints : read('sprints', localUserId),
+    tasks: isApiEnabled() ? apiData.tasks : read('tasks', localUserId),
+    apiLoading: isApiEnabled() ? apiLoading : false,
   };
 
   const refresh = useCallback(() => setVersion((v) => v + 1), []);
 
   const saveProject = useCallback(
-    (project) => {
-      const projects = read('projects');
+    async (project) => {
+      if (isApiEnabled()) {
+        if (project.id) {
+          await apiRequest(`/api/projects/${project.id}`, { method: 'PATCH', body: JSON.stringify(project) });
+        } else {
+          await apiRequest('/api/projects', { method: 'POST', body: JSON.stringify(project) });
+        }
+        await loadFromApi();
+        return;
+      }
+      const projects = read('projects', localUserId);
       const idx = projects.findIndex((p) => p.id === project.id);
       if (idx >= 0) projects[idx] = project;
       else projects.push(project);
-      write('projects', projects);
+      write('projects', projects, localUserId);
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
   const deleteProject = useCallback(
-    (projectId) => {
-      write('projects', read('projects').filter((p) => p.id !== projectId));
-      write('sprints', read('sprints').filter((s) => s.projectId !== projectId));
-      write('tasks', read('tasks').filter((t) => t.projectId !== projectId));
+    async (projectId) => {
+      if (isApiEnabled()) {
+        await apiRequest(`/api/projects/${projectId}`, { method: 'DELETE' });
+        await loadFromApi();
+        return;
+      }
+      write('projects', read('projects', localUserId).filter((p) => p.id !== projectId), localUserId);
+      write('sprints', read('sprints', localUserId).filter((s) => s.projectId !== projectId), localUserId);
+      write('tasks', read('tasks', localUserId).filter((t) => t.projectId !== projectId), localUserId);
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
   const saveSprint = useCallback(
-    (sprint) => {
-      const sprints = read('sprints');
+    async (sprint) => {
+      if (isApiEnabled()) {
+        if (sprint.id) {
+          await apiRequest(`/api/sprints/${sprint.id}`, { method: 'PATCH', body: JSON.stringify(sprint) });
+        } else {
+          await apiRequest('/api/sprints', { method: 'POST', body: JSON.stringify(sprint) });
+        }
+        await loadFromApi();
+        return;
+      }
+      const sprints = read('sprints', localUserId);
       const idx = sprints.findIndex((s) => s.id === sprint.id);
       if (idx >= 0) sprints[idx] = sprint;
       else sprints.push(sprint);
-      write('sprints', sprints);
+      write('sprints', sprints, localUserId);
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
   const deleteSprint = useCallback(
-    (sprintId) => {
-      write('sprints', read('sprints').filter((s) => s.id !== sprintId));
+    async (sprintId) => {
+      if (isApiEnabled()) {
+        await apiRequest(`/api/sprints/${sprintId}`, { method: 'DELETE' });
+        await loadFromApi();
+        return;
+      }
+      write('sprints', read('sprints', localUserId).filter((s) => s.id !== sprintId), localUserId);
       write(
         'tasks',
-        read('tasks').map((t) => (t.sprintId === sprintId ? { ...t, sprintId: null } : t))
+        read('tasks', localUserId).map((t) => (t.sprintId === sprintId ? { ...t, sprintId: null } : t)),
+        localUserId
       );
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
   const saveTask = useCallback(
-    (task) => {
-      const tasks = read('tasks');
-      const idx = tasks.findIndex((t) => t.id === task.id);
-      if (idx >= 0) tasks[idx] = task;
-      else tasks.push(task);
-      write('tasks', tasks);
+    async (task) => {
+      if (isApiEnabled()) {
+        if (task.id) {
+          await apiRequest(`/api/tasks/${task.id}`, { method: 'PATCH', body: JSON.stringify(task) });
+        } else {
+          await apiRequest('/api/tasks', { method: 'POST', body: JSON.stringify(task) });
+        }
+        await loadFromApi();
+        return;
+      }
+      const tasks = read('tasks', localUserId);
+      const full = { ...task, assigneeId: task.assigneeId ?? null };
+      const idx = tasks.findIndex((t) => t.id === full.id);
+      if (idx >= 0) tasks[idx] = full;
+      else tasks.push(full);
+      write('tasks', tasks, localUserId);
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
   const setTaskStatus = useCallback(
-    (taskId, status, sprintId) => {
-      const tasks = read('tasks');
+    async (taskId, status, sprintId) => {
+      if (isApiEnabled()) {
+        await apiRequest(`/api/tasks/${taskId}/status`, {
+          method: 'POST',
+          body: JSON.stringify({ status, sprintId }),
+        });
+        await loadFromApi();
+        return;
+      }
+      const tasks = read('tasks', localUserId);
       const t = tasks.find((x) => x.id === taskId);
       if (!t) return;
       t.status = status;
       if (sprintId !== undefined) t.sprintId = sprintId ?? null;
       if (status === 'in_progress' && !t.startedAt) t.startedAt = new Date().toISOString();
       if (status === 'done') t.completedAt = new Date().toISOString();
-      write('tasks', tasks);
+      write('tasks', tasks, localUserId);
       refresh();
     },
-    [refresh]
+    [refresh, loadFromApi, localUserId]
   );
 
-  const getProjects = useCallback(() => read('projects'), []);
-  const getSprints = useCallback((projectId) => {
-    const all = read('sprints');
-    return projectId ? all.filter((s) => s.projectId === projectId) : all;
-  }, []);
-  const getTasks = useCallback((projectId, sprintId) => {
-    const all = read('tasks').filter((t) => t.projectId === projectId);
-    if (sprintId === undefined) return all;
-    if (sprintId === null) return all.filter((t) => !t.sprintId);
-    return all.filter((t) => t.sprintId === sprintId);
-  }, []);
+  const getProjects = useCallback(
+    () => (isApiEnabled() ? apiData.projects : read('projects', localUserId)),
+    [isApiEnabled(), apiData.projects, localUserId]
+  );
+  const getSprints = useCallback(
+    (projectId) => {
+      const all = isApiEnabled() ? apiData.sprints : read('sprints', localUserId);
+      return projectId ? all.filter((s) => s.projectId === projectId) : all;
+    },
+    [isApiEnabled(), apiData.sprints, localUserId]
+  );
+  const getTasks = useCallback(
+    (projectId, sprintId) => {
+      const all = (isApiEnabled() ? apiData.tasks : read('tasks', localUserId)).filter((t) => t.projectId === projectId);
+      if (sprintId === undefined) return all;
+      if (sprintId === null) return all.filter((t) => !t.sprintId);
+      return all.filter((t) => t.sprintId === sprintId);
+    },
+    [isApiEnabled(), apiData.tasks, localUserId]
+  );
+
+  const getComments = useCallback(
+    async (taskId) => {
+      if (isApiEnabled()) {
+        try {
+          return await apiRequest(`/api/comments/task/${taskId}`);
+        } catch {
+          return [];
+        }
+      }
+      const comments = read('comments', localUserId);
+      return comments.filter((c) => c.taskId === taskId).sort((a, b) => (a.createdAt || '').localeCompare(b.createdAt || ''));
+    },
+    [localUserId]
+  );
+
+  const addComment = useCallback(
+    async (taskId, text) => {
+      const trimmed = (text || '').trim();
+      if (!trimmed) return null;
+      if (isApiEnabled()) {
+        try {
+          const comment = await apiRequest(`/api/comments/task/${taskId}`, {
+            method: 'POST',
+            body: JSON.stringify({ text: trimmed }),
+          });
+          return comment;
+        } catch (err) {
+          console.error(err);
+          return null;
+        }
+      }
+      const comments = read('comments', localUserId);
+      const comment = {
+        id: genId(),
+        taskId,
+        userId: currentUser?.id || '',
+        text: trimmed,
+        createdAt: new Date().toISOString(),
+      };
+      comments.push(comment);
+      write('comments', comments, localUserId);
+      refresh();
+      return comment;
+    },
+    [refresh, localUserId, currentUser?.id]
+  );
 
   const value = {
     ...data,
@@ -133,6 +273,9 @@ export function StorageProvider({ children }) {
     getProjects,
     getSprints,
     getTasks,
+    getComments,
+    addComment,
+    loadFromApi,
   };
 
   return <StorageContext.Provider value={value}>{children}</StorageContext.Provider>;

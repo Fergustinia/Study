@@ -1,4 +1,3 @@
-# Scrum PM — Server (Section 4.1)
 
 REST API, JWT authentication, business logic and analytics layer.
 
@@ -24,6 +23,7 @@ API base: `http://localhost:3001`
 - `POST /api/auth/register` — body: `{ name, email?, password }` → `{ user, token }`
 - `POST /api/auth/login` — body: `{ nameOrEmail, password }` → `{ user, token }`
 - `GET /api/auth/me` — header `Authorization: Bearer <token>` → `{ user }`
+- `PATCH /api/auth/profile` — protected; body `{ name?, email? }` → `{ user }`
 
 ### Protected (header: `Authorization: Bearer <token>`)
 
@@ -37,3 +37,7 @@ API base: `http://localhost:3001`
   - `GET /api/analytics/lead-time?projectId=&sprintId=`
   - `GET /api/analytics/sprint-progress?projectId=`
   - `GET /api/analytics/done-by-type?projectId=`
+- **Users (for assignee):** `GET /api/auth/users` — list users (id, name, email).
+- **Comments:** `GET /api/comments/task/:taskId`, `POST /api/comments/task/:taskId` body `{ text }`.
+- **Notifications:** `GET /api/notifications`, `PATCH /api/notifications/:id/read`, `POST /api/notifications/read-all`.
+- **Activity:** `GET /api/activity?projectId=`

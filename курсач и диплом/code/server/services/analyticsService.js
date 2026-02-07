@@ -4,8 +4,10 @@
  */
 
 import db from '../db.js';
+import { isProjectOwnedBy } from './projectService.js';
 
-export function getVelocityBySprint(projectId) {
+export function getVelocityBySprint(projectId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return [];
   const sprints = db.prepare('SELECT * FROM sprints WHERE project_id = ? ORDER BY start_date').all(projectId);
   return sprints.map((s) => {
     const tasks = db.prepare('SELECT * FROM tasks WHERE sprint_id = ? AND status = ?').all(s.id, 'done');
@@ -14,9 +16,9 @@ export function getVelocityBySprint(projectId) {
   });
 }
 
-export function getBurndown(sprintId) {
+export function getBurndown(sprintId, userId) {
   const sprint = db.prepare('SELECT * FROM sprints WHERE id = ?').get(sprintId);
-  if (!sprint) return null;
+  if (!sprint || !isProjectOwnedBy(sprint.project_id, userId)) return null;
   const tasks = db.prepare('SELECT * FROM tasks WHERE sprint_id = ?').all(sprintId);
   const totalPoints = tasks.reduce((s, t) => s + (t.story_points || 0), 0);
   const start = new Date(sprint.start_date);
@@ -43,7 +45,8 @@ export function getBurndown(sprintId) {
   return { sprintId, name: sprint.name, totalPoints, days, ideal, actual };
 }
 
-export function getCycleTime(projectId, sprintId) {
+export function getCycleTime(projectId, sprintId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return { avgDays: null, count: 0 };
   let tasks;
   if (sprintId) {
     tasks = db.prepare('SELECT * FROM tasks WHERE project_id = ? AND sprint_id = ? AND status = ? AND started_at IS NOT NULL AND completed_at IS NOT NULL').all(projectId, sprintId, 'done');
@@ -55,7 +58,8 @@ export function getCycleTime(projectId, sprintId) {
   return { avgDays: avg !== null ? Math.round(avg * 10) / 10 : null, count: times.length };
 }
 
-export function getLeadTime(projectId, sprintId) {
+export function getLeadTime(projectId, sprintId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return { avgDays: null, count: 0 };
   let tasks;
   if (sprintId) {
     tasks = db.prepare('SELECT * FROM tasks WHERE project_id = ? AND sprint_id = ? AND status = ? AND created_at IS NOT NULL AND completed_at IS NOT NULL').all(projectId, sprintId, 'done');
@@ -67,7 +71,8 @@ export function getLeadTime(projectId, sprintId) {
   return { avgDays: avg !== null ? Math.round(avg * 10) / 10 : null, count: times.length };
 }
 
-export function getSprintProgress(projectId) {
+export function getSprintProgress(projectId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return [];
   const sprints = db.prepare('SELECT * FROM sprints WHERE project_id = ? ORDER BY start_date').all(projectId);
   return sprints.map((s) => {
     const all = db.prepare('SELECT * FROM tasks WHERE sprint_id = ?').all(s.id);
@@ -91,7 +96,8 @@ export function getSprintProgress(projectId) {
   });
 }
 
-export function getDoneByType(projectId) {
+export function getDoneByType(projectId, userId) {
+  if (!isProjectOwnedBy(projectId, userId)) return { task: 0, bug: 0, improvement: 0 };
   const tasks = db.prepare('SELECT type FROM tasks WHERE project_id = ? AND status = ?').all(projectId, 'done');
   const out = { task: 0, bug: 0, improvement: 0 };
   tasks.forEach((t) => {

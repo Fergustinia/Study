@@ -29,3 +29,24 @@ export function loginByNameOrEmail(nameOrEmail, password) {
 export function getUserById(id) {
   return db.prepare('SELECT id, name, email FROM users WHERE id = ?').get(id) || null;
 }
+
+/** List all users (id, name, email) for assignee selection. */
+export function listUsers() {
+  const rows = db.prepare('SELECT id, name, email FROM users ORDER BY name').all();
+  return rows;
+}
+
+export function updateProfile(userId, updates) {
+  const name = updates.name !== undefined ? (updates.name || '').trim() : null;
+  const email = updates.email !== undefined ? (updates.email || '').trim() : null;
+  if (name === null && email === null) return getUserById(userId);
+  const user = getUserById(userId);
+  if (!user) return null;
+  if (name !== null) {
+    db.prepare('UPDATE users SET name = ? WHERE id = ?').run(name, userId);
+  }
+  if (email !== null) {
+    db.prepare('UPDATE users SET email = ? WHERE id = ?').run(email, userId);
+  }
+  return getUserById(userId);
+}

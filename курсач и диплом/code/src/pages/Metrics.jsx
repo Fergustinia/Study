@@ -28,6 +28,17 @@ export default function Metrics() {
   });
   const avgCycleDays = cycleTimes.length ? (cycleTimes.reduce((a, b) => a + b, 0) / cycleTimes.length).toFixed(1) : null;
 
+  // Lead time: average days from createdAt to completedAt for done tasks
+  const doneWithLead = projectTasksForCycle.filter(
+    (t) => t.status === 'done' && t.createdAt && t.completedAt
+  );
+  const leadTimes = doneWithLead.map((t) => {
+    const start = new Date(t.createdAt).getTime();
+    const end = new Date(t.completedAt).getTime();
+    return (end - start) / (24 * 60 * 60 * 1000);
+  });
+  const avgLeadDays = leadTimes.length ? (leadTimes.reduce((a, b) => a + b, 0) / leadTimes.length).toFixed(1) : null;
+
   // By type (task/bug/improvement) for selected project
   const allProjectTasks = projectId ? tasks.filter((t) => t.projectId === projectId) : [];
   const doneByType = { task: 0, bug: 0, improvement: 0 };
@@ -81,6 +92,44 @@ export default function Metrics() {
     }
   }
 
+  const exportCsv = () => {
+    const project = projects.find((p) => p.id === projectId);
+    const rows = [
+      ['Scrum PM — отчёт по метрикам'],
+      ['Проект', project?.name || projectId || '—'],
+      ['Спринт', sprintId ? sprints.find((s) => s.id === sprintId)?.name || sprintId : 'Все спринты'],
+      [],
+      ['Метрика', 'Значение'],
+      ['Cycle time (дн.)', avgCycleDays != null ? avgCycleDays : '—'],
+      ['Lead time (дн.)', avgLeadDays != null ? avgLeadDays : '—'],
+      ['Завершено: задача', doneByType.task],
+      ['Завершено: баг', doneByType.bug],
+      ['Завершено: улучшение', doneByType.improvement],
+      [],
+      ['Velocity по спринтам'],
+      ...velocityData.map((d) => [d.name, d.value]),
+      [],
+      ['Прогресс спринтов', 'Задач %', 'SP %'],
+      ...sprints.map((s) => {
+        const taskList = getTasks(projectId, s.id);
+        const total = taskList.length;
+        const done = taskList.filter((t) => t.status === 'done').length;
+        const totalSp = taskList.reduce((sum, t) => sum + (t.storyPoints || 0), 0);
+        const doneSp = taskList.filter((t) => t.status === 'done').reduce((sum, t) => sum + (t.storyPoints || 0), 0);
+        const pct = total ? Math.round((done / total) * 100) : 0;
+        const spPct = totalSp ? Math.round((doneSp / totalSp) * 100) : 0;
+        return [s.name, `${pct}%`, `${spPct}%`];
+      }),
+    ];
+    const csv = rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `scrum-metrics-${project?.name || projectId || 'report'}-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
   return (
     <section className="view">
       <h1>Scrum-метрики</h1>
@@ -101,6 +150,9 @@ export default function Metrics() {
             </option>
           ))}
         </select>
+        <button type="button" className="btn btn-secondary" onClick={exportCsv} disabled={!projectId}>
+          Скачать отчёт (CSV)
+        </button>
       </div>
       <div className="metrics-grid">
         <div className="metric-card">
@@ -153,6 +205,19 @@ export default function Metrics() {
               <span className="metric-number">{avgCycleDays} дн.</span>
             ) : (
               <span className="empty-state">Нет данных (задачи со статусом «В работе» → «Готово»)</span>
+            )}
+          </div>
+        </div>
+        <div className="metric-card">
+          <h3>Lead time</h3>
+          <p className="metric-desc">Среднее время от создания до «Готово» (дней)</p>
+          <div className="metric-value">
+            {!projectId ? (
+              <span className="empty-state">Выберите проект</span>
+            ) : avgLeadDays != null ? (
+              <span className="metric-number">{avgLeadDays} дн.</span>
+            ) : (
+              <span className="empty-state">Нет данных</span>
             )}
           </div>
         </div>

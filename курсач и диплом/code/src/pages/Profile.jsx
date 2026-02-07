@@ -8,6 +8,7 @@ export default function Profile() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (currentUser) {
@@ -16,13 +17,18 @@ export default function Profile() {
     }
   }, [currentUser]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     const trimmed = name.trim();
     if (!trimmed) return;
-    updateProfile({ name: trimmed, email: email.trim() });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      await updateProfile({ name: trimmed, email: email.trim() });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      setError(err.message || 'Ошибка сохранения');
+    }
   };
 
   const handleLogout = () => {
@@ -59,6 +65,7 @@ export default function Profile() {
             />
           </label>
           {saved && <p className="profile-saved">Сохранено</p>}
+          {error && <p className="login-error">{error}</p>}
           <div className="form-actions">
             <button type="submit" className="btn btn-primary">
               Сохранить

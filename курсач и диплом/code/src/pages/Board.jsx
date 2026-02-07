@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useStorage } from '../context/StorageContext';
+import { useAuth } from '../context/AuthContext';
 import Modal from '../components/Modal';
+import TaskComments from '../components/TaskComments';
 
 const COLUMNS = [
   { id: 'backlog', title: 'Бэклог' },
@@ -22,8 +25,10 @@ const TASK_TYPES = [
 ];
 
 export default function Board() {
+  const [searchParams] = useSearchParams();
   const { projects, getSprints, getTasks, saveTask, setTaskStatus, genId, tasks } = useStorage();
-  const [projectId, setProjectId] = useState('');
+  const { users } = useAuth();
+  const [projectId, setProjectId] = useState(searchParams.get('project') || '');
   const [sprintId, setSprintId] = useState('');
   const [taskModalOpen, setTaskModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -34,8 +39,27 @@ export default function Board() {
   const [taskPoints, setTaskPoints] = useState(1);
   const [taskPriority, setTaskPriority] = useState('medium');
   const [taskType, setTaskType] = useState('task');
+  const [taskAssigneeId, setTaskAssigneeId] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [filterType, setFilterType] = useState('');
+  const [filterAssigneeId, setFilterAssigneeId] = useState('');
+
+  const openedTaskFromUrl = useRef(false);
+
+  useEffect(() => {
+    const p = searchParams.get('project');
+    if (p && p !== projectId) setProjectId(p);
+  }, [searchParams]);
+
+  useEffect(() => {
+    const taskId = searchParams.get('task');
+    if (!taskId || openedTaskFromUrl.current) return;
+    const task = tasks.find((t) => t.id === taskId);
+    if (task && task.projectId === projectId) {
+      openedTaskFromUrl.current = true;
+      openTaskForm(task.sprintId, task.status, task);
+    }
+  }, [searchParams, projectId, tasks]);
 
   const sprints = getSprints(projectId);
   const backlogRaw = getTasks(projectId, null);
@@ -44,8 +68,10 @@ export default function Board() {
     list.filter((t) => {
       if (filterPriority && (t.priority || 'medium') !== filterPriority) return false;
       if (filterType && (t.type || 'task') !== filterType) return false;
+      if (filterAssigneeId && (t.assigneeId || '') !== filterAssigneeId) return false;
       return true;
     });
+  const getAssigneeName = (id) => (id ? (users.find((u) => u.id === id)?.name || id) : null);
   const backlog = filterTasks(backlogRaw);
   const sprintTasks = filterTasks(sprintTasksRaw);
   const byStatus = (arr, status) => arr.filter((t) => t.status === status);
@@ -58,29 +84,35 @@ export default function Board() {
     setTaskPoints(task?.storyPoints ?? 1);
     setTaskPriority(task?.priority ?? 'medium');
     setTaskType(task?.type ?? 'task');
+    setTaskAssigneeId(task?.assigneeId ?? '');
     setEditingTask(task);
     setTaskModalOpen(true);
   };
 
-  const handleTaskSubmit = (e) => {
+  const handleTaskSubmit = async (e) => {
     e.preventDefault();
     const existing = tasks.find((t) => t.id === editingTask?.id);
     const isNew = !editingTask?.id;
-    saveTask({
-      id: editingTask?.id || genId(),
-      projectId: taskProjectId,
-      sprintId: taskSprintId || null,
-      title: taskTitle.trim(),
-      description: taskDesc.trim(),
-      storyPoints: parseInt(taskPoints, 10) || 0,
-      priority: taskPriority,
-      type: taskType,
-      status: existing?.status ?? 'todo',
-      completedAt: existing?.completedAt,
-      startedAt: existing?.startedAt,
-      createdAt: existing?.createdAt || (isNew ? new Date().toISOString() : undefined),
-    });
-    setTaskModalOpen(false);
+    try {
+      await saveTask({
+        id: editingTask?.id || genId(),
+        projectId: taskProjectId,
+        sprintId: taskSprintId || null,
+        title: taskTitle.trim(),
+        description: taskDesc.trim(),
+        storyPoints: parseInt(taskPoints, 10) || 0,
+        priority: taskPriority,
+        type: taskType,
+        assigneeId: taskAssigneeId || null,
+        status: existing?.status ?? 'todo',
+        completedAt: existing?.completedAt,
+        startedAt: existing?.startedAt,
+        createdAt: existing?.createdAt || (isNew ? new Date().toISOString() : undefined),
+      });
+      setTaskModalOpen(false);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleDragStart = (e, taskId) => {
@@ -88,13 +120,17 @@ export default function Board() {
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDrop = (e, columnStatus) => {
+  const handleDrop = async (e, columnStatus) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData('text/plain');
     if (!taskId) return;
-    if (columnStatus === 'backlog') setTaskStatus(taskId, 'todo', null);
-    else if (sprintId) setTaskStatus(taskId, columnStatus, sprintId);
-    else setTaskStatus(taskId, columnStatus);
+    try {
+      if (columnStatus === 'backlog') await setTaskStatus(taskId, 'todo', null);
+      else if (sprintId) await setTaskStatus(taskId, columnStatus, sprintId);
+      else await setTaskStatus(taskId, columnStatus);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -147,6 +183,14 @@ export default function Board() {
               </option>
             ))}
           </select>
+          <select value={filterAssigneeId} onChange={(e) => setFilterAssigneeId(e.target.value)} title="Исполнитель">
+            <option value="">Все исполнители</option>
+            {users.map((u) => (
+              <option key={u.id} value={u.id}>
+                {u.name}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="board-container">
@@ -177,7 +221,12 @@ export default function Board() {
                     </span>
                   </div>
                   <div>{t.title}</div>
-                  <div className="points">{t.storyPoints || 0} SP</div>
+                  <div className="task-card-footer">
+                    <span className="points">{t.storyPoints || 0} SP</span>
+                    {getAssigneeName(t.assigneeId) && (
+                      <span className="task-assignee" title="Исполнитель">{getAssigneeName(t.assigneeId)}</span>
+                    )}
+                  </div>
                 </div>
               ))}
               {showAddInColumn(col.id) && projectId && (
@@ -234,6 +283,17 @@ export default function Board() {
             Story points
             <input type="number" min={0} value={taskPoints} onChange={(e) => setTaskPoints(e.target.value)} />
           </label>
+          <label>
+            Исполнитель
+            <select value={taskAssigneeId} onChange={(e) => setTaskAssigneeId(e.target.value)}>
+              <option value="">— не назначен —</option>
+              {users.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.name}
+                </option>
+              ))}
+            </select>
+          </label>
           <div className="form-actions">
             <button type="submit" className="btn btn-primary">
               Сохранить
@@ -243,6 +303,7 @@ export default function Board() {
             </button>
           </div>
         </form>
+        {editingTask?.id && <TaskComments taskId={editingTask.id} />}
       </Modal>
     </section>
   );
