@@ -1,0 +1,17 @@
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\bin\Debug\net8.0-windows\WinFormsApp1.exe
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\bin\Debug\net8.0-windows\WinFormsApp1.deps.json
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\bin\Debug\net8.0-windows\WinFormsApp1.runtimeconfig.json
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\bin\Debug\net8.0-windows\WinFormsApp1.dll
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\bin\Debug\net8.0-windows\WinFormsApp1.pdb
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.csproj.GenerateResource.cache
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.GeneratedMSBuildEditorConfig.editorconfig
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.AssemblyInfoInputs.cache
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.AssemblyInfo.cs
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.csproj.CoreCompileInputs.cache
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.sourcelink.json
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.dll
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\refint\WinFormsApp1.dll
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.pdb
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\WinFormsApp1.genruntimeconfig.cache
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\ref\WinFormsApp1.dll
+C:\Labs\Study\3 курс\имитационка\lab 1\WinFormsApp1\obj\Debug\net8.0-windows\FlightSimulation.Form1.resources

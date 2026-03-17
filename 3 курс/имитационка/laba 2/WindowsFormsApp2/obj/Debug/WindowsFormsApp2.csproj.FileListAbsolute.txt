@@ -1,0 +1,10 @@
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.csproj.AssemblyReference.cache
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\HeatEquationApp.Form1.resources
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.Properties.Resources.resources
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.csproj.GenerateResource.cache
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.csproj.CoreCompileInputs.cache
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\bin\Debug\WindowsFormsApp2.exe.config
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\bin\Debug\WindowsFormsApp2.exe
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\bin\Debug\WindowsFormsApp2.pdb
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.exe
+C:\Labs\Study\3 курс\имитационка\laba 2\WindowsFormsApp2\obj\Debug\WindowsFormsApp2.pdb

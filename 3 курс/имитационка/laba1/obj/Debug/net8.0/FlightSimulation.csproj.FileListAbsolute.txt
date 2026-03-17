@@ -1,0 +1,15 @@
+C:\Labs\Study\3 курс\имитационка\laba1\bin\Debug\net8.0\FlightSimulation.exe
+C:\Labs\Study\3 курс\имитационка\laba1\bin\Debug\net8.0\FlightSimulation.deps.json
+C:\Labs\Study\3 курс\имитационка\laba1\bin\Debug\net8.0\FlightSimulation.runtimeconfig.json
+C:\Labs\Study\3 курс\имитационка\laba1\bin\Debug\net8.0\FlightSimulation.dll
+C:\Labs\Study\3 курс\имитационка\laba1\bin\Debug\net8.0\FlightSimulation.pdb
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.GeneratedMSBuildEditorConfig.editorconfig
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.AssemblyInfoInputs.cache
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.AssemblyInfo.cs
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.csproj.CoreCompileInputs.cache
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.sourcelink.json
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.dll
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\refint\FlightSimulation.dll
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.pdb
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\FlightSimulation.genruntimeconfig.cache
+C:\Labs\Study\3 курс\имитационка\laba1\obj\Debug\net8.0\ref\FlightSimulation.dll

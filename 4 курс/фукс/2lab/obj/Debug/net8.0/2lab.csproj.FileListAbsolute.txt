@@ -1,0 +1,15 @@
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.GeneratedMSBuildEditorConfig.editorconfig
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.AssemblyInfoInputs.cache
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.AssemblyInfo.cs
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.csproj.CoreCompileInputs.cache
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.sourcelink.json
+C:\Labs\Study\4 курс\фукс\2lab\bin\Debug\net8.0\2lab.exe
+C:\Labs\Study\4 курс\фукс\2lab\bin\Debug\net8.0\2lab.deps.json
+C:\Labs\Study\4 курс\фукс\2lab\bin\Debug\net8.0\2lab.runtimeconfig.json
+C:\Labs\Study\4 курс\фукс\2lab\bin\Debug\net8.0\2lab.dll
+C:\Labs\Study\4 курс\фукс\2lab\bin\Debug\net8.0\2lab.pdb
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.dll
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\refint\2lab.dll
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.pdb
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\2lab.genruntimeconfig.cache
+C:\Labs\Study\4 курс\фукс\2lab\obj\Debug\net8.0\ref\2lab.dll

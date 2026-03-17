@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "dgSpecHash": "l87nOAoJ5Eo=",
+  "success": true,
+  "projectFilePath": "C:\\Labs\\Study\\3 курс\\имитационка\\laba1\\FlightSimulation.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ВЫХУХОЛЬ\\.nuget\\packages\\system.windows.forms.datavisualization\\1.0.0-prerelease.20110.1\\system.windows.forms.datavisualization.1.0.0-prerelease.20110.1.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Произошла ошибка при получении данных уязвимости пакета: Не удалось загрузить индекс службы для источника https://api.nuget.org/v3/index.json."
+    }
+  ]
+}
