@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/shared/stat-card";
+import { CreateProjectForm } from "@/components/projects/create-project-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function getStatusLabel(status: "ACTIVE" | "ARCHIVED") {
@@ -27,10 +29,23 @@ export default async function ProjectsPage() {
     },
   });
 
-  const activeProjects = projects.filter((project) => project.status === "ACTIVE").length;
-  const archivedProjects = projects.filter((project) => project.status === "ARCHIVED").length;
-  const totalTasks = projects.reduce((acc, project) => acc + project._count.tasks, 0);
-  const totalSprints = projects.reduce((acc, project) => acc + project._count.sprints, 0);
+  const activeProjects = projects.filter(
+    (project) => project.status === "ACTIVE"
+  ).length;
+
+  const archivedProjects = projects.filter(
+    (project) => project.status === "ARCHIVED"
+  ).length;
+
+  const totalTasks = projects.reduce(
+    (acc, project) => acc + project._count.tasks,
+    0
+  );
+
+  const totalSprints = projects.reduce(
+    (acc, project) => acc + project._count.sprints,
+    0
+  );
 
   return (
     <div className="space-y-6">
@@ -66,61 +81,80 @@ export default async function ProjectsPage() {
 
       <section className="grid gap-4 xl:grid-cols-3">
         <div className="grid gap-4 xl:col-span-2">
-          {projects.map((project) => (
-            <Card key={project.id} className="rounded-2xl">
-              <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
-                <div className="space-y-1">
-                  <CardTitle className="text-xl">{project.name}</CardTitle>
-                  <p className="text-sm text-neutral-500">
-                    {project.description || "Без описания"}
-                  </p>
-                </div>
-
-                <span
-                  className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(project.status)}`}
-                >
-                  {getStatusLabel(project.status)}
-                </span>
-              </CardHeader>
-
-              <CardContent className="grid gap-3 text-sm text-neutral-600 md:grid-cols-4">
-                <div>
-                  <p className="text-neutral-400">Ключ</p>
-                  <p className="font-medium text-black">{project.key}</p>
-                </div>
-
-                <div>
-                  <p className="text-neutral-400">Задачи</p>
-                  <p className="font-medium text-black">{project._count.tasks}</p>
-                </div>
-
-                <div>
-                  <p className="text-neutral-400">Спринты</p>
-                  <p className="font-medium text-black">{project._count.sprints}</p>
-                </div>
-
-                <div>
-                  <p className="text-neutral-400">Создан</p>
-                  <p className="font-medium text-black">
-                    {new Date(project.createdAt).toLocaleDateString("ru-RU")}
-                  </p>
-                </div>
+          {projects.length === 0 ? (
+            <Card className="rounded-2xl border-dashed">
+              <CardContent className="flex min-h-[220px] flex-col items-center justify-center text-center">
+                <h3 className="text-lg font-semibold">Проектов пока нет</h3>
+                <p className="mt-2 max-w-md text-sm text-neutral-500">
+                  Создай первый проект справа, чтобы начать работу со спринтами,
+                  задачами и командной нагрузкой.
+                </p>
               </CardContent>
             </Card>
-          ))}
+          ) : (
+            projects.map((project) => (
+              <Link
+                key={project.id}
+                href={`/projects/${project.id}`}
+                className="block"
+              >
+                <Card className="rounded-2xl transition hover:border-black/20 hover:shadow-md">
+                  <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
+                    <div className="space-y-1">
+                      <CardTitle className="text-xl">{project.name}</CardTitle>
+                      <p className="text-sm text-neutral-500">
+                        {project.description || "Без описания"}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${getStatusClasses(
+                        project.status
+                      )}`}
+                    >
+                      {getStatusLabel(project.status)}
+                    </span>
+                  </CardHeader>
+
+                  <CardContent className="grid gap-3 text-sm text-neutral-600 md:grid-cols-4">
+                    <div>
+                      <p className="text-neutral-400">Ключ</p>
+                      <p className="font-medium text-black">{project.key}</p>
+                    </div>
+
+                    <div>
+                      <p className="text-neutral-400">Задачи</p>
+                      <p className="font-medium text-black">
+                        {project._count.tasks}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-neutral-400">Спринты</p>
+                      <p className="font-medium text-black">
+                        {project._count.sprints}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-neutral-400">Создан</p>
+                      <p className="font-medium text-black">
+                        {new Date(project.createdAt).toLocaleDateString("ru-RU")}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))
+          )}
         </div>
 
         <Card className="rounded-2xl">
           <CardHeader>
-            <CardTitle>Быстрые действия</CardTitle>
+            <CardTitle>Новый проект</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <button className="w-full rounded-xl bg-black px-4 py-2 text-sm font-medium text-white">
-              Новый проект
-            </button>
-            <button className="w-full rounded-xl border px-4 py-2 text-sm font-medium">
-              Открыть backlog
-            </button>
+          <CardContent>
+            <CreateProjectForm />
           </CardContent>
         </Card>
       </section>

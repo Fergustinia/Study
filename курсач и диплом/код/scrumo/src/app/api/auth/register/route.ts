@@ -1,33 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { hash } from "bcryptjs";
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 
-const registerSchema = z.object({
-  name: z.string().min(2, "Имя должно содержать минимум 2 символа"),
-  email: z.email("Некорректный email"),
-  password: z.string().min(6, "Пароль должен содержать минимум 6 символов"),
-});
-
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const parsed = registerSchema.safeParse(body);
+    console.log("REGISTER BODY:", body);
 
-    if (!parsed.success) {
+    const name = String(body?.name ?? "").trim();
+    const email = String(body?.email ?? "").trim().toLowerCase();
+    const password = String(body?.password ?? "").trim();
+
+    if (!name || !email || !password) {
+      console.log("REGISTER FAIL: empty fields");
       return NextResponse.json(
-        {
-          error: parsed.error.issues[0]?.message ?? "Некорректные данные",
-        },
+        { error: "Все поля обязательны" },
         { status: 400 }
       );
     }
 
-    const { name, email, password } = parsed.data;
-
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+
+    console.log("EXISTING USER:", existingUser);
 
     if (existingUser) {
       return NextResponse.json(
@@ -38,23 +34,35 @@ export async function POST(request: NextRequest) {
 
     const passwordHash = await hash(password, 10);
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         email,
         passwordHash,
+        role: "MEMBER",
       },
     });
 
+    console.log("USER CREATED:", user);
+
+    const allUsers = await prisma.user.findMany();
+    console.log("ALL USERS AFTER CREATE:", allUsers);
+
     return NextResponse.json(
-      { message: "Пользователь успешно создан" },
+      {
+        message: "Пользователь успешно создан",
+        user,
+      },
       { status: 201 }
     );
   } catch (error) {
-    console.error("REGISTER_ERROR", error);
+    console.error("REGISTER ERROR:", error);
 
     return NextResponse.json(
-      { error: "Не удалось зарегистрировать пользователя" },
+      {
+        error:
+          error instanceof Error ? error.message : "Unknown server error",
+      },
       { status: 500 }
     );
   }

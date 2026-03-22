@@ -17,20 +17,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Пароль", type: "password" },
       },
       async authorize(credentials) {
-        const email = credentials?.email as string | undefined;
-        const password = credentials?.password as string | undefined;
+        const email = String(credentials?.email ?? "").trim().toLowerCase();
+        const password = String(credentials?.password ?? "");
 
-        if (!email || !password) return null;
+        console.log("LOGIN ATTEMPT:", {
+          email,
+          passwordLength: password.length,
+        });
 
         const user = await prisma.user.findUnique({
           where: { email },
         });
 
-        if (!user?.passwordHash) return null;
+        console.log("USER FOUND:", user);
+
+        if (!user?.passwordHash) {
+          console.log("LOGIN FAIL: no passwordHash");
+          return null;
+        }
 
         const isValid = await compare(password, user.passwordHash);
 
-        if (!isValid) return null;
+        console.log("PASSWORD MATCH:", isValid);
+
+        if (!isValid) {
+          console.log("LOGIN FAIL: password mismatch");
+          return null;
+        }
 
         return {
           id: user.id,
@@ -46,7 +59,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = (user as { role?: string }).role;
+        token.role = user.role;
       }
       return token;
     },
