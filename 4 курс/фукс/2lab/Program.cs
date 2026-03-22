@@ -108,8 +108,8 @@ namespace KnapsackProblem
                     if (items[i - 1].Weight <= w)
                     {
                         dp[i, w] = Math.Max(
-                            dp[i - 1, w],
-                            dp[i - 1, w - items[i - 1].Weight] + items[i - 1].Value
+                            dp[i - 1, w],// Не берем
+                            dp[i - 1, w - items[i - 1].Weight] + items[i - 1].Value //Берем
                         );
                     }
                     else
