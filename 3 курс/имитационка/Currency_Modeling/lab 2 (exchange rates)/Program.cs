@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace lab_2__exchange_rates_
+namespace HeatEquationFiniteDifference
 {
     internal static class Program
     {

@@ -1,0 +1,10 @@
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\bin\Debug\lab4 (2d cellular machine).exe.config
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\bin\Debug\lab4 (2d cellular machine).exe
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\bin\Debug\lab4 (2d cellular machine).pdb
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4 (2d cellular machine).csproj.AssemblyReference.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4__2d_cellular_machine_.Form1.resources
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4__2d_cellular_machine_.Properties.Resources.resources
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4 (2d cellular machine).csproj.GenerateResource.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4 (2d cellular machine).csproj.CoreCompileInputs.cache
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4 (2d cellular machine).exe
+C:\Users\ВЫХУХОЛЬ\Desktop\lab 4\lab4 (2d cellular machine)\obj\Debug\lab4 (2d cellular machine).pdb

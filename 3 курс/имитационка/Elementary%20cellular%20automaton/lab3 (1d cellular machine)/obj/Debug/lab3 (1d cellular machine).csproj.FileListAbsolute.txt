@@ -28,3 +28,13 @@ C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab3\Elementary cellular 
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab3\Elementary cellular automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).csproj.CoreCompileInputs.cache
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab3\Elementary cellular automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).exe
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab3\Elementary cellular automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).pdb
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\bin\Debug\lab3 (1d cellular machine).exe.config
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\bin\Debug\lab3 (1d cellular machine).exe
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\bin\Debug\lab3 (1d cellular machine).pdb
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).csproj.AssemblyReference.cache
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3__1d_cellular_machine_.Form1.resources
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3__1d_cellular_machine_.Properties.Resources.resources
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).csproj.GenerateResource.cache
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).csproj.CoreCompileInputs.cache
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).exe
+C:\Labs\Study\3 курс\имитационка\Elementary%20cellular%20automaton\lab3 (1d cellular machine)\obj\Debug\lab3 (1d cellular machine).pdb
