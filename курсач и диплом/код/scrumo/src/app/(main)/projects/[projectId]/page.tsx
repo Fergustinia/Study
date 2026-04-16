@@ -10,17 +10,46 @@ type ProjectPageProps = {
   }>;
 };
 
-function getProjectStatusLabel(status: "ACTIVE" | "ARCHIVED") {
-  return status === "ACTIVE" ? "Активный" : "Архивный";
+function formatDate(date: Date | string | null | undefined) {
+  if (!date) return "—";
+  return new Date(date).toLocaleDateString("ru-RU");
 }
 
-function getProjectStatusClasses(status: "ACTIVE" | "ARCHIVED") {
-  return status === "ACTIVE"
-    ? "bg-emerald-100 text-emerald-700"
-    : "bg-neutral-200 text-neutral-700";
+function getProjectStatusLabel(status: string) {
+  switch (status) {
+    case "PLANNING":
+      return "Планирование";
+    case "ACTIVE":
+      return "Активный";
+    case "ON_HOLD":
+      return "На паузе";
+    case "COMPLETED":
+      return "Завершён";
+    case "ARCHIVED":
+      return "Архивный";
+    default:
+      return status;
+  }
 }
 
-function getSprintStatusLabel(status: "PLANNED" | "ACTIVE" | "COMPLETED") {
+function getProjectStatusClasses(status: string) {
+  switch (status) {
+    case "PLANNING":
+      return "bg-blue-100 text-blue-700";
+    case "ACTIVE":
+      return "bg-emerald-100 text-emerald-700";
+    case "ON_HOLD":
+      return "bg-amber-100 text-amber-700";
+    case "COMPLETED":
+      return "bg-violet-100 text-violet-700";
+    case "ARCHIVED":
+      return "bg-neutral-200 text-neutral-700";
+    default:
+      return "bg-neutral-100 text-neutral-700";
+  }
+}
+
+function getSprintStatusLabel(status: string) {
   switch (status) {
     case "PLANNED":
       return "Запланирован";
@@ -28,10 +57,12 @@ function getSprintStatusLabel(status: "PLANNED" | "ACTIVE" | "COMPLETED") {
       return "Активный";
     case "COMPLETED":
       return "Завершён";
+    default:
+      return status;
   }
 }
 
-function getSprintStatusClasses(status: "PLANNED" | "ACTIVE" | "COMPLETED") {
+function getSprintStatusClasses(status: string) {
   switch (status) {
     case "PLANNED":
       return "bg-blue-100 text-blue-700";
@@ -39,12 +70,12 @@ function getSprintStatusClasses(status: "PLANNED" | "ACTIVE" | "COMPLETED") {
       return "bg-emerald-100 text-emerald-700";
     case "COMPLETED":
       return "bg-neutral-200 text-neutral-700";
+    default:
+      return "bg-neutral-100 text-neutral-700";
   }
 }
 
-function getTaskStatusLabel(
-  status: "TODO" | "IN_PROGRESS" | "REVIEW" | "TESTING" | "DONE"
-) {
+function getTaskStatusLabel(status: string) {
   switch (status) {
     case "TODO":
       return "К выполнению";
@@ -52,71 +83,94 @@ function getTaskStatusLabel(
       return "В работе";
     case "REVIEW":
       return "На ревью";
+    case "IN_REVIEW":
+      return "На ревью";
     case "TESTING":
       return "Тестирование";
     case "DONE":
       return "Готово";
+    default:
+      return status;
+  }
+}
+
+function getTaskStatusClasses(status: string) {
+  switch (status) {
+    case "TODO":
+      return "bg-neutral-100 text-neutral-700";
+    case "IN_PROGRESS":
+      return "bg-blue-100 text-blue-700";
+    case "REVIEW":
+    case "IN_REVIEW":
+      return "bg-amber-100 text-amber-700";
+    case "TESTING":
+      return "bg-violet-100 text-violet-700";
+    case "DONE":
+      return "bg-emerald-100 text-emerald-700";
+    default:
+      return "bg-neutral-100 text-neutral-700";
   }
 }
 
 export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
   const { projectId } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
-    include: {
-      _count: {
-        select: {
-          tasks: true,
-          sprints: true,
-        },
+  const [project, completedTasks, activeSprints] = await Promise.all([
+    prisma.project.findUnique({
+      where: {
+        id: projectId,
       },
-      sprints: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 6,
-      },
-      tasks: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 8,
-        include: {
-          assignee: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-            },
-          },
-          sprint: {
-            select: {
-              id: true,
-              name: true,
-            },
+      include: {
+        _count: {
+          select: {
+            tasks: true,
+            sprints: true,
           },
         },
+        sprints: {
+          orderBy: [{ startDate: "desc" }, { createdAt: "desc" }],
+          take: 6,
+        },
+        tasks: {
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 8,
+          include: {
+            assignee: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+            sprint: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
-    },
-  });
+    }),
+    prisma.task.count({
+      where: {
+        projectId,
+        status: "DONE",
+      },
+    }),
+    prisma.sprint.count({
+      where: {
+        projectId,
+        status: "ACTIVE",
+      },
+    }),
+  ]);
 
   if (!project) {
     notFound();
   }
-
-  const completedTasks = await prisma.task.count({
-    where: {
-      projectId: project.id,
-      status: "DONE",
-    },
-  });
-
-  const activeSprints = project.sprints.filter(
-    (sprint) => sprint.status === "ACTIVE"
-  ).length;
 
   return (
     <div className="space-y-6">
@@ -142,7 +196,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
             <span className="rounded-lg bg-neutral-100 px-2.5 py-1 font-medium text-neutral-700">
               {project.key}
             </span>
-            <span>Создан {new Date(project.createdAt).toLocaleDateString("ru-RU")}</span>
+            <span>Создан {formatDate(project.createdAt)}</span>
           </div>
 
           <p className="max-w-3xl text-sm text-neutral-600">
@@ -169,7 +223,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
         <StatCard
           title="Завершено задач"
           value={String(completedTasks)}
-          description="Со статусом Done"
+          description="Со статусом Готово"
         />
         <StatCard
           title="Всего спринтов"
@@ -178,7 +232,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
         />
         <StatCard
           title="Статус проекта"
-          value={project.status === "ACTIVE" ? "Active" : "Archived"}
+          value={getProjectStatusLabel(project.status)}
           description="Текущее состояние проекта"
         />
       </section>
@@ -219,13 +273,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                       <div className="flex items-center justify-between gap-3">
                         <span className="text-neutral-400">Даты</span>
                         <span className="font-medium text-black">
-                          {sprint.startDate
-                            ? new Date(sprint.startDate).toLocaleDateString("ru-RU")
-                            : "—"}{" "}
-                          —{" "}
-                          {sprint.endDate
-                            ? new Date(sprint.endDate).toLocaleDateString("ru-RU")
-                            : "—"}
+                          {formatDate(sprint.startDate)} — {formatDate(sprint.endDate)}
                         </span>
                       </div>
 
@@ -244,7 +292,15 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
 
           <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle>Последние задачи</CardTitle>
+              <div className="flex items-center justify-between gap-3">
+                <CardTitle>Последние задачи</CardTitle>
+                <Link
+                  href={`/projects/${project.id}/tasks`}
+                  className="text-sm text-neutral-500 transition hover:text-black"
+                >
+                  Все задачи
+                </Link>
+              </div>
             </CardHeader>
             <CardContent className="space-y-3">
               {project.tasks.length === 0 ? (
@@ -253,10 +309,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                 </div>
               ) : (
                 project.tasks.map((task) => (
-                  <div
-                    key={task.id}
-                    className="rounded-2xl border p-4"
-                  >
+                  <div key={task.id} className="rounded-2xl border p-4">
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div className="space-y-1">
                         <h3 className="font-semibold">{task.title}</h3>
@@ -265,7 +318,9 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                         </p>
                       </div>
 
-                      <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${getTaskStatusClasses(task.status)}`}
+                      >
                         {getTaskStatusLabel(task.status)}
                       </span>
                     </div>
@@ -274,7 +329,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                       <div>
                         <p className="text-neutral-400">Исполнитель</p>
                         <p className="font-medium text-black">
-                          {task.assignee?.name || "Не назначен"}
+                          {task.assignee?.name || task.assignee?.email || "Не назначен"}
                         </p>
                       </div>
 
@@ -288,7 +343,7 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                       <div>
                         <p className="text-neutral-400">Story Points</p>
                         <p className="font-medium text-black">
-                          {task.storyPoints}
+                          {task.storyPoints ?? "—"}
                         </p>
                       </div>
                     </div>
@@ -324,16 +379,12 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
 
               <div>
                 <p className="text-neutral-400">Создан</p>
-                <p className="font-medium text-black">
-                  {new Date(project.createdAt).toLocaleDateString("ru-RU")}
-                </p>
+                <p className="font-medium text-black">{formatDate(project.createdAt)}</p>
               </div>
 
               <div>
                 <p className="text-neutral-400">Обновлён</p>
-                <p className="font-medium text-black">
-                  {new Date(project.updatedAt).toLocaleDateString("ru-RU")}
-                </p>
+                <p className="font-medium text-black">{formatDate(project.updatedAt)}</p>
               </div>
             </CardContent>
           </Card>
@@ -343,14 +394,20 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
               <CardTitle>Следующие шаги</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <button className="w-full rounded-xl bg-black px-4 py-2 text-sm font-medium text-white">
+              <Link
+                href={`/projects/${project.id}/tasks/new`}
+                className="inline-flex w-full items-center justify-center rounded-xl bg-black px-4 py-2 text-sm font-medium text-white"
+              >
                 Создать задачу
-              </button>
+              </Link>
+              <Link
+                href={`/projects/${project.id}/tasks`}
+                className="inline-flex w-full items-center justify-center rounded-xl border px-4 py-2 text-sm font-medium"
+              >
+                Все задачи
+              </Link>
               <button className="w-full rounded-xl border px-4 py-2 text-sm font-medium">
                 Создать спринт
-              </button>
-              <button className="w-full rounded-xl border px-4 py-2 text-sm font-medium">
-                Архивировать проект
               </button>
             </CardContent>
           </Card>
