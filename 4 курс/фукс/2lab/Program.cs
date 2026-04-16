@@ -29,7 +29,7 @@ namespace KnapsackProblem
     {
         public int TotalValue { get; set; }
         public bool[] Taken { get; set; }
-        public double TimeMs { get; set; }  // Изменено с long на double
+        public double TimeMs { get; set; }  
         public string AlgorithmName { get; set; }
 
         public void Print(Item[] items)
@@ -140,7 +140,7 @@ namespace KnapsackProblem
             {
                 TotalValue = dp[n, capacity],
                 Taken = taken,
-                TimeMs = stopwatch.Elapsed.TotalMilliseconds,  // Теперь double
+                TimeMs = stopwatch.Elapsed.TotalMilliseconds,  
                 AlgorithmName = "ДИНАМИЧЕСКОЕ ПРОГРАММИРОВАНИЕ"
             };
         }
