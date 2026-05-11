@@ -28,14 +28,3 @@ C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab2\Currency_Modeling\la
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab2\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).csproj.CoreCompileInputs.cache
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab2\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).exe
 C:\Seva\GitHub\TSU_TASKS\Simulation_Modeling\Imitation.lab2\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).pdb
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).exe.config
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).exe
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).pdb
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).csproj.AssemblyReference.cache
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab_2__exchange_rates_.Form1.resources
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab_2__exchange_rates_.Properties.Resources.resources
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).csproj.GenerateResource.cache
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).csproj.CoreCompileInputs.cache
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).exe
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).pdb
-C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\HeatEquationFiniteDifference.Form1.resources

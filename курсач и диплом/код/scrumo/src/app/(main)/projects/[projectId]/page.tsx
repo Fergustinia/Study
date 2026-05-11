@@ -83,8 +83,6 @@ function getTaskStatusLabel(status: string) {
       return "В работе";
     case "REVIEW":
       return "На ревью";
-    case "IN_REVIEW":
-      return "На ревью";
     case "TESTING":
       return "Тестирование";
     case "DONE":
@@ -101,7 +99,6 @@ function getTaskStatusClasses(status: string) {
     case "IN_PROGRESS":
       return "bg-blue-100 text-blue-700";
     case "REVIEW":
-    case "IN_REVIEW":
       return "bg-amber-100 text-amber-700";
     case "TESTING":
       return "bg-violet-100 text-violet-700";
@@ -312,7 +309,12 @@ export default async function ProjectDetailsPage({ params }: ProjectPageProps) {
                   <div key={task.id} className="rounded-2xl border p-4">
                     <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                       <div className="space-y-1">
-                        <h3 className="font-semibold">{task.title}</h3>
+                        <Link
+                          href={`/projects/${project.id}/tasks/${task.id}/edit`}
+                          className="font-semibold transition hover:text-neutral-700 hover:underline"
+                        >
+                          {task.title}
+                        </Link>
                         <p className="text-sm text-neutral-500">
                           {task.description || "Без описания"}
                         </p>

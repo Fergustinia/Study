@@ -48,13 +48,3 @@ C:\Users\ВЫХУХОЛЬ\Desktop\Simulation%20of%20body%20flight%20in%20the%20a
 C:\Users\ВЫХУХОЛЬ\Desktop\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).csproj.CoreCompileInputs.cache
 C:\Users\ВЫХУХОЛЬ\Desktop\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).exe
 C:\Users\ВЫХУХОЛЬ\Desktop\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).pdb
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\bin\Debug\lab 1 (Flying with atmosphere).exe.config
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\bin\Debug\lab 1 (Flying with atmosphere).exe
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\bin\Debug\lab 1 (Flying with atmosphere).pdb
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).csproj.AssemblyReference.cache
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab_1__Flying_with_atmosphere_.Form1.resources
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab_1__Flying_with_atmosphere_.Properties.Resources.resources
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).csproj.GenerateResource.cache
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).csproj.CoreCompileInputs.cache
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).exe
-C:\Labs\Study\3 курс\имитационка\Simulation%20of%20body%20flight%20in%20the%20atmosphere\lab 1 (Flying with atmosphere)\obj\Debug\lab 1 (Flying with atmosphere).pdb

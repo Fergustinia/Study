@@ -78,7 +78,7 @@ class Simulation:
         self.next_client_id = 0
         self.lambd = lambd
         self.mu = mu
-       
+        self.time_scale = 100
         self.running = False
         self.setup_gui()
   
