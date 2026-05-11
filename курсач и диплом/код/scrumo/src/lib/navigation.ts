@@ -17,5 +17,5 @@ import {
     { title: "Board", href: "/board", icon: KanbanSquare },
     { title: "Analytics", href: "/analytics", icon: BarChart3 },
     { title: "Team", href: "/team", icon: Users },
-    { title: "Settings", href: "/settings", icon: Settings },
+    { title: "Settings", href: "/setting", icon: Settings },
   ];

@@ -1,9 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+import { AuthSessionProvider } from "@/components/providers/auth-session-provider";
 
 export const metadata: Metadata = {
   title: "Scrumo",
@@ -14,8 +11,10 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ru" className={cn("font-sans", geist.variable)}>
-      <body>{children}</body>
+    <html lang="ru" className="font-sans">
+      <body>
+        <AuthSessionProvider>{children}</AuthSessionProvider>
+      </body>
     </html>
   );
 }
