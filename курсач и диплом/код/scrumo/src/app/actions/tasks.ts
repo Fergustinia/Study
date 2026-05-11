@@ -21,6 +21,8 @@ export type CreateTaskFormState = {
   };
 };
 
+export type UpdateTaskFormState = CreateTaskFormState;
+
 const taskStatusValues = ["TODO", "IN_PROGRESS", "REVIEW", "TESTING", "DONE"] as const;
 const taskPriorityValues = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 
@@ -43,6 +45,10 @@ const createTaskSchema = z.object({
   deadline: z.union([z.literal(""), z.string().date()]).optional(),
   assigneeId: z.string().optional().or(z.literal("")),
   sprintId: z.string().optional().or(z.literal("")),
+});
+
+const updateTaskSchema = createTaskSchema.extend({
+  taskId: z.string().min(1, "Task id is required."),
 });
 
 export async function createTask(
@@ -148,4 +154,113 @@ export async function createTask(
   revalidatePath(`/projects/${data.projectId}`);
   revalidatePath("/projects");
   redirect(`/projects/${data.projectId}`);
+}
+
+export async function updateTask(
+  _prevState: UpdateTaskFormState,
+  formData: FormData
+): Promise<UpdateTaskFormState> {
+  const validatedFields = updateTaskSchema.safeParse({
+    taskId: formData.get("taskId"),
+    projectId: formData.get("projectId"),
+    title: formData.get("title"),
+    description: formData.get("description"),
+    status: formData.get("status"),
+    priority: formData.get("priority"),
+    storyPoints: formData.get("storyPoints"),
+    deadline: formData.get("deadline"),
+    assigneeId: formData.get("assigneeId"),
+    sprintId: formData.get("sprintId"),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const data = validatedFields.data;
+
+  const task = await prisma.task.findFirst({
+    where: {
+      id: data.taskId,
+      projectId: data.projectId,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  if (!task) {
+    return {
+      errors: {
+        _form: ["Задача не найдена в этом проекте."],
+      },
+    };
+  }
+
+  if (data.assigneeId) {
+    const assignee = await prisma.user.findUnique({
+      where: {
+        id: data.assigneeId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!assignee) {
+      return {
+        errors: {
+          assigneeId: ["Выбранный исполнитель не найден."],
+        },
+      };
+    }
+  }
+
+  if (data.sprintId) {
+    const sprint = await prisma.sprint.findFirst({
+      where: {
+        id: data.sprintId,
+        projectId: data.projectId,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (!sprint) {
+      return {
+        errors: {
+          sprintId: ["Выбранный спринт не принадлежит проекту."],
+        },
+      };
+    }
+  }
+
+  await prisma.task.update({
+    where: {
+      id: data.taskId,
+    },
+    data: {
+      title: data.title.trim(),
+      description: data.description?.trim() || null,
+      status: data.status,
+      priority: data.priority,
+      storyPoints:
+        data.storyPoints === "" || data.storyPoints === undefined
+          ? undefined
+          : Number(data.storyPoints),
+      deadline:
+        data.deadline && data.deadline !== ""
+          ? new Date(`${data.deadline}T00:00:00`)
+          : null,
+      assigneeId: data.assigneeId || null,
+      sprintId: data.sprintId || null,
+    },
+  });
+
+  revalidatePath(`/projects/${data.projectId}`);
+  revalidatePath(`/projects/${data.projectId}/tasks`);
+  redirect(`/projects/${data.projectId}/tasks`);
 }

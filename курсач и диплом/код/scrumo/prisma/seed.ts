@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaClient, ProjectStatus, SprintStatus, TaskPriority, TaskStatus, UserRole } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { Pool } from "pg";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -8,7 +9,8 @@ if (!connectionString) {
   throw new Error("DATABASE_URL is not set");
 }
 
-const adapter = new PrismaPg({ connectionString });
+const pool = new Pool({ connectionString, max: 5 });
+const adapter = new PrismaPg(pool);
 
 const prisma = new PrismaClient({
   adapter,
@@ -136,9 +138,11 @@ async function main() {
 main()
   .then(async () => {
     await prisma.$disconnect();
+    await pool.end();
   })
   .catch(async (error) => {
     console.error("Seed failed:", error);
     await prisma.$disconnect();
+    await pool.end();
     process.exit(1);
   });

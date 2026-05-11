@@ -1,0 +1,10 @@
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\HeatEquationFiniteDifference.csproj.AssemblyReference.cache
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\HeatEquationFiniteDifference.Form1.resources
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab_2__exchange_rates_.Properties.Resources.resources
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\HeatEquationFiniteDifference.csproj.GenerateResource.cache
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\HeatEquationFiniteDifference.csproj.CoreCompileInputs.cache
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).exe
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\obj\Debug\lab 2 (exchange rates).pdb
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).exe.config
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).exe
+C:\Labs\Study\3 курс\имитационка\Currency_Modeling\lab 2 (exchange rates)\bin\Debug\lab 2 (exchange rates).pdb
