@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requireUserId, requireProjectMember } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateTaskForm } from "@/components/tasks/create-task-form";
@@ -14,7 +15,9 @@ type CreateProjectTaskPageProps = {
 export default async function CreateProjectTaskPage({
   params,
 }: CreateProjectTaskPageProps) {
+  const userId = await requireUserId();
   const { projectId } = await params;
+  await requireProjectMember(projectId, userId);
 
   const [project, sprints, users] = await Promise.all([
     prisma.project.findUnique({

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma";
+import { requireUserId, requireProjectMember } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/shared/stat-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -126,7 +127,9 @@ export default async function ProjectTasksPage({
   params,
   searchParams,
 }: ProjectTasksPageProps) {
+  const userId = await requireUserId();
   const { projectId } = await params;
+  await requireProjectMember(projectId, userId);
   const resolvedSearchParams = (await searchParams) ?? {};
 
   const q = resolvedSearchParams.q?.trim() || "";

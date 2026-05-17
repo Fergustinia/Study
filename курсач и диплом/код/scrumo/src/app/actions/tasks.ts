@@ -53,10 +53,42 @@ const updateTaskSchema = createTaskSchema.extend({
   taskId: z.string().min(1, "Task id is required."),
 });
 
+async function assertProjectMembership(projectId: string, userId: string) {
+  const membership = await prisma.projectMember.findUnique({
+    where: {
+      userId_projectId: {
+        userId,
+        projectId,
+      },
+    },
+    select: { id: true },
+  });
+
+  return Boolean(membership);
+}
+
+function revalidateTaskViews(projectId: string) {
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath(`/projects/${projectId}/tasks`);
+  revalidatePath("/projects");
+  revalidatePath("/board");
+  revalidatePath("/backlog");
+  revalidatePath("/planning");
+  revalidatePath("/analytics");
+  revalidatePath("/dashboard");
+}
+
 export async function createTask(
   _prevState: CreateTaskFormState,
   formData: FormData
 ): Promise<CreateTaskFormState> {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return { errors: { _form: ["Требуется авторизация."] } };
+  }
+
   const validatedFields = createTaskSchema.safeParse({
     projectId: formData.get("projectId"),
     title: formData.get("title"),
@@ -90,6 +122,14 @@ export async function createTask(
     return {
       errors: {
         _form: ["Проект не найден."],
+      },
+    };
+  }
+
+  if (!(await assertProjectMembership(data.projectId, userId))) {
+    return {
+      errors: {
+        _form: ["Нет доступа к проекту."],
       },
     };
   }
@@ -153,9 +193,7 @@ export async function createTask(
     },
   });
 
-  revalidatePath(`/projects/${data.projectId}`);
-  revalidatePath("/projects");
-  revalidatePath("/board");
+  revalidateTaskViews(data.projectId);
   redirect(`/projects/${data.projectId}`);
 }
 
@@ -163,6 +201,13 @@ export async function updateTask(
   _prevState: UpdateTaskFormState,
   formData: FormData
 ): Promise<UpdateTaskFormState> {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return { errors: { _form: ["Требуется авторизация."] } };
+  }
+
   const validatedFields = updateTaskSchema.safeParse({
     taskId: formData.get("taskId"),
     projectId: formData.get("projectId"),
@@ -198,6 +243,14 @@ export async function updateTask(
     return {
       errors: {
         _form: ["Задача не найдена в этом проекте."],
+      },
+    };
+  }
+
+  if (!(await assertProjectMembership(data.projectId, userId))) {
+    return {
+      errors: {
+        _form: ["Нет доступа к проекту."],
       },
     };
   }
@@ -263,9 +316,7 @@ export async function updateTask(
     },
   });
 
-  revalidatePath(`/projects/${data.projectId}`);
-  revalidatePath(`/projects/${data.projectId}/tasks`);
-  revalidatePath("/board");
+  revalidateTaskViews(data.projectId);
   redirect(`/projects/${data.projectId}/tasks`);
 }
 
@@ -317,9 +368,7 @@ export async function updateTaskStatus(
     data: { status },
   });
 
-  revalidatePath("/board");
-  revalidatePath(`/projects/${task.projectId}`);
-  revalidatePath(`/projects/${task.projectId}/tasks`);
+  revalidateTaskViews(task.projectId);
 
   return { success: true };
 }

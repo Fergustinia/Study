@@ -2,7 +2,7 @@
 
 Используй этот файл как **системный промпт / бриф** в начале новой сессии: скопируй раздел «Промпт для ассистента» в первое сообщение или приложи файл.
 
-**Последнее обновление handoff:** май 2026 (канбан `/board`, drag-and-drop, `updateTaskStatus`).
+**Последнее обновление handoff:** май 2026 — полный UI всех разделов, навигация, спринты, бэклог, аналитика, команда, настройки.
 
 ---
 
@@ -13,129 +13,253 @@
 
 Репозиторий: Next.js 16 App Router + React 19 + TypeScript + Tailwind v4 + Prisma 7 + PostgreSQL + NextAuth v5 (beta) + shadcn-стиль UI.
 
-Корень проекта: `курсач и диплом/код/scrumo` (в workspace может быть `A:\Study\курсач и диплом\код\scrumo`).
+Корень проекта: `курсач и диплом/код/scrumo` (в workspace: `A:\Study\курсач и диплом\код\scrumo`).
 
 ОБЯЗАТЕЛЬНО:
 - Читай существующий код перед правками; не делай рефакторинг «заодно».
-- Не коммить секреты; `.env` в git не должен попадать с реальными паролями в публичные репо.
+- Не коммить секреты; `.env` не должен попадать в публичные репо с реальными паролями.
 - Пользователь предпочитает русский язык в ответах.
-- Для проверки сессии на сервере используй `auth()` из `@/auth`, НЕ `getServerSession` (NextAuth v5).
+- Для проверки сессии на сервере: `auth()` из `@/auth`, НЕ `getServerSession` (NextAuth v5).
+- Проверка доступа к проекту: `requireUserId()` / `requireProjectMember()` из `@/lib/access`.
+- URL настроек: `/setting` (папка `setting`, не `settings`).
 
-УЖЕ СДЕЛАНО В ПРОШЛЫХ СЕССИЯХ (не ломай без причины):
+УЖЕ СДЕЛАНО (не ломай без причины):
 
-1) **Prisma + PostgreSQL + driver adapter**
-   - `src/lib/prisma.ts`: `pg.Pool` (max 10) + `PrismaPg` + singleton `prisma` в dev на `globalThis`.
-   - Причина: один `pg`-клиент не выдерживает параллельные `Promise.all` на дашборде → Prisma P1017 ConnectionClosed.
-   - `prisma/seed.ts`: тоже Pool + `pool.end()` после `$disconnect()`.
-   - Клиент генерится в `src/generated/prisma` (в `.gitignore`). Импорт: `@/generated/prisma/client`.
+1) **Prisma + PostgreSQL**
+   - `src/lib/prisma.ts`: `pg.Pool` (max 10) + `PrismaPg` + singleton в dev на `globalThis`.
+   - Клиент: `src/generated/prisma` (в `.gitignore`), импорт `@/generated/prisma/client`.
+   - Схема: `prisma/schema.prisma` — User, Project, ProjectMember, Sprint, Task, Comment.
+   - Сид: `prisma/seed.ts` — `npx prisma db seed`.
 
-2) **NextAuth (credentials) + клиент**
-   - `src/auth.ts`: JWT-сессия, Credentials provider, bcrypt compare с `passwordHash` в БД.
-   - API: `src/app/api/auth/[...nextauth]/route.ts` → `handlers` из `@/auth`.
-   - Регистрация: `src/app/api/auth/register/route.ts`.
-   - `src/components/providers/auth-session-provider.tsx` — `SessionProvider` из `next-auth/react`.
-   - Логин: `src/app/login/page.tsx` + `login-form.tsx` (`useSearchParams` только внутри Suspense).
-   - Расширение типов: `src/types/next-auth.d.ts` (`session.user.id`, `role`).
+2) **Auth**
+   - `src/auth.ts` — JWT, Credentials, bcrypt.
+   - `src/app/api/auth/[...nextauth]/route.ts`, `src/app/api/auth/register/route.ts`.
+   - Логин/регистрация: `src/app/login/`, `src/app/register/`.
+   - Типы: `src/types/next-auth.d.ts` (`session.user.id`, `role`).
 
-3) **Навигация и заглушки разделов**
-   - Минимальные страницы: `(main)/analytics|backlog|planning|team|setting/page.tsx` — заглушки.
-   - `src/lib/navigation.ts`: Settings → href `/setting` (папка `setting`, не `settings`).
+3) **Layout и навигация**
+   - `src/app/(main)/layout.tsx` — auth, проекты пользователя, `ProjectProvider`, `AppShell`.
+   - `src/components/layout/` — актуальная цепочка:
+     - `app-shell.tsx` — client: мобильное меню + sidebar + header.
+     - `app-sidebar.tsx` — desktop sidebar + mobile drawer.
+     - `sidebar-nav.tsx` — пункты меню + `ProjectSwitcher`.
+     - `app-header-bar.tsx` — заголовок страницы, пользователь, кнопка меню (lg:hidden).
+     - `sign-out-button.tsx` — server action выхода.
+   - `src/lib/navigation.ts` — единый список маршрутов (русские названия), `isNavItemActive()`, `getPageTitle()`.
+   - **Не использовать** (мёртвый код, можно удалить): `header.tsx`, `sidebar.tsx`, `top-header.tsx`, `app-header.tsx`.
+   - `src/contexts/project-context.tsx` — `activeProject` в localStorage; switcher в сайдбаре.
+   - **Важно:** доска `/board` выбирает проект через URL `?projectId=`, а не через `ProjectProvider` — при доработке можно синхронизировать.
 
-4) **Канбан-доска (`/board`)**
-   - `src/app/(main)/board/page.tsx` — выбор проекта (`?projectId=`), задачи только из проектов, где пользователь в `members`.
-   - `src/components/kanban/` — `kanban-board.tsx` (dnd-kit), `kanban-column.tsx`, `task-card.tsx`, `board-project-select.tsx`.
-   - `src/types/task.ts` — `KanbanTask`, `KANBAN_COLUMNS`, хелперы приоритетов.
-   - `updateTaskStatus(taskId, status)` в `src/app/actions/tasks.ts` — `auth()`, проверка членства, `revalidatePath` для `/board` и проекта.
-   - Drag-and-drop между колонками TODO → IN_PROGRESS → REVIEW → TESTING → DONE; оптимистичный UI + откат при ошибке.
+4) **Все основные страницы (реализованы, не заглушки)**
 
-5) **Удалены / не создавать снова**
-   - Пустые `src/app/api/login/page.tsx` и `src/app/api/register/page.tsx` (ломали validator).
-   - Не создавать пустые `src/app/api/tasks/` без полноценных `route.ts` (ломает validator).
+   | Маршрут | Файл | Что делает |
+   |---------|------|------------|
+   | `/dashboard` | `dashboard/page.tsx` | Статистика, проекты, последние задачи, быстрые ссылки |
+   | `/projects` | `projects/page.tsx` | Список проектов (только где user в members), создание |
+   | `/projects/[id]` | `projects/[projectId]/page.tsx` | Детали, команда, ссылки на доску/задачи/бэклог/планирование |
+   | `/projects/[id]/tasks` | `.../tasks/page.tsx` | Фильтры, список, StatCard |
+   | `/projects/[id]/tasks/new` | `.../tasks/new/page.tsx` | `CreateTaskForm` |
+   | `/projects/[id]/tasks/[taskId]/edit` | `.../edit/page.tsx` | `EditTaskForm` |
+   | `/board` | `board/page.tsx` | Kanban + dnd-kit, `?projectId=` |
+   | `/backlog` | `backlog/page.tsx` | Задачи без спринта, назначение в спринт |
+   | `/planning` | `planning/page.tsx` | Спринты: создание, статусы, задачи в спринте |
+   | `/analytics` | `analytics/page.tsx` | Метрики и прогресс-бары по статусам/приоритетам |
+   | `/team` | `team/page.tsx` | Участники всех доступных проектов |
+   | `/setting` | `setting/page.tsx` | Профиль (имя), email readonly |
 
-6) **Шрифт и Turbopack**
-   - Geist через `@import` в `globals.css`, не через `next/font/google` (баг Turbopack с font).
+   Общий паттерн для backlog/planning/analytics/board:
+   - `getProjectsForUser()` + `resolveSelectedProjectId()` из `src/lib/projects.ts`
+   - `ProjectPageSelect` — `src/components/shared/project-page-select.tsx`
+   - `EmptyProjectsState` — пустое состояние без проектов
+
+5) **Server actions**
+
+   | Файл | Функции |
+   |------|---------|
+   | `src/app/actions/tasks.ts` | `createTask`, `updateTask`, `updateTaskStatus` — с `auth()` и проверкой членства |
+   | `src/app/actions/sprints.ts` | `createSprint`, `updateSprintStatus`, `assignTaskToSprint` |
+   | `src/app/actions/settings.ts` | `updateProfile` (имя) |
+   | `src/app/actions/projects.ts` | `createProject` (Zod + useActionState) — **не используется в UI** |
+   | `src/actions/project-actions.ts` | `createProject` — **используется** в `CreateProjectDialog` |
+
+6) **Канбан**
+   - `src/components/kanban/` — board, column, task-card, board-project-select.
+   - `updateTaskStatus` — optimistic UI + откат.
+   - `src/types/task.ts` — статусы, колонки, лейблы.
+
+7) **Компоненты фич**
+   - `components/sprints/` — `create-sprint-dialog.tsx`, `sprint-status-actions.tsx`
+   - `components/tasks/` — create/edit forms, `assign-sprint-select.tsx`
+   - `components/settings/` — `settings-form.tsx`
+   - `components/shared/` — `stat-card`, `project-page-select`, `empty-projects-state`
+
+8) **Инфраструктура**
+   - Geist через `@import` в `globals.css` (не `next/font/google` — баг Turbopack).
    - `npm run dev:webpack` — обход паник Turbopack.
-   - Путь с кириллицей (`курсач и диплом`) может ломать `next build` (Turbopack: `start byte index is not a char boundary`) — при FATAL пробовать webpack или перенос проекта в ASCII-путь.
+   - Путь с кириллицей может ломать `next build` (Turbopack) — тогда webpack или ASCII-путь.
+   - `npm run build` проходит успешно (проверено май 2026).
 
-7) **npm scripts**
-   - `dev`, `dev:webpack`, `build`, `start`, `lint`.
-
-8) **Проекты и участники (сессия май 2026)**
-   - Схема: модель `ProjectMember` (`userId`, `projectId`, `role`: OWNER | MANAGER | MEMBER | VIEWER), связь `Project.members`.
-   - После смены схемы выполнен `npx prisma db push` (локально). При другой БД — `migrate dev` / `db push` по процессу команды.
-   - **Список проектов** `src/app/(main)/projects/page.tsx`: только проекты, где текущий пользователь в `members`; UI — карточки + `CreateProjectDialog`.
-   - **Создание проекта (основной путь):**
-     - `src/components/projects/create-project-dialog.tsx` (client, shadcn Dialog).
-     - `src/actions/project-actions.ts` — server action `createProject(formData)`: `auth()`, валидация ключа, `prisma.project.create` + `members.create` с `role: "OWNER"`, `revalidatePath("/projects")`.
-   - **Альтернативный путь (форма с useActionState):**
-     - `src/components/projects/create-project-form.tsx` + `src/app/actions/projects.ts` — Zod, возвращает `CreateProjectState`; тоже создаёт `ProjectMember` с OWNER. Сейчас на `/projects` используется Dialog, не Form.
-   - **Детали проекта:** `src/app/(main)/projects/[projectId]/page.tsx` — статистика, список команды.
-   - **Задачи проекта:** `src/app/(main)/projects/[projectId]/tasks/page.tsx` (фильтры, список), `tasks/new`, `tasks/[taskId]/edit` + `src/app/actions/tasks.ts` (server actions create/update).
-   - **Дашборд:** `src/app/(main)/dashboard/page.tsx` — агрегаты по проектам/задачам/спринтам.
-   - **API:** `src/app/api/projects/route.ts` — только `GET` всех проектов **без auth** (legacy/вспомогательный; для UI списка используется Server Component + Prisma, не этот route).
+9) **Не создавать снова**
+   - Пустые `src/app/api/login/page.tsx`, `src/app/api/register/page.tsx`.
+   - Пустые папки `src/app/api/tasks/` без `route.ts`.
+   - Проект без `ProjectMember` — иначе не виден в `/projects`.
 
 ИЗВЕСТНЫЕ РИСКИ / ТЕХДОЛГ:
 - `src/auth.ts` — отладочные `console.log` (убрать перед сдачей).
-- `GET /api/projects` без проверки сессии — при доработке API добавить `auth()`.
-- Пустые или незавершённые файлы ломают сборку: не оставлять обрезанные `page.tsx` / нулевые байты на диске; после удаления routes чистить `.next`.
-- Дублирование логики создания проекта в `project-actions.ts` и `app/actions/projects.ts` — при рефакторинге свести к одному месту.
-- Заглушки: analytics, backlog, planning, team, setting.
+- `GET /api/projects` без auth — legacy, UI не использует.
+- Дублирование `createProject` в `project-actions.ts` и `app/actions/projects.ts`.
+- Модель `Comment` в схеме — **нет UI и actions**.
+- `recharts` в package.json — **не используется** (аналитика на CSS-барах).
+- `ProjectSwitcher` (localStorage) не связан с `?projectId=` на доске/бэклоге.
+- Нет смены пароля в настройках.
+- Нет приглашения участников / смены ролей в UI (только просмотр в Team и на странице проекта).
+- Нет удаления задач/проектов/спринтов.
+- `createTask`/`updateTask` — assignee не проверяется на членство в проекте (только существование User).
+- Роли `UserRole` / `ProjectRole` в БД есть, в UI почти не используются (кроме отображения).
+- Мёртвые файлы layout: `header.tsx`, `sidebar.tsx`, `top-header.tsx`, `app-header.tsx`.
 
-ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (локально, в `.env`):
+ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (`.env`):
 - `DATABASE_URL` — `postgresql://USER:PASSWORD@localhost:5432/scrumo?schema=public`
-- `AUTH_SECRET` — длинная случайная строка для NextAuth
+- `AUTH_SECRET` — случайная строка для NextAuth
+- `AUTH_URL` — при деплое (например `http://localhost:3000`)
 
 Prisma:
-- Конфиг: `prisma.config.ts`, схема `prisma/schema.prisma`.
-- После смены схемы: `npx prisma db push` или `npx prisma migrate dev`; сид: `npx prisma db seed`.
-- При странных TS-ошибках на `members`: удалить `src/generated/prisma`, выполнить `npx prisma generate`.
+- `prisma.config.ts`, схема `prisma/schema.prisma`.
+- После смены схемы: `npx prisma db push` или `migrate dev`; сид: `npx prisma db seed`.
+- TS-ошибки на `members`: удалить `src/generated/prisma`, `npx prisma generate`.
 
-ЗАДАЧИ НА БУДУЩЕЕ (если пользователь не уточнил — уточнить):
-- REST API задач (`/api/tasks`) с `auth()` — сейчас статус меняется через server action `updateTaskStatus`.
-- Защита и фильтрация `GET /api/projects` по участнику.
-- Роли проекта (MANAGER/VIEWER) в UI.
-- Заглушки разделов → реальный функционал.
-- `AUTH_URL` при деплое.
+ЗАДАЧИ НА ДОРАБОТКУ (приоритет для «сделать всё»):
 
-Если «не работает логин/БД/сборка» — проверить: `.env`, Postgres, `prisma db push` / migrate, лог dev, `npm run dev:webpack`, удаление `.next`, `npx tsc --noEmit`.
+**Высокий приоритет (продукт / курсовой)**
+- [ ] Комментарии к задачам (`Comment` + UI на edit task page).
+- [ ] Синхронизация выбора проекта: `ProjectProvider` ↔ `?projectId=` на board/backlog/planning/analytics.
+- [ ] Удаление задачи (action + кнопка на edit/list).
+- [ ] Приглашение участника в проект (email → User + ProjectMember).
+- [ ] Смена пароля в `/setting`.
+- [ ] Убрать `console.log` из `auth.ts`.
+- [ ] Защитить или удалить `GET /api/projects`.
+
+**Средний приоритет (UX / polish)**
+- [ ] Recharts на `/analytics` (уже в dependencies).
+- [ ] Редактирование/удаление спринта.
+- [ ] Drag задач из бэклога в спринт (или bulk-assign).
+- [ ] Фильтры на бэклоге (приоритет, поиск).
+- [ ] Ссылки с карточек Kanban на edit task.
+- [ ] Avatar (`components/ui/avatar.tsx`) в header и team.
+- [ ] Удалить мёртвые layout-файлы.
+- [ ] Свести создание проекта к одному action.
+
+**Низкий приоритет / деплой**
+- [ ] REST API задач с `auth()` (если нужен для диплома).
+- [ ] Роли MANAGER/VIEWER — ограничения в actions (кто может создавать спринт, удалять задачу).
+- [ ] Архивация проекта (`ProjectStatus.ARCHIVED`).
+- [ ] Email-уведомления, activity log.
+- [ ] E2E-тесты (Playwright).
+
+Если «не работает» — проверить: `.env`, Postgres, `prisma db push`, лог dev, `npm run dev:webpack`, удалить `.next`, `npx tsc --noEmit`.
 ```
 
 ---
 
-## Карта проекта (кратко)
+## Статус страниц (актуально)
+
+| Раздел | Статус | Ключевые файлы |
+|--------|--------|----------------|
+| Дашборд | ✅ Готово | `dashboard/page.tsx` |
+| Проекты | ✅ Готово | `projects/page.tsx`, `create-project-dialog.tsx` |
+| Проект (детали) | ✅ Готово | `projects/[projectId]/page.tsx` |
+| Задачи CRUD | ✅ Готово | `tasks/page.tsx`, `tasks/new`, `tasks/.../edit`, `actions/tasks.ts` |
+| Доска | ✅ Готово | `board/page.tsx`, `components/kanban/` |
+| Бэклог | ✅ Готово | `backlog/page.tsx`, `assign-sprint-select.tsx` |
+| Планирование | ✅ Готово | `planning/page.tsx`, `actions/sprints.ts`, sprint components |
+| Аналитика | ✅ Готово (базово) | `analytics/page.tsx` — CSS-бары, без recharts |
+| Команда | ✅ Готово (просмотр) | `team/page.tsx` |
+| Настройки | ✅ Готово (имя) | `setting/page.tsx`, `actions/settings.ts` |
+| Комментарии | ❌ Нет UI | модель `Comment` в Prisma |
+| API tasks | ❌ Нет | только server actions |
+
+---
+
+## Карта проекта
 
 | Область | Путь |
 |--------|------|
 | App Router | `src/app/` |
-| Защищённый shell | `src/app/(main)/layout.tsx` — `auth()` + redirect `/login` |
+| Защищённый shell | `src/app/(main)/layout.tsx` |
+| Доступ | `src/lib/access.ts` |
+| Проекты (хелперы) | `src/lib/projects.ts` |
+| Навигация | `src/lib/navigation.ts` |
+| Layout UI | `src/components/layout/app-shell.tsx`, `app-sidebar.tsx`, `sidebar-nav.tsx`, `app-header-bar.tsx` |
+| Контекст проекта | `src/contexts/project-context.tsx` |
 | Дашборд | `src/app/(main)/dashboard/page.tsx` |
 | Канбан | `src/app/(main)/board/page.tsx`, `src/components/kanban/` |
+| Бэклог | `src/app/(main)/backlog/page.tsx` |
+| Планирование | `src/app/(main)/planning/page.tsx` |
+| Аналитика | `src/app/(main)/analytics/page.tsx` |
+| Команда | `src/app/(main)/team/page.tsx` |
+| Настройки | `src/app/(main)/setting/page.tsx` |
 | Типы задач | `src/types/task.ts` |
-| Проекты (список) | `src/app/(main)/projects/page.tsx` |
-| Проект (детали) | `src/app/(main)/projects/[projectId]/page.tsx` |
-| Задачи проекта | `src/app/(main)/projects/[projectId]/tasks/` |
+| Типы спринтов/ролей | `src/types/sprint.ts` |
+| Server actions | `src/app/actions/tasks.ts`, `sprints.ts`, `settings.ts`, `projects.ts` |
 | Создание проекта (UI) | `src/components/projects/create-project-dialog.tsx` |
 | Создание проекта (action) | `src/actions/project-actions.ts` |
-| Создание проекта (форма+Zod) | `src/components/projects/create-project-form.tsx`, `src/app/actions/projects.ts` |
-| Задачи (server actions) | `src/app/actions/tasks.ts` |
-| Публичные страницы | `src/app/login/`, `src/app/register/` |
-| Prisma client | `src/lib/prisma.ts` |
-| Auth | `src/auth.ts`, `src/app/api/auth/[...nextauth]/route.ts` |
-| Навигация | `src/lib/navigation.ts`, `src/components/layout/app-sidebar.tsx` |
-| UI (shadcn) | `src/components/ui/` (`dialog`, `button`, `input`, `card`, …) |
-| Prisma schema | `prisma/schema.prisma` |
-| Seed | `prisma/seed.ts` |
+| Prisma | `prisma/schema.prisma`, `src/lib/prisma.ts` |
+| Auth | `src/auth.ts`, `src/app/api/auth/` |
 
-### Модели Prisma (актуально)
+### Модели Prisma
 
-| Модель | Назначение |
-|--------|------------|
-| `User` | Пользователь, `passwordHash`, `UserRole` |
-| `Project` | Проект (`key` unique, `status`) |
-| `ProjectMember` | Участник проекта + `ProjectRole` |
-| `Sprint` | Спринт проекта |
-| `Task` | Задача (status, priority, storyPoints, assignee) |
-| `Comment` | Комментарий к задаче |
+| Модель | Назначение | UI |
+|--------|------------|-----|
+| `User` | Пользователь, `passwordHash`, `UserRole` | login, settings, team |
+| `Project` | Проект (`key` unique) | projects, dashboard |
+| `ProjectMember` | Участник + `ProjectRole` | team, project page |
+| `Sprint` | Спринт (`PLANNED`/`ACTIVE`/`COMPLETED`) | planning, backlog assign |
+| `Task` | Задача (status, priority, storyPoints, sprintId?) | tasks, board, backlog |
+| `Comment` | Комментарий к задаче | **не реализовано** |
+
+### Enums
+
+`UserRole`, `ProjectRole`, `ProjectStatus`, `SprintStatus`, `TaskStatus`, `TaskPriority` — см. `prisma/schema.prisma`.
+
+---
+
+## Server actions (кратко)
+
+### `tasks.ts`
+- `createTask` / `updateTask` — Zod, membership check, redirect.
+- `updateTaskStatus` — для Kanban DnD, возвращает `{ success, error? }`.
+- `revalidateTaskViews()` — board, backlog, planning, analytics, dashboard, project paths.
+
+### `sprints.ts`
+- `createSprint` — диалог на planning.
+- `updateSprintStatus` — при `ACTIVE` остальные ACTIVE → `PLANNED`.
+- `assignTaskToSprint` — из бэклога (`sprintId` пустой = убрать из спринта).
+
+### `settings.ts`
+- `updateProfile` — только `name`.
+
+---
+
+## Потоки данных (для доработки)
+
+```
+Пользователь → (main)/layout
+  → ProjectProvider (localStorage: activeProject)
+  → AppShell
+       → AppSidebar → SidebarNav → ProjectSwitcher
+       → AppHeaderBar → getPageTitle(pathname)
+       → children (страницы)
+
+Страницы с выбором проекта:
+  board, backlog, planning, analytics
+  → ?projectId= в URL (НЕ из ProjectProvider)
+
+Создание задачи:
+  CreateTaskForm → createTask → redirect /projects/[id]
+
+Kanban:
+  drag → updateTaskStatus → revalidate
+```
 
 ---
 
@@ -145,19 +269,22 @@ Prisma:
 npm run dev              # dev (Turbopack)
 npm run dev:webpack      # dev без Turbopack
 npm run build            # production build
-npx tsc --noEmit         # проверка типов без сборки
-npx prisma db push       # синхрон схемы с БД (dev)
-npx prisma migrate dev   # миграции (если используете)
-npx prisma generate      # клиент в src/generated/prisma
-npx prisma db seed
+npm run start            # production server
+npm run lint             # eslint
+npx tsc --noEmit         # типы без сборки
+npx prisma db push       # синхрон схемы (dev)
+npx prisma migrate dev   # миграции
+npx prisma generate      # клиент → src/generated/prisma
+npx prisma db seed       # тестовые данные
 ```
 
-При ошибках validator про отсутствующие `api/.../route.ts`:
+При ошибках validator / битой сборке:
 
 ```powershell
 Set-Location "A:\Study\курсач и диплом\код\scrumo"
 Remove-Item -Recurse -Force .next -ErrorAction SilentlyContinue
 npx prisma generate
+npm run build
 ```
 
 ---
@@ -166,20 +293,23 @@ npx prisma generate
 
 - Не возвращать `next/font/google` для Geist без проверки Turbopack.
 - Не создавать `page.tsx` внутри `src/app/api/**`.
-- Не подменять `PrismaPg` + Pool на сырой `{ connectionString }` у адаптера.
-- Не использовать `getServerSession` из next-auth v4 — только `auth()` из `@/auth`.
-- Не создавать проект без записи в `ProjectMember` — иначе проект не попадёт в список на `/projects`.
+- Не подменять `PrismaPg` + Pool на сырой `{ connectionString }`.
+- Не использовать `getServerSession` — только `auth()` из `@/auth`.
+- Не создавать проект без `ProjectMember` (role OWNER).
+- Не менять URL `/setting` на `/settings` без переименования папки.
 
 ---
 
-## История handoff (кратко)
+## История handoff
 
 | Период | Изменения |
 |--------|-----------|
-| Ранние сессии | Auth, Prisma pool, заглушки маршрутов, фикс Turbopack/font, удаление битых api pages |
-| Май 2026 | `ProjectMember`, диалог создания проекта, фильтр проектов по участнику, починка обрезанных файлов, `db push`, реген Prisma client |
-| Май 2026 (2) | Канбан `/board` с dnd-kit, `updateTaskStatus`, выбор проекта на доске |
+| Ранние сессии | Auth, Prisma pool, заглушки маршрутов, Turbopack/font |
+| Май 2026 | `ProjectMember`, диалог проекта, задачи CRUD |
+| Май 2026 (2) | Kanban `/board`, dnd-kit, `updateTaskStatus` |
+| Май 2026 (3) | Единая навигация: `AppShell`, mobile menu, `ProjectProvider` |
+| Май 2026 (4) | Все разделы: backlog, planning, analytics, team, settings; sprint actions; auth на tasks |
 
 ---
 
-*Файл для handoff между чатами; обновляй по мере крупных архитектурных изменений.*
+*Обновляй этот файл после крупных архитектурных изменений или перед новым чатом.*

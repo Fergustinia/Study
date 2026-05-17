@@ -5,53 +5,61 @@ import {
   useContext,
   useEffect,
   useState,
+  type ReactNode,
 } from "react";
 
-type Project = {
+export type Project = {
   id: string;
   name: string;
   key: string;
 };
 
-type ProjectContextType = {
+type ContextType = {
   activeProject: Project | null;
   setActiveProject: (project: Project) => void;
 };
 
-const ProjectContext = createContext<ProjectContextType | null>(null);
+const ProjectContext = createContext<ContextType | null>(null);
 
 export function ProjectProvider({
   children,
   initialProject,
+  projects,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   initialProject: Project | null;
+  projects: Project[];
 }) {
-  const [activeProject, setActiveProject] = useState<Project | null>(
-    initialProject
-  );
+  const [activeProject, setActiveProject] =
+    useState<Project | null>(initialProject);
 
-  // optional: persist in localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("activeProject");
+
+    if (!saved) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(saved) as Project;
+      const found = projects.find((project) => project.id === parsed.id);
+
+      if (found) {
+        setActiveProject(found);
+      }
+    } catch {
+      localStorage.removeItem("activeProject");
+    }
+  }, [projects]);
+
   useEffect(() => {
     if (activeProject) {
-      localStorage.setItem(
-        "activeProject",
-        JSON.stringify(activeProject)
-      );
+      localStorage.setItem("activeProject", JSON.stringify(activeProject));
     }
   }, [activeProject]);
 
-  useEffect(() => {
-    if (!activeProject) {
-      const saved = localStorage.getItem("activeProject");
-      if (saved) setActiveProject(JSON.parse(saved));
-    }
-  }, []);
-
   return (
-    <ProjectContext.Provider
-      value={{ activeProject, setActiveProject }}
-    >
+    <ProjectContext.Provider value={{ activeProject, setActiveProject }}>
       {children}
     </ProjectContext.Provider>
   );
@@ -59,6 +67,10 @@ export function ProjectProvider({
 
 export function useProject() {
   const ctx = useContext(ProjectContext);
-  if (!ctx) throw new Error("useProject must be used within ProjectProvider");
+
+  if (!ctx) {
+    throw new Error("useProject must be used within ProjectProvider");
+  }
+
   return ctx;
 }

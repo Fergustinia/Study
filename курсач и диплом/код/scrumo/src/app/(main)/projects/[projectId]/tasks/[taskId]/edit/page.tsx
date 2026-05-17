@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { requireUserId, requireProjectMember } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EditTaskForm } from "@/components/tasks/edit-task-form";
@@ -24,7 +25,9 @@ function formatDateInputValue(date: Date | null) {
 }
 
 export default async function EditProjectTaskPage({ params }: EditProjectTaskPageProps) {
+  const userId = await requireUserId();
   const { projectId, taskId } = await params;
+  await requireProjectMember(projectId, userId);
 
   const [project, task, sprints, users] = await Promise.all([
     prisma.project.findUnique({

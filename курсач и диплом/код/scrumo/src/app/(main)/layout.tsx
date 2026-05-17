@@ -1,28 +1,50 @@
+import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { AppSidebar } from "@/components/layout/app-sidebar";
-import { AppHeader } from "@/components/layout/app-header";
 
-export default async function MainLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+import { auth } from "@/auth";
+import { AppShell } from "@/components/layout/app-shell";
+import { SignOutButton } from "@/components/layout/sign-out-button";
+import { ProjectProvider } from "@/contexts/project-context";
+import { prisma } from "@/lib/prisma";
+
+type Props = {
+  children: ReactNode;
+};
+
+export default async function MainLayout({ children }: Props) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
+  const projects = await prisma.project.findMany({
+    where: {
+      members: {
+        some: { userId: session.user.id },
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      key: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  const initialProject = projects[0] ?? null;
+
   return (
-    <div className="min-h-screen bg-neutral-100">
-      <div className="flex min-h-screen">
-        <AppSidebar />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <AppHeader />
-          <main className="flex-1 p-6">{children}</main>
-        </div>
-      </div>
-    </div>
+    <ProjectProvider initialProject={initialProject} projects={projects}>
+      <AppShell
+        projects={projects}
+        user={session.user}
+        signOutButton={<SignOutButton />}
+      >
+        {children}
+      </AppShell>
+    </ProjectProvider>
   );
 }
