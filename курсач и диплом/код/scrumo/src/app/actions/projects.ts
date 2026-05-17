@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 
 const createProjectSchema = z.object({
@@ -58,6 +59,16 @@ export async function createProject(
 
   const { name, key, description } = parsed.data;
 
+  const session = await auth();
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      errors: {
+        form: ["Необходимо войти в систему"],
+      },
+    };
+  }
+
   const existingProject = await prisma.project.findUnique({
     where: { key },
     select: { id: true },
@@ -78,6 +89,12 @@ export async function createProject(
         name,
         key,
         description: description || null,
+        members: {
+          create: {
+            userId: session.user.id,
+            role: "OWNER",
+          },
+        },
       },
     });
 

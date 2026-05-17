@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { TASK_STATUSES, type TaskStatus } from "@/types/task";
 
 export type CreateTaskFormState = {
   errors?: {
@@ -153,6 +155,7 @@ export async function createTask(
 
   revalidatePath(`/projects/${data.projectId}`);
   revalidatePath("/projects");
+  revalidatePath("/board");
   redirect(`/projects/${data.projectId}`);
 }
 
@@ -262,5 +265,61 @@ export async function updateTask(
 
   revalidatePath(`/projects/${data.projectId}`);
   revalidatePath(`/projects/${data.projectId}/tasks`);
+  revalidatePath("/board");
   redirect(`/projects/${data.projectId}/tasks`);
+}
+
+export type UpdateTaskStatusResult =
+  | { success: true }
+  | { success: false; error: string };
+
+export async function updateTaskStatus(
+  taskId: string,
+  status: TaskStatus
+): Promise<UpdateTaskStatusResult> {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) {
+    return { success: false, error: "Требуется авторизация." };
+  }
+
+  if (!TASK_STATUSES.includes(status)) {
+    return { success: false, error: "Некорректный статус." };
+  }
+
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    select: {
+      id: true,
+      projectId: true,
+      project: {
+        select: {
+          members: {
+            where: { userId },
+            select: { id: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    return { success: false, error: "Задача не найдена." };
+  }
+
+  if (task.project.members.length === 0) {
+    return { success: false, error: "Нет доступа к проекту." };
+  }
+
+  await prisma.task.update({
+    where: { id: taskId },
+    data: { status },
+  });
+
+  revalidatePath("/board");
+  revalidatePath(`/projects/${task.projectId}`);
+  revalidatePath(`/projects/${task.projectId}/tasks`);
+
+  return { success: true };
 }
