@@ -17,13 +17,12 @@ export default async function CreateProjectTaskPage({
 }: CreateProjectTaskPageProps) {
   const userId = await requireUserId();
   const { projectId } = await params;
+
   await requireProjectMember(projectId, userId);
 
   const [project, sprints, users] = await Promise.all([
     prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
+      where: { id: projectId },
       select: {
         id: true,
         name: true,
@@ -32,13 +31,8 @@ export default async function CreateProjectTaskPage({
       },
     }),
     prisma.sprint.findMany({
-      where: {
-        projectId,
-      },
-      orderBy: [
-        { startDate: "desc" },
-        { createdAt: "desc" },
-      ],
+      where: { projectId },
+      orderBy: [{ startDate: "desc" }, { createdAt: "desc" }],
       select: {
         id: true,
         name: true,
@@ -46,10 +40,7 @@ export default async function CreateProjectTaskPage({
       },
     }),
     prisma.user.findMany({
-      orderBy: [
-        { name: "asc" },
-        { email: "asc" },
-      ],
+      orderBy: [{ name: "asc" }, { email: "asc" }],
       select: {
         id: true,
         name: true,
@@ -58,38 +49,53 @@ export default async function CreateProjectTaskPage({
     }),
   ]);
 
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
+    <div className="mx-auto max-w-4xl space-y-8 py-6">
+      {/* Header */}
+      <div className="space-y-4">
         <Link
           href={`/projects/${project.id}`}
-          className="inline-flex text-sm text-neutral-500 transition hover:text-black"
+          className="inline-flex items-center gap-2 text-sm text-neutral-500 transition hover:text-neutral-900"
         >
-          ← Назад к проекту
+          <span>←</span>
+          <span>Назад к проекту</span>
         </Link>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">Создание задачи</h1>
-          <span className="rounded-lg bg-neutral-100 px-2.5 py-1 text-sm font-medium text-neutral-700">
-            {project.key}
-          </span>
-        </div>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+              Создание задачи
+            </h1>
 
-        <p className="text-sm text-neutral-600">
-          Новая задача будет создана внутри проекта{" "}
-          <span className="font-medium text-black">{project.name}</span>.
-        </p>
+            <p className="text-sm text-neutral-600">
+              Новая задача будет добавлена в проект{" "}
+              <span className="font-medium text-neutral-900">
+                {project.name}
+              </span>
+              .
+            </p>
+          </div>
+
+          <div className="shrink-0 rounded-xl border bg-neutral-50 px-3 py-1.5 text-sm font-medium text-neutral-700">
+            {project.key}
+          </div>
+        </div>
       </div>
 
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Новая задача</CardTitle>
+      {/* Form Card */}
+      <Card className="rounded-2xl border-neutral-200 shadow-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-lg font-semibold">
+            Детали задачи
+          </CardTitle>
+          <p className="text-sm text-neutral-500">
+            Заполните информацию перед созданием задачи
+          </p>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="space-y-6">
           <CreateTaskForm
             projectId={project.id}
             sprints={sprints}

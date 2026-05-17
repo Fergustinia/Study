@@ -20,7 +20,9 @@ export default async function AnalyticsPage({
 }: AnalyticsPageProps) {
   const userId = await requireUserId();
   const resolvedSearchParams = (await searchParams) ?? {};
+
   const projects = await getProjectsForUser(userId);
+
   const selectedProjectId = resolveSelectedProjectId(
     projects,
     resolvedSearchParams.projectId
@@ -43,123 +45,146 @@ export default async function AnalyticsPage({
       : [];
 
   const total = tasks.length;
-  const done = tasks.filter((task) => task.status === "DONE").length;
-  const inProgress = tasks.filter(
-    (task) => task.status === "IN_PROGRESS"
-  ).length;
-  const totalPoints = tasks.reduce((sum, task) => sum + task.storyPoints, 0);
+  const done = tasks.filter((t) => t.status === "DONE").length;
+  const inProgress = tasks.filter((t) => t.status === "IN_PROGRESS").length;
+
+  const totalPoints = tasks.reduce((s, t) => s + t.storyPoints, 0);
   const donePoints = tasks
-    .filter((task) => task.status === "DONE")
-    .reduce((sum, task) => sum + task.storyPoints, 0);
+    .filter((t) => t.status === "DONE")
+    .reduce((s, t) => s + t.storyPoints, 0);
 
-  const statusCounts = TASK_STATUSES.map((status) => ({
-    status,
-    count: tasks.filter((task) => task.status === status).length,
-  }));
+  const completionPercent = total ? Math.round((done / total) * 100) : 0;
 
-  const priorityCounts = ["LOW", "MEDIUM", "HIGH", "CRITICAL"].map(
-    (priority) => ({
-      priority,
-      count: tasks.filter((task) => task.priority === priority).length,
-    })
-  );
+  const statusCounts = TASK_STATUSES.map((status) => {
+    const count = tasks.filter((t) => t.status === status).length;
+    return { status, count };
+  });
 
-  const completionPercent =
-    total > 0 ? Math.round((done / total) * 100) : 0;
+  const priorityLevels = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
+
+  const priorityCounts = priorityLevels.map((priority) => {
+    const count = tasks.filter((t) => t.priority === priority).length;
+    return { priority, count };
+  });
 
   return (
-    <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Аналитика</h1>
-        <p className="text-neutral-500">
-          Сводка по задачам и прогрессу выбранного проекта.
-        </p>
-      </header>
+    <div className="mx-auto max-w-6xl space-y-8 py-6">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Аналитика
+        </h1>
 
+        <p className="text-sm text-neutral-600">
+          Метрики и распределение задач по выбранному проекту.
+        </p>
+      </div>
+
+      {/* Empty */}
       {projects.length === 0 ? (
         <EmptyProjectsState
           title="Нет доступных проектов"
-          description="Создайте проект, чтобы смотреть метрики."
+          description="Создайте проект, чтобы увидеть аналитику."
         />
       ) : (
         <>
+          {/* Project selector */}
           <ProjectPageSelect
             projects={projects}
             selectedProjectId={selectedProjectId}
             basePath="/analytics"
           />
 
+          {/* Overview stats */}
           <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             <StatCard title="Всего задач" value={String(total)} />
+
             <StatCard
               title="Выполнено"
               value={`${completionPercent}%`}
-              description={`${done} из ${total} задач`}
+              description={`${done} из ${total}`}
             />
+
             <StatCard
               title="В работе"
               value={String(inProgress)}
-              description="Статус In Progress"
+              description="IN_PROGRESS"
             />
+
             <StatCard
               title="Story points"
               value={`${donePoints}/${totalPoints}`}
-              description="Выполнено / всего"
+              description="done / total"
             />
           </section>
 
+          {/* Breakdown */}
           <section className="grid gap-4 lg:grid-cols-2">
-            <Card className="rounded-2xl">
+            {/* Status */}
+            <Card className="rounded-2xl border-neutral-200 shadow-sm">
               <CardHeader>
-                <CardTitle>По статусам</CardTitle>
+                <CardTitle className="text-lg font-semibold">
+                  По статусам
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+
+              <CardContent className="space-y-4">
                 {statusCounts.map(({ status, count }) => {
-                  const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+                  const percent = total
+                    ? Math.round((count / total) * 100)
+                    : 0;
 
                   return (
-                    <section key={status} className="space-y-1">
-                      <section className="flex justify-between text-sm">
+                    <div key={status} className="space-y-1">
+                      <div className="flex justify-between text-sm">
                         <span>{getTaskStatusLabel(status)}</span>
                         <span className="text-neutral-500">
-                          {count} ({percent}%)
+                          {count} · {percent}%
                         </span>
-                      </section>
-                      <section className="h-2 overflow-hidden rounded-full bg-neutral-100">
-                        <section
-                          className="h-full rounded-full bg-black transition-all"
+                      </div>
+
+                      <div className="h-2 rounded-full bg-neutral-100">
+                        <div
+                          className="h-2 rounded-full bg-black transition-all"
                           style={{ width: `${percent}%` }}
                         />
-                      </section>
-                    </section>
+                      </div>
+                    </div>
                   );
                 })}
               </CardContent>
             </Card>
 
-            <Card className="rounded-2xl">
+            {/* Priority */}
+            <Card className="rounded-2xl border-neutral-200 shadow-sm">
               <CardHeader>
-                <CardTitle>По приоритету</CardTitle>
+                <CardTitle className="text-lg font-semibold">
+                  По приоритету
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+
+              <CardContent className="space-y-4">
                 {priorityCounts.map(({ priority, count }) => {
-                  const percent = total > 0 ? Math.round((count / total) * 100) : 0;
+                  const percent = total
+                    ? Math.round((count / total) * 100)
+                    : 0;
 
                   return (
-                    <section key={priority} className="space-y-1">
-                      <section className="flex justify-between text-sm">
+                    <div key={priority} className="space-y-1">
+                      <div className="flex justify-between text-sm">
                         <span>{priority}</span>
                         <span className="text-neutral-500">
-                          {count} ({percent}%)
+                          {count} · {percent}%
                         </span>
-                      </section>
-                      <section className="h-2 overflow-hidden rounded-full bg-neutral-100">
-                        <section
-                          className="h-full rounded-full bg-neutral-700 transition-all"
+                      </div>
+
+                      <div className="h-2 rounded-full bg-neutral-100">
+                        <div
+                          className="h-2 rounded-full bg-neutral-700 transition-all"
                           style={{ width: `${percent}%` }}
                         />
-                      </section>
-                    </section>
+                      </div>
+                    </div>
                   );
                 })}
               </CardContent>
@@ -167,6 +192,6 @@ export default async function AnalyticsPage({
           </section>
         </>
       )}
-    </section>
+    </div>
   );
 }

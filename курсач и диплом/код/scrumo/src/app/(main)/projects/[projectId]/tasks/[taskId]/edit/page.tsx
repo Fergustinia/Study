@@ -14,26 +14,26 @@ type EditProjectTaskPageProps = {
 };
 
 function formatDateInputValue(date: Date | null) {
-  if (!date) {
-    return "";
-  }
+  if (!date) return "";
 
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
 }
 
-export default async function EditProjectTaskPage({ params }: EditProjectTaskPageProps) {
+export default async function EditProjectTaskPage({
+  params,
+}: EditProjectTaskPageProps) {
   const userId = await requireUserId();
   const { projectId, taskId } = await params;
+
   await requireProjectMember(projectId, userId);
 
   const [project, task, sprints, users] = await Promise.all([
     prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
+      where: { id: projectId },
       select: {
         id: true,
         name: true,
@@ -41,10 +41,7 @@ export default async function EditProjectTaskPage({ params }: EditProjectTaskPag
       },
     }),
     prisma.task.findFirst({
-      where: {
-        id: taskId,
-        projectId,
-      },
+      where: { id: taskId, projectId },
       select: {
         id: true,
         title: true,
@@ -58,9 +55,7 @@ export default async function EditProjectTaskPage({ params }: EditProjectTaskPag
       },
     }),
     prisma.sprint.findMany({
-      where: {
-        projectId,
-      },
+      where: { projectId },
       orderBy: [{ startDate: "desc" }, { createdAt: "desc" }],
       select: {
         id: true,
@@ -78,38 +73,63 @@ export default async function EditProjectTaskPage({ params }: EditProjectTaskPag
     }),
   ]);
 
-  if (!project || !task) {
-    notFound();
-  }
+  if (!project || !task) notFound();
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-3">
+    <div className="mx-auto max-w-4xl space-y-8 py-6">
+      {/* Header */}
+      <div className="space-y-4">
         <Link
           href={`/projects/${project.id}/tasks`}
-          className="inline-flex text-sm text-neutral-500 transition hover:text-black"
+          className="inline-flex items-center gap-2 text-sm text-neutral-500 transition hover:text-neutral-900"
         >
-          ← Назад к задачам проекта
+          <span>←</span>
+          <span>Назад к задачам</span>
         </Link>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-3xl font-bold tracking-tight">Редактирование задачи</h1>
-          <span className="rounded-lg bg-neutral-100 px-2.5 py-1 text-sm font-medium text-neutral-700">
-            {project.key}
-          </span>
-        </div>
+        <div className="flex items-start justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold tracking-tight text-neutral-900">
+              Редактирование задачи
+            </h1>
 
-        <p className="text-sm text-neutral-600">
-          Изменения для задачи <span className="font-medium text-black">{task.title}</span> в
-          проекте <span className="font-medium text-black">{project.name}</span>.
-        </p>
+            <p className="text-sm text-neutral-600">
+              Изменение задачи{" "}
+              <span className="font-medium text-neutral-900">
+                {task.title}
+              </span>{" "}
+              в проекте{" "}
+              <span className="font-medium text-neutral-900">
+                {project.name}
+              </span>
+              .
+            </p>
+          </div>
+
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            <span className="rounded-xl border bg-neutral-50 px-3 py-1.5 text-sm font-medium text-neutral-700">
+              {project.key}
+            </span>
+
+            <span className="text-xs text-neutral-400">
+              Task ID: {task.id.slice(0, 6)}…
+            </span>
+          </div>
+        </div>
       </div>
 
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Параметры задачи</CardTitle>
+      {/* Form */}
+      <Card className="rounded-2xl border-neutral-200 shadow-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-lg font-semibold">
+            Параметры задачи
+          </CardTitle>
+          <p className="text-sm text-neutral-500">
+            Обновите данные задачи и сохраните изменения
+          </p>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="space-y-6">
           <EditTaskForm
             projectId={project.id}
             taskId={task.id}

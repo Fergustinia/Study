@@ -36,9 +36,7 @@ export default async function TeamPage() {
         },
       },
     },
-    orderBy: {
-      createdAt: "asc",
-    },
+    orderBy: { createdAt: "asc" },
   });
 
   const peopleMap = new Map<
@@ -57,24 +55,24 @@ export default async function TeamPage() {
     }
   >();
 
-  for (const membership of memberships) {
-    const existing = peopleMap.get(membership.user.id);
+  for (const m of memberships) {
+    const existing = peopleMap.get(m.user.id);
 
     const projectEntry = {
-      projectId: membership.project.id,
-      projectName: membership.project.name,
-      projectKey: membership.project.key,
-      role: membership.role,
+      projectId: m.project.id,
+      projectName: m.project.name,
+      projectKey: m.project.key,
+      role: m.role,
     };
 
     if (existing) {
       existing.projects.push(projectEntry);
     } else {
-      peopleMap.set(membership.user.id, {
-        id: membership.user.id,
-        name: membership.user.name,
-        email: membership.user.email,
-        systemRole: membership.user.role,
+      peopleMap.set(m.user.id, {
+        id: m.user.id,
+        name: m.user.name,
+        email: m.user.email,
+        systemRole: m.user.role,
         projects: [projectEntry],
       });
     }
@@ -84,68 +82,76 @@ export default async function TeamPage() {
     a.name.localeCompare(b.name, "ru")
   );
 
-  const projectCount = new Set(
-    memberships.map((membership) => membership.project.id)
-  ).size;
+  const projectCount = new Set(memberships.map((m) => m.project.id)).size;
 
   return (
-    <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Команда</h1>
-        <p className="text-neutral-500">
+    <div className="mx-auto max-w-6xl space-y-8 py-6">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Команда</h1>
+        <p className="text-sm text-neutral-600">
           Участники проектов, к которым у вас есть доступ.
         </p>
-      </header>
+      </div>
 
+      {/* Stats */}
       <section className="grid gap-4 md:grid-cols-2">
         <StatCard title="Участников" value={String(people.length)} />
         <StatCard title="Проектов" value={String(projectCount)} />
       </section>
 
+      {/* Empty */}
       {people.length === 0 ? (
         <Card className="rounded-2xl border-dashed">
           <CardContent className="py-10 text-center text-sm text-neutral-500">
-            В ваших проектах пока нет других участников.
+            В ваших проектах пока нет участников
           </CardContent>
         </Card>
       ) : (
         <section className="grid gap-4 lg:grid-cols-2">
           {people.map((person) => (
-            <Card key={person.id} className="rounded-2xl">
-              <CardHeader>
-                <CardTitle className="text-lg">{person.name}</CardTitle>
-                <p className="text-sm text-neutral-500">{person.email}</p>
+            <Card
+              key={person.id}
+              className="rounded-2xl border-neutral-200 shadow-sm"
+            >
+              <CardHeader className="space-y-1">
+                <CardTitle className="text-lg font-semibold">
+                  {person.name}
+                </CardTitle>
+
+                <p className="text-sm text-neutral-600">{person.email}</p>
+
                 <p className="text-xs text-neutral-400">
-                  Роль в системе: {person.systemRole}
+                  System role: {person.systemRole}
                 </p>
               </CardHeader>
-              <CardContent>
-                <ul className="space-y-2">
-                  {person.projects.map((project) => (
-                    <li
-                      key={`${person.id}-${project.projectId}`}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-neutral-100 px-3 py-2 text-sm"
+
+              <CardContent className="space-y-2">
+                {person.projects.map((project) => (
+                  <div
+                    key={project.projectId}
+                    className="flex items-center justify-between rounded-lg border border-neutral-100 px-3 py-2 text-sm hover:bg-neutral-50"
+                  >
+                    <Link
+                      href={`/projects/${project.projectId}`}
+                      className="font-medium text-neutral-900 hover:underline"
                     >
-                      <Link
-                        href={`/projects/${project.projectId}`}
-                        className="font-medium hover:underline"
-                      >
-                        {project.projectName}{" "}
-                        <span className="text-neutral-400">
-                          ({project.projectKey})
-                        </span>
-                      </Link>
-                      <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
-                        {getProjectRoleLabel(project.role)}
+                      {project.projectName}
+                      <span className="ml-2 text-xs text-neutral-400">
+                        {project.projectKey}
                       </span>
-                    </li>
-                  ))}
-                </ul>
+                    </Link>
+
+                    <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
+                      {getProjectRoleLabel(project.role)}
+                    </span>
+                  </div>
+                ))}
               </CardContent>
             </Card>
           ))}
         </section>
       )}
-    </section>
+    </div>
   );
 }

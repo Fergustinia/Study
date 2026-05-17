@@ -42,36 +42,36 @@ function getTaskStatusClasses(status: string) {
 export default async function BacklogPage({ searchParams }: BacklogPageProps) {
   const userId = await requireUserId();
   const resolvedSearchParams = (await searchParams) ?? {};
+
   const projects = await getProjectsForUser(userId);
+
   const selectedProjectId = resolveSelectedProjectId(
     projects,
     resolvedSearchParams.projectId
   );
 
-  const sprints =
+  const [sprints, backlogTasks] =
     selectedProjectId.length > 0
-      ? await prisma.sprint.findMany({
-          where: { projectId: selectedProjectId },
-          select: { id: true, name: true },
-          orderBy: { createdAt: "desc" },
-        })
-      : [];
-
-  const backlogTasks =
-    selectedProjectId.length > 0
-      ? await prisma.task.findMany({
-          where: {
-            projectId: selectedProjectId,
-            sprintId: null,
-          },
-          include: {
-            assignee: {
-              select: { id: true, name: true },
+      ? await Promise.all([
+          prisma.sprint.findMany({
+            where: { projectId: selectedProjectId },
+            select: { id: true, name: true },
+            orderBy: { createdAt: "desc" },
+          }),
+          prisma.task.findMany({
+            where: {
+              projectId: selectedProjectId,
+              sprintId: null,
             },
-          },
-          orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
-        })
-      : [];
+            include: {
+              assignee: {
+                select: { id: true, name: true },
+              },
+            },
+            orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
+          }),
+        ])
+      : [[], []];
 
   const totalBacklogPoints = backlogTasks.reduce(
     (sum, task) => sum + task.storyPoints,
@@ -79,113 +79,136 @@ export default async function BacklogPage({ searchParams }: BacklogPageProps) {
   );
 
   return (
-    <section className="space-y-6">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <section>
-          <h1 className="text-3xl font-bold tracking-tight">Бэклог</h1>
-          <p className="text-neutral-500">
-            Задачи без спринта. Назначьте спринт, когда будете готовы к
-            планированию.
-          </p>
-        </section>
+    <div className="mx-auto max-w-6xl space-y-8 py-6">
+      {/* Header */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Бэклог
+          </h1>
 
-        {selectedProjectId ? (
+          <p className="text-sm text-neutral-600">
+            Задачи без спринта. Их можно распределить позже во время планирования.
+          </p>
+        </div>
+
+        {selectedProjectId && (
           <Link
             href={`/projects/${selectedProjectId}/tasks/new`}
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-medium text-white"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-medium text-white transition hover:bg-neutral-800"
           >
             Новая задача
           </Link>
-        ) : null}
-      </header>
+        )}
+      </div>
 
+      {/* Empty state */}
       {projects.length === 0 ? (
         <EmptyProjectsState
           title="Нет доступных проектов"
-          description="Создайте проект, чтобы вести бэклог задач."
+          description="Создайте проект, чтобы начать работу с бэклогом."
         />
       ) : (
         <>
+          {/* Project selector */}
           <ProjectPageSelect
             projects={projects}
             selectedProjectId={selectedProjectId}
             basePath="/backlog"
           />
 
+          {/* Stats */}
           <section className="grid gap-4 md:grid-cols-3">
             <StatCard
-              title="Задач в бэклоге"
+              title="В бэклоге"
               value={String(backlogTasks.length)}
-              description="Без привязки к спринту"
+              description="Без спринта"
             />
             <StatCard
               title="Story points"
               value={String(totalBacklogPoints)}
-              description="Сумма в бэклоге"
+              description="Общий объём"
             />
             <StatCard
-              title="Спринтов"
+              title="Спринты"
               value={String(sprints.length)}
-              description="Доступно для назначения"
+              description="Доступны для назначения"
             />
           </section>
 
-          <Card className="rounded-2xl">
-            <CardHeader>
-              <CardTitle>Задачи бэклога</CardTitle>
+          {/* Task list */}
+          <Card className="rounded-2xl border-neutral-200 shadow-sm">
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-lg font-semibold">
+                Задачи бэклога
+              </CardTitle>
+              <p className="text-sm text-neutral-500">
+                Перетащите или назначьте задачи в спринты
+              </p>
             </CardHeader>
+
             <CardContent>
               {backlogTasks.length === 0 ? (
                 <p className="text-sm text-neutral-500">
-                  В бэклоге пока нет задач. Создайте задачу без спринта или
-                  снимите спринт с существующей.
+                  Пока нет задач без спринта.
                 </p>
               ) : (
                 <ul className="space-y-3">
                   {backlogTasks.map((task) => (
                     <li
                       key={task.id}
-                      className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 lg:flex-row lg:items-center lg:justify-between"
+                      className="flex flex-col gap-3 rounded-xl border border-neutral-200 p-4 transition hover:bg-neutral-50 lg:flex-row lg:items-center lg:justify-between"
                     >
-                      <section className="min-w-0 flex-1 space-y-2">
+                      {/* Left */}
+                      <div className="min-w-0 flex-1 space-y-2">
                         <Link
                           href={`/projects/${selectedProjectId}/tasks/${task.id}/edit`}
-                          className="font-medium hover:underline"
+                          className="block font-medium text-neutral-900 hover:underline"
                         >
                           {task.title}
                         </Link>
-                        <section className="flex flex-wrap items-center gap-2 text-xs">
+
+                        <div className="flex flex-wrap items-center gap-2 text-xs">
                           <span
-                            className={`rounded-full px-2.5 py-1 font-medium ${getTaskStatusClasses(task.status)}`}
+                            className={`rounded-full px-2.5 py-1 font-medium ${getTaskStatusClasses(
+                              task.status
+                            )}`}
                           >
                             {getTaskStatusLabel(task.status)}
                           </span>
+
                           <span
-                            className={`rounded-full px-2.5 py-1 font-medium ${getPriorityClasses(task.priority)}`}
+                            className={`rounded-full px-2.5 py-1 font-medium ${getPriorityClasses(
+                              task.priority
+                            )}`}
                           >
                             {getPriorityLabel(task.priority)}
                           </span>
+
                           <span className="text-neutral-500">
                             {task.storyPoints} SP
                           </span>
-                          {task.assignee ? (
+
+                          {task.assignee && (
                             <span className="text-neutral-500">
                               {task.assignee.name}
                             </span>
-                          ) : null}
-                        </section>
-                      </section>
+                          )}
+                        </div>
+                      </div>
 
-                      <section className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                      {/* Right */}
+                      <div className="flex items-center justify-between gap-3 lg:justify-end">
                         <span className="text-xs text-neutral-500">
                           Спринт
                         </span>
+
                         <AssignSprintSelect
                           taskId={task.id}
                           sprints={sprints}
                           currentSprintId={task.sprintId}
                         />
-                      </section>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -194,6 +217,6 @@ export default async function BacklogPage({ searchParams }: BacklogPageProps) {
           </Card>
         </>
       )}
-    </section>
+    </div>
   );
 }

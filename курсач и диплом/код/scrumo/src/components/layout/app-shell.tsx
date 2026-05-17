@@ -14,25 +14,38 @@ type Props = {
   children: ReactNode;
 };
 
-export function AppShell({ projects, user, signOutButton, children }: Props) {
+export function AppShell({
+  projects,
+  user,
+  signOutButton,
+  children,
+}: Props) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-neutral-100">
+    <div className="flex h-screen overflow-hidden bg-neutral-100">
+      {/* Sidebar */}
       <AppSidebar
         projects={projects}
         mobileOpen={mobileNavOpen}
         onMobileClose={() => setMobileNavOpen(false)}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+      {/* Main layout */}
+      <div className="flex min-w-0 flex-1 flex-col">
+        {/* Header */}
         <AppHeaderBar
           user={user}
           onMenuClick={() => setMobileNavOpen(true)}
           signOutButton={signOutButton}
         />
 
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        {/* Content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

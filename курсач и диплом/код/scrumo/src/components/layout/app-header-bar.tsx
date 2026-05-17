@@ -17,11 +17,13 @@ type Props = {
 export function AppHeaderBar({ user, onMenuClick, signOutButton }: Props) {
   const pathname = usePathname();
   const pageTitle = getPageTitle(pathname);
+
   const displayName = user.name ?? user.email ?? "Пользователь";
   const initial = (user.name?.[0] ?? user.email?.[0] ?? "?").toUpperCase();
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-4 border-b bg-white px-4 sm:px-6">
+    <header className="flex h-16 items-center justify-between border-b border-neutral-200 bg-white px-4 sm:px-6">
+      {/* Left */}
       <div className="flex min-w-0 items-center gap-3">
         <Button
           type="button"
@@ -34,34 +36,43 @@ export function AppHeaderBar({ user, onMenuClick, signOutButton }: Props) {
           <MenuIcon className="h-4 w-4" />
         </Button>
 
-        <div>
-          <p className="truncate text-sm text-neutral-500">Scrumo</p>
-          <h1 className="truncate text-lg font-semibold tracking-tight">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 text-xs text-neutral-400">
+            <span>Scrumo</span>
+            <span className="text-neutral-300">/</span>
+            <span className="truncate">{pageTitle}</span>
+          </div>
+
+          <h1 className="truncate text-lg font-semibold tracking-tight text-neutral-900">
             {pageTitle}
           </h1>
         </div>
       </div>
 
-      <div className="flex shrink-0 items-center gap-3">
+      {/* Right */}
+      <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
-          <p className="max-w-[200px] truncate text-sm font-medium text-neutral-800">
+          <p className="max-w-[180px] truncate text-sm font-medium text-neutral-900">
             {displayName}
           </p>
-          {user.email ? (
-            <p className="max-w-[200px] truncate text-xs text-neutral-500">
+
+          {user.email && (
+            <p className="max-w-[180px] truncate text-xs text-neutral-500">
               {user.email}
             </p>
-          ) : null}
+          )}
         </div>
 
-        <div
-          className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-xs font-medium text-white"
-          title={displayName}
-        >
-          {initial}
-        </div>
+        <div className="flex items-center gap-2">
+          <div
+            className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-900 text-xs font-medium text-white"
+            title={displayName}
+          >
+            {initial}
+          </div>
 
-        {signOutButton}
+          {signOutButton}
+        </div>
       </div>
     </header>
   );

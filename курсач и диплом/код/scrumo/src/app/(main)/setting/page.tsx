@@ -18,24 +18,35 @@ export default async function SettingPage() {
     },
   });
 
-  if (!user) {
-    return null;
-  }
+  if (!user) return null;
 
   return (
-    <section className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Настройки</h1>
-        <p className="text-neutral-500">
-          Профиль и параметры вашей учётной записи.
-        </p>
-      </header>
+    <div className="mx-auto max-w-5xl space-y-8 py-6">
+      {/* Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Настройки
+        </h1>
 
-      <section className="grid gap-6 lg:grid-cols-[2fr_1fr]">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle>Профиль</CardTitle>
+        <p className="text-sm text-neutral-600">
+          Управление профилем и параметрами аккаунта.
+        </p>
+      </div>
+
+      {/* Layout */}
+      <div className="grid gap-6 lg:grid-cols-[2fr_1fr]">
+        {/* Profile */}
+        <Card className="rounded-2xl border-neutral-200 shadow-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-lg font-semibold">
+              Профиль
+            </CardTitle>
+
+            <p className="text-sm text-neutral-500">
+              Основная информация аккаунта
+            </p>
           </CardHeader>
+
           <CardContent>
             <SettingsForm
               name={user.name}
@@ -45,27 +56,42 @@ export default async function SettingPage() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle>Аккаунт</CardTitle>
+        {/* Account info */}
+        <Card className="rounded-2xl border-neutral-200 shadow-sm">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-lg font-semibold">
+              Аккаунт
+            </CardTitle>
+
+            <p className="text-sm text-neutral-500">
+              Системная информация
+            </p>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-neutral-600">
-            <p>
-              Дата регистрации:{" "}
-              <span className="font-medium text-neutral-900">
+
+          <CardContent className="space-y-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-neutral-500">Email</span>
+              <span className="text-neutral-900">{user.email}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-neutral-500">Роль</span>
+              <span className="text-neutral-900">{user.role}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-neutral-500">Регистрация</span>
+              <span className="text-neutral-900">
                 {user.createdAt.toLocaleDateString("ru-RU")}
               </span>
-            </p>
-            <p>
-              Email используется для входа и не редактируется в этом разделе.
-            </p>
-            <p>
-              Для смены пароля обратитесь к администратору или добавьте отдельный
-              flow восстановления позже.
-            </p>
+            </div>
+
+            <div className="pt-2 text-xs text-neutral-500">
+              Email используется для входа в систему и не редактируется здесь.
+            </div>
           </CardContent>
         </Card>
-      </section>
-    </section>
+      </div>
+    </div>
   );
 }

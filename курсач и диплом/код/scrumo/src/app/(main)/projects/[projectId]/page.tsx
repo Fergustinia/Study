@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { StatCard } from "@/components/shared/stat-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { auth } from "@/auth";
 import { requireProjectMember } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
@@ -18,27 +17,16 @@ export default async function ProjectDetailsPage({ params }: Props) {
   const session = await auth();
   const userId = session?.user?.id;
 
-  if (!userId) {
-    return null;
-  }
+  if (!userId) return null;
 
   const { projectId } = await params;
   await requireProjectMember(projectId, userId);
 
   const project = await prisma.project.findUnique({
-    where: {
-      id: projectId,
-    },
+    where: { id: projectId },
     include: {
-      members: {
-        include: {
-          user: true,
-        },
-      },
-      sprints: {
-        orderBy: { createdAt: "desc" },
-        take: 3,
-      },
+      members: { include: { user: true } },
+      sprints: { orderBy: { createdAt: "desc" }, take: 3 },
       _count: {
         select: {
           tasks: true,
@@ -49,9 +37,7 @@ export default async function ProjectDetailsPage({ params }: Props) {
     },
   });
 
-  if (!project) {
-    notFound();
-  }
+  if (!project) notFound();
 
   const doneTasks = await prisma.task.count({
     where: {
@@ -69,48 +55,62 @@ export default async function ProjectDetailsPage({ params }: Props) {
   });
 
   return (
-    <section className="space-y-6">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <section>
-          <section className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">{project.name}</h1>
-            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-700">
+    <div className="space-y-8">
+
+      {/* HEADER */}
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-3">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {project.name}
+            </h1>
+
+            <span className="text-xs text-neutral-400">
               {project.key}
             </span>
-          </section>
-          <p className="mt-2 text-neutral-500">
+          </div>
+
+          <p className="text-sm text-neutral-500 max-w-xl">
             {project.description || "Без описания"}
           </p>
-        </section>
+        </div>
 
-        <section className="flex flex-wrap gap-2">
+        {/* ACTIONS */}
+        <div className="flex flex-wrap gap-2">
+
           <Link
             href={`/board?projectId=${project.id}`}
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-medium text-white"
+            className="rounded-full bg-black px-4 py-2 text-sm text-white"
           >
             Доска
           </Link>
+
           <Link
             href={`/projects/${project.id}/tasks`}
-            className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-medium"
+            className="rounded-full bg-neutral-100 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-200 transition"
           >
             Задачи
           </Link>
+
           <Link
             href={`/backlog?projectId=${project.id}`}
-            className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-medium"
+            className="rounded-full bg-neutral-100 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-200 transition"
           >
             Бэклог
           </Link>
+
           <Link
             href={`/planning?projectId=${project.id}`}
-            className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-medium"
+            className="rounded-full bg-neutral-100 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-200 transition"
           >
             Планирование
           </Link>
-        </section>
-      </header>
 
+        </div>
+      </div>
+
+      {/* STATS */}
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard title="Задачи" value={String(project._count.tasks)} />
         <StatCard title="Выполнено" value={String(doneTasks)} />
@@ -121,64 +121,91 @@ export default async function ProjectDetailsPage({ params }: Props) {
         />
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2">
-        <Card className="rounded-2xl">
-          <CardHeader>
-            <CardTitle>Команда проекта</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {project.members.length === 0 ? (
-              <p className="text-sm text-neutral-500">Участников пока нет</p>
-            ) : (
-              <ul className="space-y-3">
-                {project.members.map((member) => (
-                  <li
-                    key={member.id}
-                    className="flex items-center justify-between gap-4 text-sm"
-                  >
-                    <section>
-                      <p className="font-medium">{member.user.name}</p>
-                      <p className="text-neutral-500">{member.user.email}</p>
-                    </section>
-                    <span className="rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
-                      {getProjectRoleLabel(member.role)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+      {/* MAIN GRID */}
+      <section className="grid gap-6 lg:grid-cols-2">
 
-        <Card className="rounded-2xl">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Последние спринты</CardTitle>
+        {/* TEAM */}
+        <div className="rounded-2xl bg-white p-5">
+
+          <h2 className="text-base font-medium mb-4">
+            Команда
+          </h2>
+
+          {project.members.length === 0 ? (
+            <p className="text-sm text-neutral-500">
+              Нет участников
+            </p>
+          ) : (
+            <div className="space-y-3">
+
+              {project.members.map((member) => (
+                <div
+                  key={member.id}
+                  className="flex items-center justify-between"
+                >
+                  <div>
+                    <p className="text-sm font-medium">
+                      {member.user.name}
+                    </p>
+                    <p className="text-xs text-neutral-500">
+                      {member.user.email}
+                    </p>
+                  </div>
+
+                  <span className="text-xs text-neutral-400">
+                    {getProjectRoleLabel(member.role)}
+                  </span>
+                </div>
+              ))}
+
+            </div>
+          )}
+        </div>
+
+        {/* SPRINTS */}
+        <div className="rounded-2xl bg-white p-5">
+
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-medium">
+              Последние спринты
+            </h2>
+
             <Link
               href={`/planning?projectId=${project.id}`}
-              className="text-sm font-medium text-black underline"
+              className="text-sm text-neutral-500 hover:text-black"
             >
               Все
             </Link>
-          </CardHeader>
-          <CardContent>
-            {project.sprints.length === 0 ? (
-              <p className="text-sm text-neutral-500">Спринтов пока нет</p>
-            ) : (
-              <ul className="space-y-2 text-sm">
-                {project.sprints.map((sprint) => (
-                  <li
-                    key={sprint.id}
-                    className="rounded-lg border border-neutral-100 px-3 py-2"
-                  >
-                    <p className="font-medium">{sprint.name}</p>
-                    <p className="text-xs text-neutral-500">{sprint.status}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </CardContent>
-        </Card>
+          </div>
+
+          {project.sprints.length === 0 ? (
+            <p className="text-sm text-neutral-500">
+              Спринтов пока нет
+            </p>
+          ) : (
+            <div className="space-y-2">
+
+              {project.sprints.map((sprint) => (
+                <div
+                  key={sprint.id}
+                  className="rounded-xl bg-neutral-50 px-4 py-3"
+                >
+                  <p className="text-sm font-medium">
+                    {sprint.name}
+                  </p>
+
+                  <p className="text-xs text-neutral-400">
+                    {sprint.status}
+                  </p>
+                </div>
+              ))}
+
+            </div>
+          )}
+
+        </div>
+
       </section>
-    </section>
+    </div>
   );
 }

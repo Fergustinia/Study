@@ -5,12 +5,10 @@ import { Prisma } from "@/generated/prisma";
 import { requireUserId, requireProjectMember } from "@/lib/access";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/shared/stat-card";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { TaskPriority, TaskStatus } from "@prisma/client";
 
 type ProjectTasksPageProps = {
-  params: Promise<{
-    projectId: string;
-  }>;
+  params: Promise<{ projectId: string }>;
   searchParams?: Promise<{
     q?: string;
     status?: string;
@@ -21,23 +19,14 @@ type ProjectTasksPageProps = {
 };
 
 const TASK_STATUS_VALUES = ["TODO", "IN_PROGRESS", "REVIEW", "TESTING", "DONE"] as const;
+const TASK_PRIORITY_VALUES = ["LOW", "MEDIUM", "HIGH", "CRITICAL"] as const;
 
-const TASK_PRIORITY_VALUES = [
-  "LOW",
-  "MEDIUM",
-  "HIGH",
-  "CRITICAL",
-] as const;
-
-type TaskStatusValue = (typeof TASK_STATUS_VALUES)[number];
-type TaskPriorityValue = (typeof TASK_PRIORITY_VALUES)[number];
-
-function isTaskStatus(value: string): value is TaskStatusValue {
-  return TASK_STATUS_VALUES.includes(value as TaskStatusValue);
+function isTaskStatus(value: string) {
+  return TASK_STATUS_VALUES.includes(value as any);
 }
 
-function isTaskPriority(value: string): value is TaskPriorityValue {
-  return TASK_PRIORITY_VALUES.includes(value as TaskPriorityValue);
+function isTaskPriority(value: string) {
+  return TASK_PRIORITY_VALUES.includes(value as any);
 }
 
 function formatDate(date: Date | string | null | undefined) {
@@ -45,79 +34,56 @@ function formatDate(date: Date | string | null | undefined) {
   return new Date(date).toLocaleDateString("ru-RU");
 }
 
-function getTaskStatusLabel(status: string) {
-  switch (status) {
-    case "TODO":
-      return "К выполнению";
-    case "IN_PROGRESS":
-      return "В работе";
-    case "REVIEW":
-      return "На ревью";
-    case "TESTING":
-      return "Тестирование";
-    case "DONE":
-      return "Готово";
-    default:
-      return status;
-  }
+function getStatusLabel(status: string) {
+  const map: Record<string, string> = {
+    TODO: "К выполнению",
+    IN_PROGRESS: "В работе",
+    REVIEW: "На ревью",
+    TESTING: "Тестирование",
+    DONE: "Готово",
+  };
+  return map[status] ?? status;
 }
 
-function getTaskStatusClasses(status: string) {
-  switch (status) {
-    case "TODO":
-      return "bg-neutral-100 text-neutral-700";
-    case "IN_PROGRESS":
-      return "bg-blue-100 text-blue-700";
-    case "REVIEW":
-      return "bg-amber-100 text-amber-700";
-    case "TESTING":
-      return "bg-violet-100 text-violet-700";
-    case "DONE":
-      return "bg-emerald-100 text-emerald-700";
-    default:
-      return "bg-neutral-100 text-neutral-700";
-  }
+function getStatusClass(status: string) {
+  const map: Record<string, string> = {
+    TODO: "bg-neutral-100 text-neutral-700",
+    IN_PROGRESS: "bg-blue-100 text-blue-700",
+    REVIEW: "bg-amber-100 text-amber-700",
+    TESTING: "bg-violet-100 text-violet-700",
+    DONE: "bg-emerald-100 text-emerald-700",
+  };
+  return map[status] ?? "bg-neutral-100 text-neutral-700";
 }
 
 function getPriorityLabel(priority: string) {
-  switch (priority) {
-    case "LOW":
-      return "Low";
-    case "MEDIUM":
-      return "Medium";
-    case "HIGH":
-      return "High";
-    case "CRITICAL":
-      return "Critical";
-    default:
-      return priority;
-  }
+  const map: Record<string, string> = {
+    LOW: "Low",
+    MEDIUM: "Medium",
+    HIGH: "High",
+    CRITICAL: "Critical",
+  };
+  return map[priority] ?? priority;
 }
 
-function getPriorityClasses(priority: string) {
-  switch (priority) {
-    case "LOW":
-      return "bg-neutral-100 text-neutral-700";
-    case "MEDIUM":
-      return "bg-blue-100 text-blue-700";
-    case "HIGH":
-      return "bg-amber-100 text-amber-700";
-    case "CRITICAL":
-      return "bg-red-100 text-red-700";
-    default:
-      return "bg-neutral-100 text-neutral-700";
-  }
+function getPriorityClass(priority: string) {
+  const map: Record<string, string> = {
+    LOW: "bg-neutral-100 text-neutral-700",
+    MEDIUM: "bg-blue-100 text-blue-700",
+    HIGH: "bg-amber-100 text-amber-700",
+    CRITICAL: "bg-red-100 text-red-700",
+  };
+  return map[priority] ?? "bg-neutral-100 text-neutral-700";
 }
 
-function buildOrderBy(sort: string | undefined): Prisma.TaskOrderByWithRelationInput[] {
+function buildOrderBy(sort?: string): Prisma.TaskOrderByWithRelationInput[] {
   switch (sort) {
     case "oldest":
       return [{ createdAt: "asc" }];
     case "deadline_asc":
-      return [{ deadline: "asc" }, { createdAt: "desc" }];
+      return [{ deadline: "asc" }];
     case "deadline_desc":
-      return [{ deadline: "desc" }, { createdAt: "desc" }];
-    case "newest":
+      return [{ deadline: "desc" }];
     default:
       return [{ createdAt: "desc" }];
   }
@@ -129,366 +95,194 @@ export default async function ProjectTasksPage({
 }: ProjectTasksPageProps) {
   const userId = await requireUserId();
   const { projectId } = await params;
+
   await requireProjectMember(projectId, userId);
-  const resolvedSearchParams = (await searchParams) ?? {};
 
-  const q = resolvedSearchParams.q?.trim() || "";
-  const rawStatus = resolvedSearchParams.status?.trim() || "";
-  const rawPriority = resolvedSearchParams.priority?.trim() || "";
-  const assigneeId = resolvedSearchParams.assigneeId?.trim() || "";
-  const sort = resolvedSearchParams.sort?.trim() || "newest";
+  const sp = (await searchParams) ?? {};
 
-  const status = rawStatus && isTaskStatus(rawStatus) ? rawStatus : "";
-  const priority = rawPriority && isTaskPriority(rawPriority) ? rawPriority : "";
+  const q = sp.q?.trim() || "";
+  const status = isTaskStatus(sp.status || "") ? sp.status as TaskStatus : undefined;
+  const priority = isTaskPriority(sp.priority || "") ? sp.priority as TaskPriority : undefined;
+  const assigneeId = sp.assigneeId?.trim() || "";
+  const sort = sp.sort || "newest";
 
-  const where: Prisma.TaskWhereInput = {
-    projectId,
-  };
+  const where: Prisma.TaskWhereInput = { projectId };
 
-  if (q) {
-    where.title = {
-      contains: q,
-      mode: "insensitive",
-    };
-  }
+  if (q) where.title = { contains: q, mode: "insensitive" };
+  if (status) where.status = status as TaskStatus;
+  if (priority) where.priority = priority as unknown as TaskPriority;
+  if (assigneeId) where.assigneeId = assigneeId;
 
-  if (status) {
-    where.status = status;
-  }
+  const [project, tasks, assignees, total, done, inProgress, overdue] =
+    await Promise.all([
+      prisma.project.findUnique({
+        where: { id: projectId },
+        select: { id: true, name: true, key: true },
+      }),
 
-  if (priority) {
-    where.priority = priority;
-  }
-
-  if (assigneeId) {
-    where.assigneeId = assigneeId;
-  }
-
-  const [
-    project,
-    tasks,
-    assignees,
-    totalTasks,
-    doneTasks,
-    inProgressTasks,
-    overdueTasks,
-  ] = await Promise.all([
-    prisma.project.findUnique({
-      where: {
-        id: projectId,
-      },
-      select: {
-        id: true,
-        name: true,
-        key: true,
-      },
-    }),
-    prisma.task.findMany({
-      where,
-      orderBy: buildOrderBy(sort),
-      include: {
-        assignee: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
+      prisma.task.findMany({
+        where,
+        orderBy: buildOrderBy(sort),
+        include: {
+          assignee: true,
+          sprint: true,
         },
-        sprint: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
-    }),
-    prisma.user.findMany({
-      where: {
-        tasks: {
-          some: {
-            projectId,
-          },
-        },
-      },
-      orderBy: [{ name: "asc" }, { email: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    }),
-    prisma.task.count({
-      where: {
-        projectId,
-      },
-    }),
-    prisma.task.count({
-      where: {
-        projectId,
-        status: "DONE",
-      },
-    }),
-    prisma.task.count({
-      where: {
-        projectId,
-        status: "IN_PROGRESS",
-      },
-    }),
-    prisma.task.count({
-      where: {
-        projectId,
-        deadline: {
-          lt: new Date(),
-        },
-        status: {
-          not: "DONE",
-        },
-      },
-    }),
-  ]);
+      }),
 
-  if (!project) {
-    notFound();
-  }
+      prisma.user.findMany({
+        where: {
+          tasks: { some: { projectId } },
+        },
+        select: { id: true, name: true, email: true },
+      }),
+
+      prisma.task.count({ where: { projectId } }),
+      prisma.task.count({ where: { projectId, status: "DONE" } }),
+      prisma.task.count({ where: { projectId, status: "IN_PROGRESS" } }),
+      prisma.task.count({
+        where: {
+          projectId,
+          status: { not: "DONE" },
+          deadline: { lt: new Date() },
+        },
+      }),
+    ]);
+
+  if (!project) notFound();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div className="space-y-3">
+    <div className="space-y-8">
+
+      {/* HEADER */}
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
           <Link
             href={`/projects/${project.id}`}
-            className="inline-flex text-sm text-neutral-500 transition hover:text-black"
+            className="text-sm text-neutral-500 hover:text-black"
           >
-            ← Назад к проекту
+            ← Назад
           </Link>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight">Задачи проекта</h1>
-            <span className="rounded-lg bg-neutral-100 px-2.5 py-1 text-sm font-medium text-neutral-700">
-              {project.key}
-            </span>
-          </div>
+          <h1 className="text-2xl font-semibold">
+            Задачи
+          </h1>
 
-          <p className="text-sm text-neutral-600">
-            Все задачи проекта <span className="font-medium text-black">{project.name}</span>.
+          <p className="text-sm text-neutral-500">
+            {project.name} · {project.key}
           </p>
         </div>
 
         <Link
           href={`/projects/${project.id}/tasks/new`}
-          className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-medium text-white"
+          className="rounded-full bg-black px-4 py-2 text-sm text-white"
         >
-          Создать задачу
+          Создать
         </Link>
       </div>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <StatCard
-          title="Всего задач"
-          value={String(totalTasks)}
-          description="Во всём проекте"
+      {/* STATS */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <StatCard title="Всего" value={String(total)} />
+        <StatCard title="Готово" value={String(done)} />
+        <StatCard title="В работе" value={String(inProgress)} />
+        <StatCard title="Просрочено" value={String(overdue)} />
+      </div>
+
+      {/* FILTERS (simplified, NO CARD) */}
+      <form className="grid gap-3 md:grid-cols-5">
+
+        <input
+          name="q"
+          defaultValue={q}
+          placeholder="Поиск..."
+          className="h-10 rounded-xl border px-3 text-sm"
         />
-        <StatCard
-          title="Готово"
-          value={String(doneTasks)}
-          description="Со статусом Done"
-        />
-        <StatCard
-          title="В работе"
-          value={String(inProgressTasks)}
-          description="Активно выполняются"
-        />
-        <StatCard
-          title="Просрочено"
-          value={String(overdueTasks)}
-          description="Не завершены и дедлайн прошёл"
-        />
-      </section>
 
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Фильтры и поиск</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form className="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
-            <div className="space-y-2 xl:col-span-2">
-              <label htmlFor="q" className="text-sm font-medium">
-                Поиск
-              </label>
-              <input
-                id="q"
-                name="q"
-                defaultValue={q}
-                placeholder="Поиск по названию задачи"
-                className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition placeholder:text-neutral-400 focus:border-neutral-400"
-              />
-            </div>
+        <select name="status" defaultValue={status} className="h-10 rounded-xl border px-3 text-sm">
+          <option value="">Статус</option>
+          <option value="TODO">TODO</option>
+          <option value="IN_PROGRESS">IN PROGRESS</option>
+          <option value="REVIEW">REVIEW</option>
+          <option value="TESTING">TESTING</option>
+          <option value="DONE">DONE</option>
+        </select>
 
-            <div className="space-y-2">
-              <label htmlFor="status" className="text-sm font-medium">
-                Статус
-              </label>
-              <select
-                id="status"
-                name="status"
-                defaultValue={status}
-                className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-              >
-                <option value="">Все</option>
-                <option value="TODO">К выполнению</option>
-                <option value="IN_PROGRESS">В работе</option>
-                <option value="REVIEW">На ревью</option>
-                <option value="TESTING">Тестирование</option>
-                <option value="DONE">Готово</option>
-              </select>
-            </div>
+        <select name="priority" defaultValue={priority} className="h-10 rounded-xl border px-3 text-sm">
+          <option value="">Приоритет</option>
+          <option value="LOW">Low</option>
+          <option value="MEDIUM">Medium</option>
+          <option value="HIGH">High</option>
+          <option value="CRITICAL">Critical</option>
+        </select>
 
-            <div className="space-y-2">
-              <label htmlFor="priority" className="text-sm font-medium">
-                Приоритет
-              </label>
-              <select
-                id="priority"
-                name="priority"
-                defaultValue={priority}
-                className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-              >
-                <option value="">Все</option>
-                <option value="LOW">Low</option>
-                <option value="MEDIUM">Medium</option>
-                <option value="HIGH">High</option>
-                <option value="CRITICAL">Critical</option>
-              </select>
-            </div>
+        <select name="assigneeId" defaultValue={assigneeId} className="h-10 rounded-xl border px-3 text-sm">
+          <option value="">Исполнитель</option>
+          {assignees.map(a => (
+            <option key={a.id} value={a.id}>
+              {a.name || a.email}
+            </option>
+          ))}
+        </select>
 
-            <div className="space-y-2">
-              <label htmlFor="assigneeId" className="text-sm font-medium">
-                Исполнитель
-              </label>
-              <select
-                id="assigneeId"
-                name="assigneeId"
-                defaultValue={assigneeId}
-                className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-              >
-                <option value="">Все</option>
-                {assignees.map((assignee) => (
-                  <option key={assignee.id} value={assignee.id}>
-                    {assignee.name || assignee.email}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <select name="sort" defaultValue={sort} className="h-10 rounded-xl border px-3 text-sm">
+          <option value="newest">Новые</option>
+          <option value="oldest">Старые</option>
+          <option value="deadline_asc">Дедлайн ↑</option>
+          <option value="deadline_desc">Дедлайн ↓</option>
+        </select>
 
-            <div className="space-y-2">
-              <label htmlFor="sort" className="text-sm font-medium">
-                Сортировка
-              </label>
-              <select
-                id="sort"
-                name="sort"
-                defaultValue={sort}
-                className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
-              >
-                <option value="newest">Сначала новые</option>
-                <option value="oldest">Сначала старые</option>
-                <option value="deadline_asc">Ближайший дедлайн</option>
-                <option value="deadline_desc">Дальний дедлайн</option>
-              </select>
-            </div>
+        <button className="h-10 rounded-xl bg-black text-white text-sm">
+          Применить
+        </button>
+      </form>
 
-            <div className="flex gap-2 md:col-span-2 xl:col-span-5">
-              <button
-                type="submit"
-                className="inline-flex h-10 items-center justify-center rounded-xl bg-black px-4 text-sm font-medium text-white"
-              >
-                Применить
-              </button>
+      {/* TASK LIST (clean product-style list) */}
+      <div className="space-y-2">
 
-              <Link
-                href={`/projects/${project.id}/tasks`}
-                className="inline-flex h-10 items-center justify-center rounded-xl border px-4 text-sm font-medium"
-              >
-                Сбросить
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+        {tasks.length === 0 ? (
+          <div className="rounded-xl bg-neutral-50 p-6 text-sm text-neutral-500">
+            Нет задач
+          </div>
+        ) : (
+          tasks.map(task => (
+            <Link
+              key={task.id}
+              href={`/projects/${project.id}/tasks/${task.id}/edit`}
+              className="block rounded-xl px-4 py-3 hover:bg-neutral-50 transition"
+            >
 
-      <Card className="rounded-2xl">
-        <CardHeader>
-          <CardTitle>Список задач</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {tasks.length === 0 ? (
-            <div className="rounded-2xl border border-dashed p-6 text-sm text-neutral-500">
-              По текущим фильтрам задач не найдено.
-            </div>
-          ) : (
-            tasks.map((task) => (
-              <div key={task.id} className="rounded-2xl border p-4">
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="space-y-1">
-                    <Link
-                      href={`/projects/${project.id}/tasks/${task.id}/edit`}
-                      className="font-semibold transition hover:text-neutral-700 hover:underline"
-                    >
-                      {task.title}
-                    </Link>
-                    <p className="text-sm text-neutral-500">
-                      {task.description || "Без описания"}
-                    </p>
-                  </div>
+              <div className="flex items-start justify-between">
 
-                  <div className="flex flex-wrap gap-2">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${getTaskStatusClasses(task.status)}`}
-                    >
-                      {getTaskStatusLabel(task.status)}
-                    </span>
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${getPriorityClasses(task.priority)}`}
-                    >
-                      {getPriorityLabel(task.priority)}
-                    </span>
-                  </div>
+                <div>
+                  <p className="font-medium">{task.title}</p>
+                  <p className="text-sm text-neutral-500">
+                    {task.assignee?.name || "—"}
+                  </p>
                 </div>
 
-                <div className="mt-4 grid gap-3 text-sm text-neutral-600 md:grid-cols-4">
-                  <div>
-                    <p className="text-neutral-400">Исполнитель</p>
-                    <p className="font-medium text-black">
-                      {task.assignee?.name || task.assignee?.email || "Не назначен"}
-                    </p>
-                  </div>
+                <div className="flex gap-2">
+                  <span className={`text-xs px-2 py-1 rounded-full ${getStatusClass(task.status)}`}>
+                    {getStatusLabel(task.status)}
+                  </span>
 
-                  <div>
-                    <p className="text-neutral-400">Спринт</p>
-                    <p className="font-medium text-black">
-                      {task.sprint?.name || "Без спринта"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-neutral-400">Story Points</p>
-                    <p className="font-medium text-black">
-                      {task.storyPoints ?? "—"}
-                    </p>
-                  </div>
-
-                  <div>
-                    <p className="text-neutral-400">Deadline</p>
-                    <p className="font-medium text-black">
-                      {formatDate(task.deadline)}
-                    </p>
-                  </div>
+                  <span className={`text-xs px-2 py-1 rounded-full ${getPriorityClass(task.priority)}`}>
+                    {getPriorityLabel(task.priority)}
+                  </span>
                 </div>
+
               </div>
-            ))
-          )}
-        </CardContent>
-      </Card>
+
+              <div className="mt-2 flex justify-between text-xs text-neutral-500">
+                <span>{task.sprint?.name || "Без спринта"}</span>
+                <span>{formatDate(task.deadline)}</span>
+              </div>
+
+            </Link>
+          ))
+        )}
+
+      </div>
+
     </div>
   );
 }
