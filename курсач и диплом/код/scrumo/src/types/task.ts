@@ -48,6 +48,23 @@ export function getTaskStatusLabel(status: TaskStatus | string) {
   }
 }
 
+export function getTaskStatusClasses(status: TaskStatus | string) {
+  switch (status) {
+    case "TODO":
+      return "bg-neutral-100 text-neutral-700";
+    case "IN_PROGRESS":
+      return "bg-blue-100 text-blue-700";
+    case "REVIEW":
+      return "bg-amber-100 text-amber-700";
+    case "TESTING":
+      return "bg-violet-100 text-violet-700";
+    case "DONE":
+      return "bg-emerald-100 text-emerald-700";
+    default:
+      return "bg-neutral-100 text-neutral-700";
+  }
+}
+
 export function getPriorityLabel(priority: string) {
   switch (priority) {
     case "LOW":
