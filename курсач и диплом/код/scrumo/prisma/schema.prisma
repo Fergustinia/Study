@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -11,27 +10,32 @@ model User {
   id                 String          @id @default(cuid())
   name               String
   email              String          @unique
-  passwordHash       String?
   role               UserRole        @default(MEMBER)
   avatarUrl          String?
-  tasks              Task[]          @relation("TaskAssignee")
-  comments           Comment[]
-  projectMemberships ProjectMember[]
   createdAt          DateTime        @default(now())
   updatedAt          DateTime        @updatedAt
+  passwordHash       String?
+  activityLogs       ActivityLog[]
+  comments           Comment[]
+  notifications      Notification[]
+  projectMemberships ProjectMember[]
+  tasks              Task[]          @relation("TaskAssignee")
+  timeEntries        TimeEntry[]
 }
 
 model Project {
-  id          String          @id @default(cuid())
+  id          String           @id @default(cuid())
   name        String
-  key         String          @unique
+  key         String           @unique
   description String?
-  status      ProjectStatus   @default(ACTIVE)
-  tasks       Task[]
-  sprints     Sprint[]
+  status      ProjectStatus    @default(ACTIVE)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  labels      Label[]
   members     ProjectMember[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  settings    ProjectSettings?
+  sprints     Sprint[]
+  tasks       Task[]
 }
 
 model ProjectMember {
@@ -39,9 +43,9 @@ model ProjectMember {
   userId    String
   projectId String
   role      ProjectRole @default(MEMBER)
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdAt DateTime    @default(now())
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, projectId])
 }
@@ -55,10 +59,10 @@ model Sprint {
   endDate   DateTime?
   capacity  Int?
   projectId String
-  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  tasks     Task[]
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks     Task[]
 }
 
 model Task {
@@ -72,12 +76,16 @@ model Task {
   projectId   String
   sprintId    String?
   assigneeId  String?
-  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  sprint      Sprint?      @relation(fields: [sprintId], references: [id], onDelete: SetNull)
-  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
-  comments    Comment[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+  attachments Attachment[]
+  comments    Comment[]
+  subtasks    SubTask[]
+  assignee    User?        @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sprint      Sprint?      @relation(fields: [sprintId], references: [id])
+  labels      TaskLabel[]
+  timeEntries TimeEntry[]
 }
 
 model Comment {
@@ -85,9 +93,89 @@ model Comment {
   content   String
   taskId    String
   authorId  String
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model Label {
+  id        String      @id @default(cuid())
+  name      String
+  color     String
+  projectId String
+  createdAt DateTime    @default(now())
+  project   Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks     TaskLabel[]
+}
+
+model TaskLabel {
+  taskId  String
+  labelId String
+  label   Label  @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  task    Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, labelId])
+}
+
+model Attachment {
+  id         String   @id @default(cuid())
+  fileName   String
+  fileUrl    String
+  fileType   String
+  size       Int
+  taskId     String
+  uploadedBy String
+  createdAt  DateTime @default(now())
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model SubTask {
+  id           String     @id @default(cuid())
+  title        String
+  status       TaskStatus @default(TODO)
+  parentTaskId String
+  createdAt    DateTime   @default(now())
+  parentTask   Task       @relation(fields: [parentTaskId], references: [id], onDelete: Cascade)
+}
+
+model ProjectSettings {
+  id          String  @id @default(cuid())
+  projectId   String  @unique
+  allowGuests Boolean @default(false)
+  isPrivate   Boolean @default(true)
+  autoArchive Boolean @default(false)
+  project     Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  userId    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TimeEntry {
+  id        String   @id @default(cuid())
+  taskId    String
+  userId    String
+  minutes   Int
+  createdAt DateTime @default(now())
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum UserRole {

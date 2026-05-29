@@ -2,7 +2,7 @@
 
 Используй этот файл как **системный промпт / бриф** в начале новой сессии: скопируй раздел «Промпт для ассистента» в первое сообщение или приложи файл.
 
-**Последнее обновление handoff:** май 2026 — полный UI всех разделов, навигация, спринты, бэклог, аналитика, команда, настройки.
+**Последнее обновление handoff:** май 2026 — расширен `/dashboard` (спринты, мои задачи, распределение по статусам), добавлен `getTaskStatusClasses`.
 
 ---
 
@@ -54,7 +54,7 @@
 
    | Маршрут | Файл | Что делает |
    |---------|------|------------|
-   | `/dashboard` | `dashboard/page.tsx` | Статистика, проекты, последние задачи, быстрые ссылки |
+   | `/dashboard` | `dashboard/page.tsx` | Расширенная сводка: метрики, распределение по статусам, «мои задачи», спринты (active/planned), проекты и недавняя активность |
    | `/projects` | `projects/page.tsx` | Список проектов (только где user в members), создание |
    | `/projects/[id]` | `projects/[projectId]/page.tsx` | Детали, команда, ссылки на доску/задачи/бэклог/планирование |
    | `/projects/[id]/tasks` | `.../tasks/page.tsx` | Фильтры, список, StatCard |
@@ -92,6 +92,7 @@
    - `components/tasks/` — create/edit forms, `assign-sprint-select.tsx`
    - `components/settings/` — `settings-form.tsx`
    - `components/shared/` — `stat-card`, `project-page-select`, `empty-projects-state`
+   - `src/types/task.ts` — добавлен `getTaskStatusClasses(status)` (единые стили бейджей статуса)
 
 8) **Инфраструктура**
    - Geist через `@import` в `globals.css` (не `next/font/google` — баг Turbopack).
@@ -117,6 +118,7 @@
 - `createTask`/`updateTask` — assignee не проверяется на членство в проекте (только существование User).
 - Роли `UserRole` / `ProjectRole` в БД есть, в UI почти не используются (кроме отображения).
 - Мёртвые файлы layout: `header.tsx`, `sidebar.tsx`, `top-header.tsx`, `app-header.tsx`.
+- Дашборд делает несколько агрегатов Prisma (`count`, `groupBy`) — при медленной БД можно оптимизировать/кешировать.
 
 ПЕРЕМЕННЫЕ ОКРУЖЕНИЯ (`.env`):
 - `DATABASE_URL` — `postgresql://USER:PASSWORD@localhost:5432/scrumo?schema=public`
@@ -165,7 +167,7 @@ Prisma:
 
 | Раздел | Статус | Ключевые файлы |
 |--------|--------|----------------|
-| Дашборд | ✅ Готово | `dashboard/page.tsx` |
+| Дашборд | ✅ Готово (расширенный) | `dashboard/page.tsx` |
 | Проекты | ✅ Готово | `projects/page.tsx`, `create-project-dialog.tsx` |
 | Проект (детали) | ✅ Готово | `projects/[projectId]/page.tsx` |
 | Задачи CRUD | ✅ Готово | `tasks/page.tsx`, `tasks/new`, `tasks/.../edit`, `actions/tasks.ts` |
