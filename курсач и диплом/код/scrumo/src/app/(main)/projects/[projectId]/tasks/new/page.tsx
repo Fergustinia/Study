@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireUserId, requireProjectMember } from "@/lib/access";
+import { getProjectMemberUsers } from "@/lib/project-members";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateTaskForm } from "@/components/tasks/create-task-form";
@@ -39,14 +40,7 @@ export default async function CreateProjectTaskPage({
         status: true,
       },
     }),
-    prisma.user.findMany({
-      orderBy: [{ name: "asc" }, { email: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    }),
+    getProjectMemberUsers(projectId),
   ]);
 
   if (!project) notFound();
@@ -100,6 +94,7 @@ export default async function CreateProjectTaskPage({
             projectId={project.id}
             sprints={sprints}
             users={users}
+            defaultAssigneeId={userId}
           />
         </CardContent>
       </Card>

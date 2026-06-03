@@ -16,6 +16,7 @@ type CreateTaskFormProps = {
     name: string | null;
     email: string;
   }>;
+  defaultAssigneeId?: string;
 };
 
 const initialState: CreateTaskFormState = {};
@@ -24,6 +25,7 @@ export function CreateTaskForm({
   projectId,
   sprints,
   users,
+  defaultAssigneeId,
 }: CreateTaskFormProps) {
   const [state, formAction, isPending] = useActionState(createTask, initialState);
 
@@ -141,12 +143,16 @@ export function CreateTaskForm({
 
         <div className="space-y-2">
           <label htmlFor="assigneeId" className="text-sm font-medium">
-            Исполнитель
+            Исполнитель (участник проекта)
           </label>
           <select
             id="assigneeId"
             name="assigneeId"
-            defaultValue=""
+            defaultValue={
+              users.some((user) => user.id === defaultAssigneeId)
+                ? defaultAssigneeId
+                : ""
+            }
             className="flex h-10 w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400"
           >
             <option value="">Не назначен</option>

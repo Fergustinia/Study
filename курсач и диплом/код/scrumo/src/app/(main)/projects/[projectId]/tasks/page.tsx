@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma";
 import { requireUserId, requireProjectMember } from "@/lib/access";
+import { getProjectMemberUsers } from "@/lib/project-members";
 import { prisma } from "@/lib/prisma";
 import { StatCard } from "@/components/shared/stat-card";
 import { TaskPriority, TaskStatus } from "@prisma/client";
@@ -129,12 +130,7 @@ export default async function ProjectTasksPage({
         },
       }),
 
-      prisma.user.findMany({
-        where: {
-          tasks: { some: { projectId } },
-        },
-        select: { id: true, name: true, email: true },
-      }),
+      getProjectMemberUsers(projectId),
 
       prisma.task.count({ where: { projectId } }),
       prisma.task.count({ where: { projectId, status: "DONE" } }),
@@ -178,6 +174,23 @@ export default async function ProjectTasksPage({
         >
           Создать
         </Link>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href={`/projects/${project.id}/tasks?assigneeId=${userId}`}
+          className="rounded-full bg-neutral-100 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-200"
+        >
+          Мои задачи
+        </Link>
+        {assigneeId === userId ? (
+          <Link
+            href={`/projects/${project.id}/tasks`}
+            className="rounded-full border px-3 py-1.5 text-sm text-neutral-600 hover:bg-neutral-50"
+          >
+            Все задачи
+          </Link>
+        ) : null}
       </div>
 
       {/* STATS */}

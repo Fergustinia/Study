@@ -159,7 +159,7 @@ export function EditTaskForm({
 
         <div className="space-y-2">
           <label htmlFor="assigneeId" className="text-sm font-medium">
-            Исполнитель
+            Исполнитель (участник проекта)
           </label>
           <select
             id="assigneeId"

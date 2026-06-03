@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { requireUserId, requireProjectMember } from "@/lib/access";
+import { getProjectMemberUsers } from "@/lib/project-members";
 import { prisma } from "@/lib/prisma";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EditTaskForm } from "@/components/tasks/edit-task-form";
@@ -63,14 +64,7 @@ export default async function EditProjectTaskPage({
         status: true,
       },
     }),
-    prisma.user.findMany({
-      orderBy: [{ name: "asc" }, { email: "asc" }],
-      select: {
-        id: true,
-        name: true,
-        email: true,
-      },
-    }),
+    getProjectMemberUsers(projectId),
   ]);
 
   if (!project || !task) notFound();

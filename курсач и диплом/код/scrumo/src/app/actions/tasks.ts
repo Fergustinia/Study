@@ -67,6 +67,23 @@ async function assertProjectMembership(projectId: string, userId: string) {
   return Boolean(membership);
 }
 
+async function assertAssigneeIsProjectMember(
+  projectId: string,
+  assigneeId: string
+) {
+  const membership = await prisma.projectMember.findUnique({
+    where: {
+      userId_projectId: {
+        userId: assigneeId,
+        projectId,
+      },
+    },
+    select: { id: true },
+  });
+
+  return Boolean(membership);
+}
+
 function revalidateTaskViews(projectId: string) {
   revalidatePath(`/projects/${projectId}`);
   revalidatePath(`/projects/${projectId}/tasks`);
@@ -135,19 +152,15 @@ export async function createTask(
   }
 
   if (data.assigneeId) {
-    const assignee = await prisma.user.findUnique({
-      where: {
-        id: data.assigneeId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const isMember = await assertAssigneeIsProjectMember(
+      data.projectId,
+      data.assigneeId
+    );
 
-    if (!assignee) {
+    if (!isMember) {
       return {
         errors: {
-          assigneeId: ["Выбранный исполнитель не найден."],
+          assigneeId: ["Исполнитель должен быть участником проекта."],
         },
       };
     }
@@ -256,19 +269,15 @@ export async function updateTask(
   }
 
   if (data.assigneeId) {
-    const assignee = await prisma.user.findUnique({
-      where: {
-        id: data.assigneeId,
-      },
-      select: {
-        id: true,
-      },
-    });
+    const isMember = await assertAssigneeIsProjectMember(
+      data.projectId,
+      data.assigneeId
+    );
 
-    if (!assignee) {
+    if (!isMember) {
       return {
         errors: {
-          assigneeId: ["Выбранный исполнитель не найден."],
+          assigneeId: ["Исполнитель должен быть участником проекта."],
         },
       };
     }

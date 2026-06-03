@@ -23,9 +23,9 @@ export async function POST(request: Request) {
       where: { email },
     });
 
-    console.log("EXISTING USER:", existingUser);
+    console.log("EXISTING USER:", existingUser ? { id: existingUser.id, hasPassword: Boolean(existingUser.passwordHash) } : null);
 
-    if (existingUser) {
+    if (existingUser?.passwordHash) {
       return NextResponse.json(
         { error: "Пользователь с таким email уже существует" },
         { status: 409 }
@@ -34,14 +34,22 @@ export async function POST(request: Request) {
 
     const passwordHash = await hash(password, 10);
 
-    const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        passwordHash,
-        role: "MEMBER",
-      },
-    });
+    const user = existingUser
+      ? await prisma.user.update({
+          where: { email },
+          data: {
+            name,
+            passwordHash,
+          },
+        })
+      : await prisma.user.create({
+          data: {
+            name,
+            email,
+            passwordHash,
+            role: "MEMBER",
+          },
+        });
 
     console.log("USER CREATED:", user);
 
@@ -50,10 +58,16 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Пользователь успешно создан",
-        user,
+        message: existingUser
+          ? "Регистрация завершена. Можно войти в систему."
+          : "Пользователь успешно создан",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
       },
-      { status: 201 }
+      { status: existingUser ? 200 : 201 }
     );
   } catch (error) {
     console.error("REGISTER ERROR:", error);

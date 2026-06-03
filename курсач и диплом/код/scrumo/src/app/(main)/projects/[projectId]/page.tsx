@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StatCard } from "@/components/shared/stat-card";
 import { auth } from "@/auth";
 import { requireProjectMember } from "@/lib/access";
+import { canManageProjectMembers } from "@/lib/project-members";
 import { prisma } from "@/lib/prisma";
 import { getProjectRoleLabel } from "@/types/sprint";
 
@@ -20,12 +21,23 @@ export default async function ProjectDetailsPage({ params }: Props) {
   if (!userId) return null;
 
   const { projectId } = await params;
-  await requireProjectMember(projectId, userId);
+  const membership = await requireProjectMember(projectId, userId);
 
   const project = await prisma.project.findUnique({
     where: { id: projectId },
     include: {
-      members: { include: { user: true } },
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              passwordHash: true,
+            },
+          },
+        },
+      },
       sprints: { orderBy: { createdAt: "desc" }, take: 3 },
       _count: {
         select: {
@@ -126,40 +138,56 @@ export default async function ProjectDetailsPage({ params }: Props) {
 
         {/* TEAM */}
         <div className="rounded-2xl bg-white p-5">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <h2 className="text-base font-medium">Команда</h2>
 
-          <h2 className="text-base font-medium mb-4">
-            Команда
-          </h2>
+            <Link
+              href={`/team?projectId=${project.id}`}
+              className="text-sm font-medium text-neutral-600 underline hover:text-black"
+            >
+              Управление
+            </Link>
+          </div>
 
           {project.members.length === 0 ? (
-            <p className="text-sm text-neutral-500">
-              Нет участников
-            </p>
+            <p className="text-sm text-neutral-500">Нет участников</p>
           ) : (
-            <div className="space-y-3">
-
+            <ul className="space-y-3">
               {project.members.map((member) => (
-                <div
+                <li
                   key={member.id}
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between gap-3"
                 >
-                  <div>
-                    <p className="text-sm font-medium">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium">
                       {member.user.name}
                     </p>
-                    <p className="text-xs text-neutral-500">
+                    <p className="truncate text-xs text-neutral-500">
                       {member.user.email}
                     </p>
+                    {!member.user.passwordHash ? (
+                      <p className="text-xs text-amber-600">
+                        Ожидает регистрации
+                      </p>
+                    ) : null}
                   </div>
 
-                  <span className="text-xs text-neutral-400">
+                  <span className="shrink-0 rounded-full bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700">
                     {getProjectRoleLabel(member.role)}
                   </span>
-                </div>
+                </li>
               ))}
-
-            </div>
+            </ul>
           )}
+
+          {canManageProjectMembers(membership.role) ? (
+            <Link
+              href={`/team?projectId=${project.id}`}
+              className="mt-4 inline-flex text-sm font-medium text-black underline"
+            >
+              Добавить участника →
+            </Link>
+          ) : null}
         </div>
 
         {/* SPRINTS */}
